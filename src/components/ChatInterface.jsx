@@ -50,34 +50,37 @@ const ChatInterface = ({ height, onImageClick }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-900 border-t border-white/5">
+    <div className="flex flex-col h-full bg-[#0b0f17]">
       {/* Message List */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar"
         style={{ height: `${height - 80}px` }}
       >
         {messages.map((msg) => (
           <div key={msg.id} className={`flex flex-col ${msg.sender === 'Me' ? 'items-end' : 'items-start'}`}>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{msg.sender === 'Me' ? t('chat_me') : msg.sender}</span>
-              <span className="text-[10px] text-slate-600">{msg.time}</span>
+            <div className={`flex items-center gap-1.5 mb-0.5 ${msg.sender === 'Me' ? 'flex-row-reverse' : 'flex-row'}`}>
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{msg.sender === 'Me' ? t('chat_me') : msg.sender}</span>
+              <span className="text-[9px] text-slate-700 font-medium">{msg.time}</span>
             </div>
             
             {msg.type === 'text' ? (
-              <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
+              <div className={`max-w-[85%] px-3 py-1.5 rounded-2xl text-[13px] leading-relaxed shadow-sm ${
                 msg.sender === 'Me' 
-                  ? 'bg-primary-600 text-white rounded-tr-none' 
-                  : 'bg-slate-800 text-slate-200 rounded-tl-none'
+                  ? 'bg-blue-600 text-white rounded-tr-none' 
+                  : 'bg-[#1e293b] text-slate-200 rounded-tl-none border border-white/5'
               }`}>
                 {msg.text}
               </div>
             ) : (
               <div 
-                className="max-w-[80%] p-1 bg-slate-800 rounded-2xl overflow-hidden shadow-xl border border-white/5 cursor-pointer hover:opacity-90 transition-opacity"
+                className="max-w-[70%] p-0.5 bg-[#1e293b] rounded-2xl overflow-hidden shadow-2xl border border-white/10 cursor-pointer hover:opacity-95 transition-all active:scale-[0.98]"
                 onClick={() => onImageClick(msg.imageUrl)}
               >
-                <img src={msg.imageUrl} alt="chat" className="rounded-xl w-full h-auto object-cover aspect-video" />
+                <div className="relative aspect-video w-full rounded-[14px] overflow-hidden">
+                  <img src={msg.imageUrl} alt="chat" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                </div>
               </div>
             )}
           </div>
@@ -85,10 +88,10 @@ const ChatInterface = ({ height, onImageClick }) => {
         
         {isUploading && (
           <div className="flex flex-col items-end">
-            <div className="max-w-[80%] p-1 bg-slate-800/50 rounded-2xl overflow-hidden border border-white/5 animate-pulse flex items-center justify-center aspect-video w-full">
+            <div className="max-w-[70%] p-0.5 bg-[#1e293b]/50 rounded-2xl overflow-hidden border border-white/5 animate-pulse flex items-center justify-center aspect-video w-full">
               <div className="flex flex-col items-center gap-2">
-                <Loader2 size={24} className="text-primary-500 animate-spin" />
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{t('chat_uploading')}</span>
+                <Loader2 size={20} className="text-blue-500 animate-spin" />
+                <span className="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">{t('chat_uploading')}</span>
               </div>
             </div>
           </div>
@@ -96,11 +99,11 @@ const ChatInterface = ({ height, onImageClick }) => {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 glass border-t border-white/10 shrink-0">
+      <div className="p-3 bg-[#0b0f17] border-t border-white/5 shrink-0">
         <div className="flex items-center gap-2">
           <button 
             onClick={handleImageSelect}
-            className="p-2 text-slate-400 hover:text-white transition-colors bg-slate-800 rounded-xl"
+            className="p-2.5 text-slate-500 hover:text-white transition-colors bg-[#1e293b] rounded-xl active:scale-90"
           >
             <Plus size={20} />
           </button>
@@ -110,11 +113,11 @@ const ChatInterface = ({ height, onImageClick }) => {
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder={t('chat_placeholder')}
-              className="w-full bg-slate-800 border-none rounded-xl py-2.5 px-4 text-sm text-slate-200 outline-none focus:ring-2 focus:ring-primary-500/30 transition-all font-medium"
+              className="w-full bg-[#1e293b] border-none rounded-xl py-2.5 px-4 text-[13px] text-slate-200 outline-none focus:ring-1 focus:ring-blue-500/50 transition-all font-medium placeholder:text-slate-600"
             />
             <button 
               onClick={handleImageSelect}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-white transition-colors"
             >
               <Camera size={18} />
             </button>
@@ -122,7 +125,7 @@ const ChatInterface = ({ height, onImageClick }) => {
           <button 
             onClick={handleSend}
             disabled={!inputText.trim()}
-            className="p-2.5 bg-primary-600 text-white rounded-xl shadow-lg shadow-primary-900/40 disabled:opacity-50 disabled:grayscale transition-all active:scale-95"
+            className="p-2.5 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-900/20 disabled:opacity-40 disabled:grayscale transition-all active:scale-90"
           >
             <Send size={18} />
           </button>
