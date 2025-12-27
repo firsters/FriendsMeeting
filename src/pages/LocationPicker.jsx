@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Search, Mic, Plus, Minus, Navigation, MapPin, LocateFixed, Store, Trees, Utensils, ChevronRight } from 'lucide-react';
+import { useTranslation } from '../context/LanguageContext';
 
 const LocationPicker = ({ onConfirm, onBack }) => {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState({
@@ -14,7 +16,7 @@ const LocationPicker = ({ onConfirm, onBack }) => {
   });
 
   const suggestions = [
-    { id: 1, name: "City Hall Park", info: "0.1 mi • Public Park", icon: <Trees size={18} />, color: "bg-emerald-500/20 text-emerald-400" },
+    { id: 1, name: "City Hall Park", info: `0.1 mi • ${t('perm_location')}`, icon: <Trees size={18} />, color: "bg-emerald-500/20 text-emerald-400" },
     { id: 2, name: "Nobu Downtown", info: "0.3 mi • Japanese Restaurant", icon: <Utensils size={18} />, color: "bg-amber-500/20 text-amber-400" }
   ];
 
@@ -28,7 +30,7 @@ const LocationPicker = ({ onConfirm, onBack }) => {
         >
           <ArrowLeft size={24} />
         </button>
-        <h2 className="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-12">모임 위치 설정</h2>
+        <h2 className="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-12">{t('loc_picker_title')}</h2>
       </div>
 
       {/* Main Map Area (Simulation) */}
@@ -48,7 +50,7 @@ const LocationPicker = ({ onConfirm, onBack }) => {
               </div>
               <input 
                 className="flex w-full min-w-0 flex-1 bg-transparent border-none focus:ring-0 text-white placeholder:text-slate-500 px-4 text-base font-medium" 
-                placeholder="주소 또는 장소 검색..." 
+                placeholder={t('loc_search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -72,7 +74,7 @@ const LocationPicker = ({ onConfirm, onBack }) => {
                 className="w-full flex flex-col bg-slate-800/95 backdrop-blur-2xl rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden"
               >
                 <div className="px-4 py-3 bg-white/5 border-b border-white/5 flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">주변 추천 장소</span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t('loc_nearby_suggestions')}</span>
                 </div>
                 {suggestions.map((item) => (
                   <button 
@@ -121,7 +123,7 @@ const LocationPicker = ({ onConfirm, onBack }) => {
             transition={{ repeat: Infinity, duration: 2 }}
             className="bg-primary-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-2xl mb-2 whitespace-nowrap uppercase tracking-widest ring-4 ring-slate-900"
           >
-            지도를 움직여 위치를 조정하세요
+            {t('radar_move_map')}
           </motion.div>
           <MapPin size={48} className="text-primary-500 fill-primary-500/20 drop-shadow-[0_8px_8px_rgba(0,0,0,0.5)]" />
           <div className="w-3 h-1.5 bg-black/40 rounded-full blur-[2px] mt-1 scale-x-150"></div>
@@ -155,9 +157,9 @@ const LocationPicker = ({ onConfirm, onBack }) => {
                 <p className="text-white text-xl font-extrabold tracking-tight">{selectedLocation.name}</p>
                 <p className="text-slate-500 text-xs font-medium leading-relaxed uppercase tracking-wide">{selectedLocation.address}</p>
                 <div className="flex items-center gap-3 mt-2">
-                  <span className="bg-emerald-500/10 text-emerald-400 text-[10px] px-2.5 py-1 rounded-lg font-bold uppercase tracking-widest border border-emerald-500/20">영업 중</span></span>
+                  <span className="bg-emerald-500/10 text-emerald-400 text-[10px] px-2.5 py-1 rounded-lg font-bold uppercase tracking-widest border border-emerald-500/20">{t('loc_open')}</span>
                   <div className="w-1 h-1 rounded-full bg-slate-700"></div>
-                  <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">도보 5분</span>
+                  <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">{t('loc_walk_time')}</span>
                 </div>
               </div>
             </div>
@@ -167,7 +169,7 @@ const LocationPicker = ({ onConfirm, onBack }) => {
               onClick={() => onConfirm(selectedLocation)}
               className="flex w-full cursor-pointer items-center justify-center h-16 rounded-[1.5rem] bg-primary-600 hover:bg-primary-500 transition-all text-white text-sm font-bold uppercase tracking-[0.1em] shadow-2xl shadow-primary-900/40 active:scale-[0.98]"
             >
-              위치 확정하기
+              {t('loc_confirm')}
             </button>
           </div>
         </div>

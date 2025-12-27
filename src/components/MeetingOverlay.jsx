@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Clock, MapPin, Users, Hash, ChevronRight, Plus, CheckCircle } from 'lucide-react';
 import { Input, Button } from '../components/UI';
 import LocationPicker from '../pages/LocationPicker';
+import { useTranslation } from '../context/LanguageContext';
 
 const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
+  const { t } = useTranslation();
   const [showLocationPicker, setShowLocationPicker] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -41,10 +43,10 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
             onClick={onClose} 
             className="text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors px-2"
           >
-            취소
+            {t('cancel')}
           </button>
           <h1 className="text-sm font-extrabold uppercase tracking-[0.2em] text-white">
-            {type === 'create' ? '새 모임 만들기' : '모임 참여하기'}
+            {type === 'create' ? t('meeting_new') : t('meeting_join_overlay')}
           </h1>
           <div className="w-12"></div> 
         </header>
@@ -54,11 +56,11 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Meeting Name */}
               <div className="space-y-3">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">모임 이름</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">{t('meeting_name')}</label>
                 <div className="relative group">
                   <input 
                     className="w-full h-16 bg-slate-800/50 border-white/5 rounded-3xl px-6 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-slate-800 transition-all placeholder:text-slate-600 shadow-inner"
-                    placeholder="예: 강남역 맛집 모임"
+                    placeholder={t('meeting_name_placeholder')}
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     required
@@ -69,20 +71,20 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
               {/* Date & Time */}
               <div className="flex gap-4">
                 <div className="flex-1 space-y-3">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">날짜</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">{t('meeting_date')}</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-primary-400">
                       <Calendar size={18} />
                     </div>
                     <input 
                       className="w-full h-16 bg-slate-800/50 border-white/5 rounded-3xl pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-slate-800 transition-all shadow-inner cursor-pointer"
-                      value="오늘"
+                      value="Today"
                       readOnly
                     />
                   </div>
                 </div>
                 <div className="flex-1 space-y-3">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">시간</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">{t('meeting_time')}</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-primary-400">
                       <Clock size={18} />
@@ -98,7 +100,7 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
 
               {/* Location Selection Logic from Stitch */}
               <div className="space-y-3">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">장소</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">{t('meeting_location')}</label>
                 <button 
                   type="button"
                   onClick={() => setShowLocationPicker(true)}
@@ -106,7 +108,7 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
                 >
                   <MapPin size={22} className="text-primary-400 mr-4" />
                   <span className={`flex-1 text-left text-sm font-bold truncate ${formData.location ? 'text-white' : 'text-slate-500 italic'}`}>
-                    {formData.location ? formData.location.name : '모임 장소를 선택하세요...'}
+                    {formData.location ? formData.location.name : t('meeting_location_placeholder')}
                   </span>
                   <ChevronRight size={20} className="text-slate-600 group-hover:text-primary-400 transition-colors" />
                 </button>
@@ -139,8 +141,8 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
               {/* Invite Friends from Stitch */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between px-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">친구 초대</label>
-                  <button type="button" className="text-primary-400 text-[10px] font-bold uppercase tracking-widest hover:text-primary-300">전체 보기</button>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t('meeting_invite_friends')}</label>
+                  <button type="button" className="text-primary-400 text-[10px] font-bold uppercase tracking-widest hover:text-primary-300">{t('meeting_view_all')}</button>
                 </div>
                 <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                   <button type="button" className="flex-shrink-0 w-14 h-14 rounded-2xl border-2 border-dashed border-slate-700 flex items-center justify-center hover:border-primary-500 hover:bg-primary-500/10 transition-all group">
@@ -164,13 +166,13 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
                   <Hash size={48} className="text-primary-400 group-hover:scale-110 transition-transform" />
                   <div className="absolute inset-0 bg-primary-500/5 blur-2xl rounded-full"></div>
                 </div>
-                <h2 className="text-2xl font-extrabold tracking-tighter text-white uppercase italic">참여 코드 입력</h2>
+                <h2 className="text-2xl font-extrabold tracking-tighter text-white uppercase italic">{t('meeting_enter_code')}</h2>
                 <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.15em] max-w-[240px] mx-auto leading-relaxed">
-                  방장이 공유해준 참여 코드를 입력하여 모임에 참여하세요.
+                  {t('meeting_code_desc')}
                 </p>
               </div>
               <div className="space-y-3">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">모임 코드</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">{t('meeting_code')}</label>
                 <input 
                   className="w-full h-20 bg-slate-800/50 border-white/5 rounded-3xl text-center text-3xl font-black tracking-[0.3em] text-primary-400 focus:ring-4 focus:ring-primary-500/20 transition-all shadow-2xl placeholder:opacity-20"
                   placeholder="X7Y-3A"
@@ -192,7 +194,7 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
               className="w-full bg-primary-600 hover:bg-primary-500 text-white font-extrabold text-sm tracking-widest uppercase h-16 rounded-[1.5rem] shadow-2xl shadow-primary-900/40 flex items-center justify-center gap-3 transition-all"
             >
               <CheckCircle size={20} />
-              {type === 'create' ? '모임 만들기' : '지금 참여하기'}
+              {type === 'create' ? t('meeting_create') : t('meeting_join')}
             </motion.button>
           </div>
         </footer>

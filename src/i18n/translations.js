@@ -160,6 +160,9 @@ export const translations = {
     chat_placeholder: "메시지를 입력하세요...",
     chat_uploading: "업로드 중...",
     chat_me: "나",
+    chat_msg_1: "안녕, 우리 오늘 5시에 만나는 거 맞지?",
+    chat_msg_2: "응, 나 지금 가는 중이야!",
+    chat_msg_3: "나 방금 카페 도착했어 ☕️",
     
     // Profile/Settings
     settings_title: "설정",
@@ -345,6 +348,9 @@ export const translations = {
     chat_placeholder: "Type a message...",
     chat_uploading: "Uploading...",
     chat_me: "Me",
+    chat_msg_1: "Hey, are we still meeting at 5?",
+    chat_msg_2: "Yeah, I'm on my way now!",
+    chat_msg_3: "Just arrived at the cafe ☕️",
 
     // Profile/Settings
     settings_title: "Settings",

@@ -2,13 +2,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Camera, Plus, GripHorizontal, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Input, Button } from '../components/UI';
+import { useTranslation } from '../context/LanguageContext';
 
 const ChatInterface = ({ height, onImageClick }) => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState([
-    { id: '1', sender: 'Alex', text: '안녕, 우리 오늘 5시에 만나는 거 맞지?', type: 'text', time: '14:20' },
-    { id: '2', sender: 'Me', text: "응, 나 지금 가는 중이야!", type: 'text', time: '14:21' },
+    { id: '1', sender: 'Alex', text: t('chat_msg_1'), type: 'text', time: '14:20' },
+    { id: '2', sender: 'Me', text: t('chat_msg_2'), type: 'text', time: '14:21' },
     { id: '3', sender: 'Sam', type: 'image', imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80', time: '14:22' },
-    { id: '4', sender: 'Sam', text: "나 방금 카페 도착했어 ☕️", type: 'text', time: '14:22' },
+    { id: '4', sender: 'Sam', text: t('chat_msg_3'), type: 'text', time: '14:22' },
   ]);
   const [inputText, setInputText] = useState('');
   const [isUploading, setIsUploading] = useState(false);
@@ -58,7 +60,7 @@ const ChatInterface = ({ height, onImageClick }) => {
         {messages.map((msg) => (
           <div key={msg.id} className={`flex flex-col ${msg.sender === 'Me' ? 'items-end' : 'items-start'}`}>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{msg.sender === 'Me' ? '나' : msg.sender}</span>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{msg.sender === 'Me' ? t('chat_me') : msg.sender}</span>
               <span className="text-[10px] text-slate-600">{msg.time}</span>
             </div>
             
@@ -86,7 +88,7 @@ const ChatInterface = ({ height, onImageClick }) => {
             <div className="max-w-[80%] p-1 bg-slate-800/50 rounded-2xl overflow-hidden border border-white/5 animate-pulse flex items-center justify-center aspect-video w-full">
               <div className="flex flex-col items-center gap-2">
                 <Loader2 size={24} className="text-primary-500 animate-spin" />
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">업로드 중...</span>
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{t('chat_uploading')}</span>
               </div>
             </div>
           </div>
@@ -107,7 +109,7 @@ const ChatInterface = ({ height, onImageClick }) => {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="메시지를 입력하세요..."
+              placeholder={t('chat_placeholder')}
               className="w-full bg-slate-800 border-none rounded-xl py-2.5 px-4 text-sm text-slate-200 outline-none focus:ring-2 focus:ring-primary-500/30 transition-all font-medium"
             />
             <button 

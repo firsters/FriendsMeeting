@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Mail, Lock, LockKeyhole, CheckCircle, ArrowRight, ShieldCheck, MailCheck } from 'lucide-react';
 import { Input, Button } from '../components/UI';
+import { useTranslation } from '../context/LanguageContext';
 
 const ForgotPassword = ({ onBack }) => {
+  const { t } = useTranslation();
   // States: 'email' | 'confirmation' | 'reset' | 'success'
   const [step, setStep] = useState('email');
   const [email, setEmail] = useState('');
@@ -56,17 +58,17 @@ const ForgotPassword = ({ onBack }) => {
             </div>
             
             <div className="text-center mb-10 space-y-4">
-              <h1 className="text-4xl font-black tracking-tighter uppercase italic tracking-tighter">비밀번호 찾기</h1>
+              <h1 className="text-4xl font-black tracking-tighter uppercase italic tracking-tighter">{t('forgot_title')}</h1>
               <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.15em] leading-relaxed max-w-[280px] mx-auto opacity-70">
-                걱정 마세요! 흔히 있는 일입니다. 가입하신 이메일을 입력하시면 복구 링크를 보내드립니다.
+                {t('forgot_desc')}
               </p>
             </div>
 
             <form onSubmit={handleSendLink} className="space-y-8 w-full">
               <div className="space-y-3">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">이메일 주소</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">{t('auth_email')}</label>
                 <Input 
-                  placeholder="이메일을 입력하세요"
+                  placeholder={t('auth_email_placeholder')}
                   type="email"
                   icon={Mail}
                   value={email}
@@ -77,7 +79,7 @@ const ForgotPassword = ({ onBack }) => {
 
               <div className="pt-4">
                 <Button type="submit" className="w-full h-16 py-0 rounded-[1.5rem] text-sm tracking-[0.2em]">
-                  복구 링크 전송
+                  {t('forgot_send_link')}
                   <ArrowRight size={20} className="ml-2" />
                 </Button>
               </div>
@@ -86,7 +88,7 @@ const ForgotPassword = ({ onBack }) => {
             <div className="mt-auto pt-10 text-center">
               <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest leading-loose">
                 이메일에 접근할 수 없나요? <br/>
-                <button className="text-primary-400 hover:text-primary-300 transition-colors mt-2">고객 센터 문의</button>
+                <button className="text-primary-400 hover:text-primary-300 transition-colors mt-2">{t('settings_help')}</button>
               </p>
             </div>
           </motion.div>
@@ -110,15 +112,15 @@ const ForgotPassword = ({ onBack }) => {
               </div>
 
               <div className="flex flex-col items-center gap-4 text-center">
-                <h1 className="text-4xl font-black tracking-tighter uppercase italic">이메일 확인</h1>
+                <h1 className="text-4xl font-black tracking-tighter uppercase italic">{t('forgot_check_mail')}</h1>
                 <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.15em] leading-relaxed max-w-[280px] opacity-70">
-                  비밀번호 복구 지침이 입력하신 이메일로 전송되었습니다.
+                  {t('forgot_check_desc')}
                 </p>
               </div>
 
               <div className="w-full space-y-4 pt-6">
                 <Button onClick={() => setStep('reset')} className="w-full h-16 rounded-[1.5rem] text-sm tracking-[0.2em]">
-                  비밀번호 재설정하기
+                  {t('forgot_new_password')}
                 </Button>
                 <div className="text-center pt-4">
                   <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
@@ -138,7 +140,7 @@ const ForgotPassword = ({ onBack }) => {
             className="flex flex-1 flex-col px-8 pt-6 pb-12 max-w-md mx-auto w-full"
           >
             <div className="mb-12">
-              <h1 className="text-[42px] font-black tracking-tighter leading-tight mb-4 uppercase italic">새 비밀번호</h1>
+              <h1 className="text-[42px] font-black tracking-tighter leading-tight mb-4 uppercase italic">{t('forgot_new_password')}</h1>
               <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.15em] leading-relaxed max-w-[260px] opacity-70">
                 이전에 사용하지 않은 새로운 비밀번호를 설정해주세요.
               </p>
@@ -146,7 +148,7 @@ const ForgotPassword = ({ onBack }) => {
 
             <form onSubmit={handleResetPassword} className="flex flex-col gap-8 w-full">
               <div className="space-y-3 group/input">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">새 비밀번호</label>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">{t('auth_password')}</label>
                 <Input 
                   placeholder="최소 8자 이상 입력"
                   type={showPassword ? "text" : "password"}
@@ -183,7 +185,7 @@ const ForgotPassword = ({ onBack }) => {
 
               <div className="pt-8">
                 <Button type="submit" className="w-full h-18 py-0 rounded-[1.5rem] text-[15px] font-black tracking-[0.2em] shadow-primary-900/40">
-                  지금 업데이트
+                  확인
                 </Button>
               </div>
             </form>
@@ -220,7 +222,7 @@ const ForgotPassword = ({ onBack }) => {
             </div>
 
             <div className="text-center space-y-4 relative z-10">
-              <h1 className="text-4xl font-black tracking-tighter uppercase italic">성공!</h1>
+              <h1 className="text-4xl font-black tracking-tighter uppercase italic">{t('forgot_reset_success')}</h1>
               <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.15em] leading-relaxed max-w-[280px] mx-auto opacity-70">
                 비밀번호가 성공적으로 업데이트되었습니다. 이제 새로운 비밀번호로 로그인하여 서비스를 이용하실 수 있습니다.
               </p>
@@ -228,7 +230,7 @@ const ForgotPassword = ({ onBack }) => {
 
             <div className="w-full mt-24">
               <Button onClick={onBack} className="w-full h-18 py-0 rounded-[1.75rem] text-[15px] font-black tracking-[0.2em] shadow-primary-900/60">
-                로그인으로 돌아가기
+                {t('forgot_back_to_login')}
               </Button>
             </div>
           </motion.div>
