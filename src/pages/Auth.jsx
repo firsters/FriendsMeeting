@@ -19,7 +19,7 @@ const Auth = ({ onAuthSuccess }) => {
     <div className="relative flex min-h-screen w-full flex-col bg-slate-900 text-white overflow-hidden max-w-md mx-auto shadow-2xl">
       <div className="relative h-72 w-full overflow-hidden shrink-0">
         <img 
-          src="C:/Users/firster/.gemini/antigravity/brain/9fbd1937-1055-4411-90cc-7cb4d039e63f/auth_hero_image_1766838376511.png" 
+          src="/assets/auth_hero.png" 
           alt="Friends Meeting"
           className="w-full h-full object-cover opacity-80"
         />

@@ -37,7 +37,7 @@ const Welcome = ({ onGetStarted }) => {
           {/* Using the image URL from Stitch */}
           <div 
             className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110" 
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&q=80')" }}
+            style={{ backgroundImage: "url('/assets/welcome_hero.png')" }}
           ></div>
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
           
