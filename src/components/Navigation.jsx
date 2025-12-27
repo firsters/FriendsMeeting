@@ -13,8 +13,8 @@ const Navigation = ({ activeTab, onTabChange }) => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-[#E0E0E0] pb-safe z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
-      <div className="flex justify-around items-center h-[56px] px-2">
+    <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-background border-t border-border pb-safe z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.04)]">
+      <div className="flex justify-around items-center h-[var(--nav-bar-height)] px-xxs">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           
@@ -24,18 +24,18 @@ const Navigation = ({ activeTab, onTabChange }) => {
               onClick={() => onTabChange(tab.id)}
               className="relative flex flex-col items-center justify-center w-full h-full transition-colors"
             >
-              <div className={`transition-all duration-200 ${isActive ? 'text-[#4285F4]' : 'text-[#757575] hover:text-[#4285F4]'}`}>
+              <div className={`transition-all duration-200 ${isActive ? 'text-primary' : 'text-text-secondary hover:text-primary'}`}>
                 <span className={`material-symbols-outlined text-[24px] ${isActive ? 'fill-1' : ''}`}>
                   {tab.icon}
                 </span>
               </div>
-              <span className={`text-[10px] font-bold mt-0.5 transition-all duration-200 ${isActive ? 'text-[#4285F4] opacity-100' : 'text-[#757575] opacity-100'}`}>
+              <span className={`text-[10px] font-bold mt-0.5 transition-all duration-200 ${isActive ? 'text-primary opacity-100' : 'text-text-secondary opacity-100'}`}>
                 {tab.label}
               </span>
               {isActive && (
                 <motion.div 
                   layoutId="activeTabIndicator"
-                  className="absolute top-0 w-8 h-[3px] bg-[#4285F4] rounded-b-full"
+                  className="absolute top-0 w-8 h-[3px] bg-primary rounded-b-full"
                   transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
                 />
               )}
