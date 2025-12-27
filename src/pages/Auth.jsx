@@ -17,13 +17,13 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
   const headerBg = 'linear-gradient(0deg, rgba(16, 22, 34, 1) 0%, rgba(16, 22, 34, 0.6) 50%, rgba(16, 22, 34, 0.2) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDnDxG3dSGWecuREn3JtejWbiUFuaJeiVw3X4BH85kzNAZ5Mg-FEfdF8uFNNsdw3iic2KT9jPugu8psUu2n8ogAHZZptyRvXezcAvfSfXWG5-vWGwZ6Bbvau6EwzccSqHZpu9fvFX6C3EFnJhOHXX2_lgMQa4hdDTbKtNnBOW4Ot56zGHvDo0TQFgRT9QVpRqHmzqMDRpJ5CJbtV0pMtdy2vP5cazIHcdqZw8vCqLVM9JH5X-swoK2Q8IIbfKxfVpHaTdtTORJhr74")';
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col justify-between overflow-x-hidden max-w-md mx-auto shadow-2xl bg-slate-50 dark:bg-[#101622] text-slate-900 dark:text-white font-display antialiased">
+    <div className="relative flex min-h-screen w-full flex-col justify-between overflow-x-hidden max-w-md mx-auto shadow-2xl bg-[#f5f6f8] dark:bg-[#101622] text-slate-900 dark:text-white font-display antialiased">
       {/* Main Content Wrapper */}
       <div className="flex flex-col flex-1">
         {/* Header Section */}
-        <div className="pt-6 relative">
+        <div className="pt-6 relative px-0">
           <div 
-            className="flex flex-col justify-end overflow-hidden bg-[#101622] min-h-[240px] relative px-6 pb-6"
+            className="flex flex-col justify-end overflow-hidden bg-[#101622] min-h-[240px] relative rounded-none"
             style={{ 
               backgroundImage: headerBg,
               backgroundSize: 'cover',
@@ -32,14 +32,14 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
           >
             {/* Logo/Icon Overlay */}
             <div className="absolute top-6 left-0 right-0 flex justify-center">
-              <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-900/30 backdrop-blur-sm bg-opacity-90">
+              <div className="w-16 h-16 bg-[#256af4] rounded-2xl flex items-center justify-center shadow-lg shadow-[#256af4]/30 backdrop-blur-sm bg-opacity-90">
                 <MapPin size={32} className="text-white" />
               </div>
             </div>
 
-            <div className="text-center z-10">
+            <div className="flex flex-col p-6 text-center z-10">
               <h1 className="text-white tracking-tight text-3xl font-bold leading-tight mb-2">
-                {isLogin ? t('auth_locate_connect') : t('auth_join_network')}
+                 {isLogin ? t('auth_locate_connect') : t('auth_join_network')}
               </h1>
               <p className="text-slate-300 text-base font-normal leading-normal">
                 {isLogin ? t('auth_locate_desc') : t('auth_join_desc')}
@@ -56,53 +56,54 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
           </button>
         </div>
 
-        {/* Form Area */}
-        <div className="px-6 py-6 flex flex-col gap-5">
+        {/* Login Form Area */}
+        <div className="px-6 py-4 flex flex-col gap-5">
           <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); onSuccess(); }}>
             {!isLogin && (
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium leading-normal ml-1">{t('auth_nickname')}</label>
-                <div className="relative flex items-center group">
-                  <span className="absolute left-4 text-slate-400 group-focus-within:text-primary-500 transition-colors">
+                <label className="text-sm font-medium leading-normal">{t('auth_nickname')}</label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400">
                     <User size={20} />
                   </span>
                   <input 
-                    className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-4 text-base font-normal placeholder:text-slate-400 transition-all"
+                    className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#256af4]/50 focus:border-[#256af4] border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-4 text-base font-normal transition-all placeholder:text-slate-400"
                     placeholder={t('auth_nickname_placeholder')}
+                    type="text"
                   />
                 </div>
               </div>
             )}
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium leading-normal ml-1">{t('auth_email')}</label>
-              <div className="relative flex items-center group">
-                <span className="absolute left-4 text-slate-400 group-focus-within:text-primary-500 transition-colors">
+              <label className="text-sm font-medium leading-normal">{t('auth_email')}</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-4 text-slate-400">
                   <Mail size={20} />
                 </span>
                 <input 
-                  type="email"
-                  className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-4 text-base font-normal placeholder:text-slate-400 transition-all"
+                  className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#256af4]/50 focus:border-[#256af4] border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-4 text-base font-normal transition-all placeholder:text-slate-400"
                   placeholder={t('auth_email_placeholder')}
+                  type="email"
                 />
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium leading-normal ml-1">{t('auth_password')}</label>
-              <div className="relative flex items-center group">
-                <span className="absolute left-4 text-slate-400 group-focus-within:text-primary-500 transition-colors">
+              <label className="text-sm font-medium leading-normal">{t('auth_password')}</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-4 text-slate-400">
                   <Lock size={20} />
                 </span>
                 <input 
-                  type={showPassword ? 'text' : 'password'}
-                  className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-12 text-base font-normal placeholder:text-slate-400 transition-all"
+                  className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#256af4]/50 focus:border-[#256af4] border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-12 text-base font-normal transition-all placeholder:text-slate-400"
                   placeholder="••••••••"
+                  type={showPassword ? 'text' : 'password'}
                 />
                 <button 
-                  type="button"
+                  className="absolute right-0 top-0 bottom-0 px-4 flex items-center justify-center text-slate-400 hover:text-[#256af4] transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-0 top-0 bottom-0 px-4 flex items-center justify-center text-slate-400 hover:text-primary-500 transition-colors"
+                  type="button"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -110,24 +111,24 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
             </div>
 
             {isLogin && (
-              <div className="flex justify-end pr-1">
+              <div className="flex justify-end">
                 <button 
-                  type="button"
+                  className="text-[#256af4] text-sm font-medium hover:text-blue-400 transition-colors"
                   onClick={() => setShowForgotPassword(true)}
-                  className="text-primary-600 text-sm font-medium hover:text-primary-500 transition-colors"
+                  type="button"
                 >
                   {t('auth_forgot_password')}
                 </button>
               </div>
             )}
 
-            <button className="flex w-full items-center justify-center rounded-xl h-14 bg-primary-600 text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary-500 active:scale-[0.98] transition-all shadow-lg shadow-primary-900/20 mt-2">
+            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 bg-[#256af4] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-blue-600 active:scale-[0.98] transition-all shadow-lg shadow-[#256af4]/20">
               <span className="truncate">{isLogin ? t('auth_login') : t('auth_signup')}</span>
             </button>
           </form>
 
           {/* Social Login Divider */}
-          <div className="relative flex py-2 items-center mt-4">
+          <div className="relative flex py-2 items-center">
             <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
             <span className="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium uppercase tracking-wider">{t('auth_or_continue_with')}</span>
             <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
@@ -146,18 +147,19 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
       </div>
 
       {/* Footer Section */}
-      <div className="px-6 py-8 flex flex-col items-center gap-4 border-t border-slate-100 dark:border-white/5">
+      <div className="px-6 py-8 flex flex-col items-center gap-4">
         <p className="text-slate-500 text-sm font-normal text-center">
-          {isLogin ? t('auth_no_account') : t('auth_has_account')}
+          {isLogin ? t('auth_no_account') : t('auth_has_account')} 
           <button 
+            className="text-[#256af4] font-medium hover:text-blue-400 ml-1"
             onClick={() => setIsLogin(!isLogin)}
-            className="text-primary-600 font-medium hover:text-primary-500 ml-2"
+            type="button"
           >
             {isLogin ? t('auth_signup') : t('auth_login')}
           </button>
         </p>
         <div className="flex items-center gap-1 opacity-50">
-          <Shield size={14} className="text-slate-500" />
+          <Shield className="text-slate-500" size={16} />
           <span className="text-slate-500 text-xs font-normal">Secured connection</span>
         </div>
       </div>
