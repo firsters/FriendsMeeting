@@ -15,44 +15,52 @@ const Auth = ({ onAuthSuccess }) => {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-slate-900 text-white overflow-hidden max-w-md mx-auto shadow-2xl">
-      {/* Top App Bar from Stitch Registration */}
-      <div className="flex items-center px-4 py-4 justify-between bg-transparent sticky top-0 z-10 backdrop-blur-md">
-        <button 
-          onClick={() => setIsLogin(true)} 
-          className="flex items-center justify-center size-10 rounded-full hover:bg-white/10 transition-colors"
-        >
-          <ChevronLeft size={24} />
-        </button>
-        <div className="size-10"></div>
+      <div className="relative h-72 w-full overflow-hidden shrink-0">
+        <img 
+          src="C:/Users/firster/.gemini/antigravity/brain/9fbd1937-1055-4411-90cc-7cb4d039e63f/auth_hero_image_1766838376511.png" 
+          alt="Friends Meeting"
+          className="w-full h-full object-cover opacity-80"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+        
+        {/* Top App Bar Overlaid */}
+        <div className="absolute top-0 left-0 right-0 flex items-center px-4 py-4 justify-between bg-transparent z-10">
+          <button 
+            onClick={() => setIsLogin(true)} 
+            className="flex items-center justify-center size-10 rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-white/10 transition-colors"
+          >
+            <ChevronLeft size={24} />
+          </button>
+        </div>
+
+        {/* Floating Icon from Stitch */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center">
+          <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.4)] ring-4 ring-slate-900 mb-2">
+            <MapPin size={32} className="text-white" />
+          </div>
+        </div>
       </div>
 
-      <main className="flex-1 flex flex-col px-8 pb-8 w-full">
+      <main className="flex-1 flex flex-col px-8 pb-8 w-full -mt-2 relative z-10">
         {/* Header Section with Stitch Aesthetic */}
-        <div className="mb-10 relative">
-          <div className="absolute -right-12 -top-12 w-40 h-40 opacity-10 pointer-events-none rounded-full overflow-hidden">
-            <div className="w-full h-full bg-gradient-to-br from-primary-500 to-transparent"></div>
-          </div>
-          
+        <div className="mb-8 text-center">
           <AnimatePresence mode="wait">
             <motion.div
               key={isLogin ? 'login' : 'signup'}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
             >
               {isLogin ? (
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-20 h-20 bg-primary-600 rounded-[2rem] flex items-center justify-center shadow-2xl shadow-primary-900/40 mb-6 ring-4 ring-slate-800 backdrop-blur-sm">
-                    <MapPin size={36} className="text-white" />
-                  </div>
-                  <h1 className="text-4xl font-extrabold tracking-tighter mb-2 leading-none">Locate & Chat</h1>
-                  <p className="text-slate-400 text-xs font-bold uppercase tracking-widest opacity-60">Sign in to see where your friends are.</p>
-                </div>
+                <>
+                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic italic tracking-tighter">Locate & Connect</h1>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Find your friends in the city</p>
+                </>
               ) : (
                 <>
-                  <h1 className="text-4xl font-extrabold tracking-tighter mb-3 leading-none">Create Account</h1>
-                  <p className="text-slate-400 text-xs font-bold uppercase tracking-widest opacity-60">Start sharing your location with friends.</p>
+                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic italic tracking-tighter">Join Network</h1>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Start sharing your journey</p>
                 </>
               )}
             </motion.div>
