@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, MapPin, Calendar, Clock, UserMinus, Shield, LogOut, Trash2, MoreHorizontal, UserPlus, ShieldCheck, BellRing, ChevronRight, MessageSquareEdit } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Clock, UserMinus, Shield, LogOut, Trash2, MoreHorizontal, UserPlus, ShieldCheck, BellRing, ChevronRight, MessageSquarePlus } from 'lucide-react';
 import { Button } from '../components/UI';
 import LocationPicker from './LocationPicker';
 
@@ -73,7 +73,7 @@ const MeetingDetails = ({ meeting, onBack, isHost = false }) => {
                 onClick={() => setShowLocationPicker(true)}
                 className="absolute top-4 right-4 bg-white/10 backdrop-blur-md hover:bg-white/20 p-3 rounded-2xl border border-white/10 text-white transition-all active:scale-90"
               >
-                <MessageSquareEdit size={20} />
+                <MessageSquarePlus size={20} />
               </button>
             )}
           </div>
