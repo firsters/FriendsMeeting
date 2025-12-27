@@ -1,138 +1,84 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Map, Bell, ArrowLeft, CheckCircle2, Navigation, AlertCircle, ShieldCheck } from 'lucide-react';
+import React from 'react';
+import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 
-const Permissions = ({ onGrant }) => {
+const Permissions = ({ onNavigate }) => {
   const { t } = useTranslation();
-  const [permissions, setPermissions] = useState({
-    location: false,
-    notifications: false
-  });
-
-  const handleToggle = (key) => {
-    setPermissions(prev => ({ ...prev, [key]: !prev[key] }));
-  };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-slate-900 text-white overflow-hidden max-w-md mx-auto shadow-2xl">
-      {/* Top App Bar from Stitch */}
-      <div className="flex items-center justify-between p-4 sticky top-0 z-20 bg-slate-900/90 backdrop-blur-md border-b border-white/5">
-        <button onClick={() => {}} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-white/10 transition-colors">
-          <ArrowLeft size={22} />
+    <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
+      <div className="p-4 flex items-center justify-center relative">
+        <button onClick={() => onNavigate(ScreenType.LOGIN)} className="absolute left-4 p-2 text-white/50 hover:text-white transition-colors">
+          <span className="material-symbols-outlined">arrow_back</span>
         </button>
-        <h2 className="text-sm font-bold uppercase tracking-widest flex-1 text-center pr-10">{t('perm_title')}</h2>
+        <span className="font-bold text-white">{t('permissions_title') || "Permissions"}</span>
       </div>
 
-      <div className="flex-1 flex flex-col pb-32 overflow-y-auto no-scrollbar">
-        {/* Header Illustration Component from Stitch */}
-        <div className="px-6 py-6">
-          <div className="w-full aspect-video bg-slate-800/50 flex flex-col justify-end overflow-hidden rounded-[2.5rem] shadow-2xl relative border border-white/5 group">
-            {/* Background pattern similar to Stitch */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-600/20 via-transparent to-transparent"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative">
-                <motion.div 
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ repeat: Infinity, duration: 4 }}
-                  className="absolute -left-8 -top-8 size-16 rounded-full bg-primary-500/20 blur-xl"
-                ></motion.div>
-                <div className="bg-primary-600 text-white p-6 rounded-[2rem] shadow-2xl shadow-primary-900/40 border-4 border-slate-900 relative z-10">
-                  <Map size={48} />
-                </div>
-                <div className="absolute -right-4 -bottom-4 bg-slate-800 p-2.5 rounded-2xl shadow-xl z-20 border-2 border-slate-900">
-                  <CheckCircle2 size={24} className="text-green-500 animate-pulse" />
+      <div className="flex-1 flex flex-col items-center px-6 pt-10">
+        <div className="w-full h-56 rounded-3xl overflow-hidden mb-10 relative border border-white/5 shadow-2xl">
+          <div 
+            className="absolute inset-0 bg-cover bg-center grayscale opacity-30"
+            style={{backgroundImage: 'url("https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=800")'}}
+          ></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="relative">
+              <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(37,106,244,0.4)] relative z-10">
+                <span className="material-symbols-outlined text-white text-4xl">map</span>
+              </div>
+              <div className="absolute -right-4 -bottom-4 bg-background-dark p-1 rounded-full z-20">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <span className="material-symbols-outlined text-white text-xl">check_circle</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Headline & Body from Stitch */}
-        <div className="flex flex-col items-center px-8 text-center mb-8">
-          <h2 className="text-3xl font-extrabold tracking-tighter leading-tight mb-4 text-white">
-            {t('perm_subtitle_1')} <span className="text-primary-400">{t('perm_subtitle_2')}</span>{t('perm_subtitle_3')}
-          </h2>
-          <p className="text-sm text-slate-500 font-bold uppercase tracking-wide opacity-80 leading-relaxed max-w-xs">
-            {t('perm_desc')}
-          </p>
-        </div>
+        <h2 className="text-3xl font-extrabold text-white text-center mb-4 leading-tight font-display">{t('permissions_header') || "Let's get you connected"}</h2>
+        <p className="text-gray-400 text-center font-medium leading-relaxed mb-10">{t('permissions_desc') || "To get the most out of the map, we need access to a few things. We respect your privacy and only use this data to connect you with friends."}</p>
 
-        {/* Permissions List from Stitch */}
-        <div className="flex flex-col gap-4 px-6 w-full pb-10">
-          {/* Location Permission */}
-          <motion.div 
-            whileHover={{ scale: 1.02 }}
-            className={`flex flex-col gap-6 p-6 rounded-[2rem] border transition-all duration-300 ${permissions.location ? 'bg-primary-500/10 border-primary-500/30 shadow-xl' : 'bg-slate-800/40 border-white/5'}`}
-          >
-            <div className="flex gap-5">
-              <div className={`flex items-center justify-center shrink-0 size-14 rounded-2xl shadow-inner transition-colors ${permissions.location ? 'bg-primary-500 text-white' : 'bg-slate-800 text-primary-400'}`}>
-                <Navigation size={28} />
-              </div>
-              <div className="flex flex-1 flex-col justify-center gap-1">
-                <p className="text-base font-bold text-white tracking-tight">{t('perm_location')}</p>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">{t('perm_location_desc')}</p>
+        <div className="w-full space-y-4">
+          <div className="p-5 bg-card-dark rounded-3xl flex gap-4 border border-white/5">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-primary text-2xl">location_on</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-white font-bold mb-1">{t('permission_location_services') || "Location Services"}</h3>
+              <p className="text-xs text-gray-500 leading-relaxed mb-3">{t('permission_location_desc') || "Required to share your real-time position with friends and get alerts when they arrive."}</p>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">{t('permission_always_allow') || "Always Allow"}</span>
+                <button className="px-5 py-1.5 bg-primary rounded-full text-white text-xs font-bold shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-95">
+                  {t('enable') || "Enable"}
+                </button>
               </div>
             </div>
-            <div className="flex items-center justify-between pl-[64px] gap-4">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                <AlertCircle size={14} className="text-amber-500" />
-                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">{t('perm_location_always')}</span>
-              </div>
-              <button 
-                onClick={() => handleToggle('location')}
-                className={`flex min-w-[100px] h-10 px-6 rounded-full text-xs font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 ${permissions.location ? 'bg-green-600 text-white shadow-green-900/20' : 'bg-primary-600 text-white shadow-primary-900/20'}`}
-              >
-                {permissions.location ? t('perm_set_done') : t('perm_set')}
-              </button>
-            </div>
-          </motion.div>
+          </div>
 
-          {/* Notifications Permission */}
-          <motion.div 
-            whileHover={{ scale: 1.02 }}
-            className={`flex flex-col gap-6 p-6 rounded-[2rem] border transition-all duration-300 ${permissions.notifications ? 'bg-purple-500/10 border-purple-500/30 shadow-xl' : 'bg-slate-800/40 border-white/5'}`}
-          >
-            <div className="flex gap-5">
-              <div className={`flex items-center justify-center shrink-0 size-14 rounded-2xl shadow-inner transition-colors ${permissions.notifications ? 'bg-purple-500 text-white' : 'bg-slate-800 text-purple-400'}`}>
-                <Bell size={28} />
-              </div>
-              <div className="flex flex-1 flex-col justify-center gap-1">
-                <p className="text-base font-bold text-white tracking-tight">{t('perm_notifications')}</p>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">{t('perm_notifications_desc')}</p>
+          <div className="p-5 bg-card-dark rounded-3xl flex gap-4 border border-white/5">
+            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-purple-500 text-2xl">notifications</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-white font-bold mb-1">{t('permission_notifications') || "Notifications"}</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">{t('permission_notifications_desc') || "Get notified when friends message you or are nearby. Never miss a meetup."}</p>
+              <div className="flex justify-end mt-2">
+                <button className="px-5 py-1.5 bg-gray-800 rounded-full text-white text-xs font-bold hover:bg-gray-700 transition-all active:scale-95">
+                  {t('allow') || "Allow"}
+                </button>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-4">
-              <button 
-                onClick={() => handleToggle('notifications')}
-                className={`flex min-w-[100px] h-10 px-6 rounded-full text-xs font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 ${permissions.notifications ? 'bg-green-600 text-white shadow-green-900/20' : 'bg-slate-700 text-white'}`}
-              >
-                {permissions.notifications ? t('perm_enabled') : t('perm_enable')}
-              </button>
-            </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      {/* Sticky Bottom Action from Stitch */}
-      <div className="fixed bottom-0 left-0 right-0 p-8 bg-slate-900/95 backdrop-blur-xl border-t border-white/5 z-30">
-        <div className="max-w-md mx-auto w-full flex flex-col gap-4">
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onGrant}
-            disabled={!permissions.location}
-            className={`flex w-full items-center justify-center h-16 rounded-[1.5rem] font-bold text-sm tracking-widest uppercase shadow-2xl transition-all ${permissions.location ? 'bg-primary-600 text-white shadow-primary-900/40' : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-white/5'}`}
-          >
-            {t('continue')}
-          </motion.button>
-          <div className="flex items-center justify-center gap-2 opacity-50 px-2">
-            <ShieldCheck size={14} className="text-primary-400" />
-            <p className="text-[10px] font-bold text-slate-500 text-center uppercase tracking-widest leading-relaxed">
-              {t('perm_privacy_note')}
-            </p>
-          </div>
-        </div>
+      <div className="p-6 pb-12 pt-4 bg-background-dark border-t border-white/5">
+        <button 
+          onClick={() => onNavigate(ScreenType.MAP)}
+          className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-xl shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
+        >
+          {t('continue') || "Continue"}
+        </button>
+        <p className="mt-4 text-[10px] text-gray-600 font-bold text-center uppercase tracking-widest">{t('permissions_footer') || "You can change settings at any time"}</p>
       </div>
     </div>
   );

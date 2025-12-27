@@ -1,0 +1,7 @@
+{
+  "name": "LocateMate",
+  "description": "A high-fidelity location sharing and real-time chat application for coordinating meetups with friends, featuring AI-powered meeting suggestions.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

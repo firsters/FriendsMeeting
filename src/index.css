@@ -2,13 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Google Fonts 로드 */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
-
 :root {
-  --app-height: 100%;
-  --nav-bar-height: 56px;
-  --radar-indicator-bg: rgba(255, 255, 255, 0.6);
+  --app-height: 100vh;
+  --primary: #256af4;
+  --background-dark: #101622;
 }
 
 html,
@@ -17,45 +14,49 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #ffffff;
-  color: #212121;
-  font-family: "Roboto", "Noto Sans KR", sans-serif;
-  overflow: hidden; /* Prevent body scroll, use internal scroll */
+  background-color: var(--background-dark);
+  color: white;
+  font-family: "Inter", "Noto Sans KR", sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Glassmorphism utility - Adjusted for Light Mode */
+.font-display {
+  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+}
+
+/* Glassmorphism utility for Dark Mode */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(24, 34, 52, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Custom Chat Bubble Radii from Guide */
+/* Scrollbar Utility */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom Chat Bubble Radii (Adapted for new design) */
 .chat-bubble-left {
-  border-radius: 16px 16px 16px 0px;
+  border-radius: 20px 20px 20px 4px;
 }
 
 .chat-bubble-right {
-  border-radius: 16px 16px 0px 16px;
-}
-
-/* Custom scrollbar optimized for light mode */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #E0E0E0;
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #BDBDBD;
+  border-radius: 20px 20px 4px 20px;
 }
 
 /* Mobile Safe Area helper */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
 }

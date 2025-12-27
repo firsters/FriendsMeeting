@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  ArrowLeft, Edit3, Globe, Volume2, Bell, MessageSquare, 
-  Navigation, Eye, ShieldAlert, BadgeHelp, Info, LogOut, ChevronRight,
-  FileText, ShieldCheck, Code, Download
-} from 'lucide-react';
+import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 
-const Profile = ({ onLogout, deferredPrompt, onInstallSuccess }) => {
+const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => {
   const { t, language, changeLanguage } = useTranslation();
+
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
@@ -17,141 +13,187 @@ const Profile = ({ onLogout, deferredPrompt, onInstallSuccess }) => {
       onInstallSuccess();
     }
   };
-  const [nickname, setNickname] = useState('Alex Doe');
-  const [handle, setHandle] = useState('@alexdoe');
+
+  const renderSectionHeader = (title) => (
+    <h3 className="px-6 pt-8 pb-3 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">{title}</h3>
+  );
+
+  const renderSettingItem = ({ icon, label, color, value, isToggle, isLast, onClick, isActive, onToggle }) => (
+    <div 
+      className={`flex items-center justify-between p-5 px-6 hover:bg-white/5 transition-all cursor-pointer border-b border-white/5 ${isLast ? 'border-none' : ''}`}
+      onClick={onClick}
+    >
+      <div className="flex items-center gap-4">
+        <div className={`w-10 h-10 rounded-2xl ${color} flex items-center justify-center shadow-lg shadow-black/20`}>
+          <span className="material-symbols-outlined text-white text-xl">{icon}</span>
+        </div>
+        <span className="text-sm font-bold text-white tracking-tight">{label}</span>
+      </div>
+      <div className="flex items-center gap-3">
+        {value && <span className="text-xs font-bold text-gray-500 uppercase">{value}</span>}
+        {isToggle ? (
+           <div 
+             className={`w-11 h-6 ${isActive ? 'bg-primary' : 'bg-gray-700'} rounded-full relative p-0.5 transition-colors cursor-pointer`}
+             onClick={(e) => { e.stopPropagation(); onToggle(); }}
+           >
+             <div className={`w-5 h-5 bg-white rounded-full absolute shadow-sm transition-all ${isActive ? 'right-0.5' : 'left-0.5'}`}></div>
+           </div>
+        ) : (
+           <span className="material-symbols-outlined text-gray-700 text-lg">chevron_right</span>
+        )}
+      </div>
+    </div>
+  );
+
+  const [toggles, setToggles] = useState({
+    sound: true,
+    push: true,
+    chat: true,
+    nearby: false,
+    online: true,
+  });
+
+  const handleToggle = (key) => setToggles(prev => ({ ...prev, [key]: !prev[key] }));
 
   return (
-    <div className="flex flex-col h-full bg-slate-900 text-white overflow-hidden relative">
-      {/* Top Header */}
-      <header className="sticky top-0 z-50 flex items-center justify-between bg-slate-900/80 backdrop-blur-md px-4 py-3 border-b border-white/5">
-        <button className="flex size-10 items-center justify-center rounded-full text-white hover:bg-white/10 transition-colors">
-          <ArrowLeft size={22} />
+    <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
+      <header className="px-6 pt-10 pb-6 flex items-center justify-between sticky top-0 bg-background-dark/95 backdrop-blur-md z-20 font-display">
+        <button onClick={() => onNavigate(ScreenType.MAP)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-all active:scale-95">
+          <span className="material-symbols-outlined text-white">arrow_back_ios_new</span>
         </button>
-        <h1 className="text-lg font-bold tracking-tight uppercase tracking-widest">{t('settings_title')}</h1>
-        <div className="size-10"></div>
+        <h1 className="text-lg font-extrabold text-white">{t('settings_title') || "Settings"}</h1>
+        <div className="w-10"></div>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-4 space-y-8 pb-32">
-        {/* Profile Section */}
-        <section className="flex flex-col items-center gap-4 py-4">
+      <main className="flex-1 overflow-y-auto scrollbar-hide pb-32">
+        <div className="flex flex-col items-center pt-6 pb-4">
           <div className="relative group">
-            <div className="size-28 rounded-3xl bg-primary-600 flex items-center justify-center text-4xl font-bold shadow-2xl border-4 border-slate-800 overflow-hidden relative">
-              A
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer backdrop-blur-sm">
-                <Edit3 size={24} className="text-white" />
-              </div>
-            </div>
-            <button className="absolute -bottom-2 -right-2 flex size-10 items-center justify-center rounded-2xl bg-primary-500 text-white shadow-xl border-4 border-slate-900 active:scale-90 transition-transform">
-              <Edit3 size={18} />
+            <img src="https://picsum.photos/seed/alex/200/200" className="w-28 h-28 rounded-full object-cover border-4 border-card-dark shadow-2xl ring-2 ring-primary/20 transition-transform group-hover:scale-105" alt="Profile" />
+            <button className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-2 border-background-dark active:scale-90 transition-all">
+              <span className="material-symbols-outlined text-lg">edit</span>
             </button>
           </div>
-          <div className="text-center">
-            <h2 className="text-2xl font-bold leading-tight tracking-tight">{nickname}</h2>
-            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1 opacity-60">{handle}</p>
-          </div>
-        </section>
+          <h2 className="mt-5 text-2xl font-extrabold text-white font-display">Alex Doe</h2>
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1 opacity-60">@alexdoe</p>
+        </div>
 
-        {/* Settings Group: General */}
-        <SettingsGroup title={t('settings_general')}>
-          <div onClick={() => changeLanguage(language === 'ko' ? 'en' : 'ko')}>
-            <SettingsItem icon={<Globe size={20} />} title={t('settings_language')} value={language === 'ko' ? '한국어' : 'English'} />
-          </div>
-          <SettingsToggle icon={<Volume2 size={20} />} title={t('settings_sound')} active={true} color="bg-purple-500" />
-        </SettingsGroup>
+        {renderSectionHeader(t('settings_general') || "General")}
+        <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
+          {renderSettingItem({
+            icon: "language",
+            label: t('settings_language') || "Language",
+            color: "bg-blue-600",
+            value: language === 'ko' ? '한국어' : 'English',
+            onClick: () => changeLanguage(language === 'ko' ? 'en' : 'ko')
+          })}
+          {renderSettingItem({
+            icon: "volume_up",
+            label: t('settings_sound') || "Sound Effects",
+            color: "bg-purple-600",
+            isToggle: true,
+            isActive: toggles.sound,
+            onToggle: () => handleToggle('sound'),
+            isLast: true
+          })}
+        </div>
 
-        {/* Settings Group: Notifications */}
-        <SettingsGroup title={t('settings_notifications')}>
-          <SettingsToggle icon={<Bell size={20} />} title={t('settings_push')} active={true} color="bg-red-500" />
-          <SettingsToggle icon={<MessageSquare size={20} />} title={t('settings_new_message')} active={true} color="bg-green-500" />
-          <SettingsToggle icon={<Navigation size={20} />} title={t('settings_nearby_friends')} active={false} color="bg-orange-500" />
-        </SettingsGroup>
+        {renderSectionHeader(t('settings_notifications') || "Notifications")}
+        <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
+          {renderSettingItem({
+            icon: "notifications",
+            label: t('settings_push') || "Push Notifications",
+            color: "bg-red-500",
+            isToggle: true,
+            isActive: toggles.push,
+            onToggle: () => handleToggle('push')
+          })}
+          {renderSettingItem({
+            icon: "chat_bubble",
+            label: t('settings_new_message') || "New Messages",
+            color: "bg-emerald-500",
+            isToggle: true,
+            isActive: toggles.chat,
+            onToggle: () => handleToggle('chat')
+          })}
+          {renderSettingItem({
+            icon: "near_me",
+            label: t('settings_nearby_friends') || "Nearby Friends",
+            color: "bg-orange-500",
+            isToggle: true,
+            isActive: toggles.nearby,
+            onToggle: () => handleToggle('nearby'),
+            isLast: true
+          })}
+        </div>
 
-        {/* Settings Group: Privacy & Security */}
-        <SettingsGroup title={t('settings_privacy')}>
-          <SettingsItem icon={<Eye size={20} />} title={t('settings_who_find')} value={t('friends_all')} />
-          <SettingsToggle icon={<Eye size={20} />} title={t('settings_show_online')} active={true} color="bg-teal-500" />
-          <SettingsItem icon={<ShieldAlert size={20} />} title={t('settings_blocked')} />
-        </SettingsGroup>
+        {renderSectionHeader(t('settings_privacy') || "Privacy & Security")}
+        <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
+          {renderSettingItem({
+            icon: "person_search",
+            label: t('settings_who_find') || "Who can find me",
+            color: "bg-indigo-600",
+            value: t('friends_all') || "Friends"
+          })}
+          {renderSettingItem({
+            icon: "visibility",
+            label: t('settings_show_online') || "Show Online Status",
+            color: "bg-teal-500",
+            isToggle: true,
+            isActive: toggles.online,
+            onToggle: () => handleToggle('online')
+          })}
+          {renderSettingItem({
+            icon: "block",
+            label: t('settings_blocked') || "Blocked Users",
+            color: "bg-rose-500",
+            isLast: true
+          })}
+        </div>
 
-        {/* Settings Group: Support */}
-        <SettingsGroup title={t('settings_support')}>
-          <SettingsItem icon={<BadgeHelp size={20} />} title={t('settings_help')} />
-          {deferredPrompt && (
-            <div onClick={handleInstallClick}>
-              <SettingsItem 
-                icon={<Download size={20} />} 
-                title={t('settings_install')} 
-                value="Install" 
-              />
+        {deferredPrompt && (
+          <>
+            {renderSectionHeader(t('settings_support') || "Support")}
+            <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
+              {renderSettingItem({
+                icon: "download",
+                label: t('settings_install') || "Install App",
+                color: "bg-emerald-600",
+                onClick: handleInstallClick,
+                isLast: true
+              })}
             </div>
-          )}
-          <SettingsItem icon={<Info size={20} />} title={t('settings_version')} value="v1.0.4" hasArrow={false} />
-        </SettingsGroup>
+          </>
+        )}
 
-        {/* Settings Group: Legal */}
-        <SettingsGroup title={t('settings_legal')}>
-          <SettingsItem icon={<FileText size={20} />} title={t('settings_terms')} />
-          <SettingsItem icon={<ShieldCheck size={20} />} title={t('settings_privacy_policy')} />
-          <SettingsItem icon={<Code size={20} />} title={t('settings_license')} />
-        </SettingsGroup>
-
-        {/* Logout Button */}
-        <div className="pt-4 pb-10">
+        <div className="px-6 pt-10">
           <button 
             onClick={onLogout}
-            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-red-500/10 p-5 text-red-500 transition-all hover:bg-red-500/20 active:scale-[0.98] border border-red-500/20 font-bold uppercase tracking-widest text-xs"
+            className="w-full h-16 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-[2rem] font-extrabold text-base flex items-center justify-center gap-3 transition-all border border-red-500/10 active:scale-[0.98]"
           >
-            <LogOut size={20} />
-            {t('settings_logout')}
+            <span className="material-symbols-outlined">logout</span>
+            {t('settings_logout') || "Log Out"}
           </button>
         </div>
       </main>
-    </div>
-  );
-};
 
-const SettingsGroup = ({ title, children }) => (
-  <section>
-    <h3 className="mb-3 px-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">{title}</h3>
-    <div className="overflow-hidden rounded-3xl bg-slate-800/40 border border-white/5 shadow-xl">
-      <div className="divide-y divide-white/5">
-        {children}
-      </div>
-    </div>
-  </section>
-);
-
-const SettingsItem = ({ icon, title, value, hasArrow = true }) => (
-  <div className="flex items-center justify-between gap-4 p-4 active:bg-white/5 cursor-pointer transition-colors group">
-    <div className="flex items-center gap-4">
-      <div className="flex size-10 items-center justify-center rounded-xl bg-slate-800 text-slate-400 group-hover:text-white transition-colors">
-        {icon}
-      </div>
-      <span className="text-sm font-bold text-slate-200">{title}</span>
-    </div>
-    <div className="flex items-center gap-2">
-      {value && <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">{value}</span>}
-      {hasArrow && <ChevronRight size={18} className="text-slate-600" />}
-    </div>
-  </div>
-);
-
-const SettingsToggle = ({ icon, title, active, color = "bg-primary-500" }) => {
-  const [isActive, setIsActive] = useState(active);
-  return (
-    <div 
-      className="flex items-center justify-between gap-4 p-4 active:bg-white/5 cursor-pointer transition-colors group"
-      onClick={() => setIsActive(!isActive)}
-    >
-      <div className="flex items-center gap-4">
-        <div className={`flex size-10 items-center justify-center rounded-xl bg-slate-800 text-slate-400 group-hover:text-white transition-colors`}>
-          {icon}
-        </div>
-        <span className="text-sm font-bold text-slate-200">{title}</span>
-      </div>
-      <div className={`relative h-6 w-11 rounded-full transition-colors duration-300 ${isActive ? color : 'bg-slate-700'}`}>
-        <div className={`absolute top-1 size-4 rounded-full bg-white transition-all duration-300 ${isActive ? 'left-6 shadow-lg' : 'left-1'}`} />
-      </div>
+      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 max-w-md mx-auto z-50">
+        <button onClick={() => onNavigate(ScreenType.MAP)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+          <span className="material-symbols-outlined">map</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_map') || "Map"}</span>
+        </button>
+        <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+          <span className="material-symbols-outlined">group</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends') || "Friends"}</span>
+        </button>
+        <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+          <span className="material-symbols-outlined">calendar_month</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings') || "Meet"}</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 text-primary">
+          <span className="material-symbols-outlined">person</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_profile') || "Profile"}</span>
+        </button>
+      </nav>
     </div>
   );
 };

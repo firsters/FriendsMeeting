@@ -1,134 +1,204 @@
 import React, { useState } from 'react';
+import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 
-const Auth = ({ type = 'login', onBack, onSuccess }) => {
+const Auth = ({ currentScreen, onNavigate, onLogin }) => {
   const { t } = useTranslation();
-  const [isLogin, setIsLogin] = useState(type === 'login');
-  
-  // The user reference has a single form structure. 
-  // We'll adapt the text content dynamically based on isLogin state 
-  // while keeping the exact styling from the provided HTML.
+  const [showPass, setShowPass] = useState(false);
 
-  return (
-    <div className="relative flex flex-col w-full max-w-md mx-auto min-h-screen overflow-x-hidden bg-background-light dark:bg-background-dark shadow-xl transition-colors duration-200">
-      
-      {/* Back Button */}
-      <div className="absolute top-0 left-0 p-4 z-10">
-        <button 
-          onClick={onBack}
-          className="flex items-center justify-center size-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-        >
-          <span className="material-symbols-outlined text-gray-900 dark:text-white">arrow_back</span>
+  const renderHeader = (title, desc, backTo) => (
+    <header className="px-6 pt-10 pb-8">
+      {backTo && (
+        <button onClick={() => onNavigate(backTo)} className="mb-8 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+          <span className="material-symbols-outlined text-white">arrow_back</span>
         </button>
-      </div>
+      )}
+      <h1 className="text-4xl font-extrabold text-white tracking-tight leading-tight font-display mb-4">{title}</h1>
+      <p className="text-gray-400 font-medium leading-relaxed">{desc}</p>
+    </header>
+  );
 
-      <div className="flex-1 flex flex-col justify-center px-6 pt-12 pb-6">
-        
-        {/* Header Section */}
-        <div className="flex flex-col items-center mb-10">
-          <div className="size-20 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary rotate-3 transform transition-transform hover:rotate-6 shadow-lg shadow-blue-500/10">
-            <span className="material-symbols-outlined text-4xl">location_on</span>
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white text-center">
-            {isLogin ? (t('auth_welcome_back') || '다시 오신 것을 환영해요!') : (t('auth_join_title') || '새 계정 만들기')}
-          </h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 text-center">
-            {isLogin ? (t('auth_desc_login') || '친구들의 위치를 확인하고 대화를 나눠보세요.') : (t('auth_desc_signup') || '친구들과 위치를 공유하고 약속을 잡아보세요.')}
-          </p>
-        </div>
-
-        {/* Form Section */}
-        <form className="flex flex-col gap-5 w-full" onSubmit={(e) => { e.preventDefault(); onSuccess(); }}>
-          
-          {/* Email Input */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">
-              {t('auth_email_label') || '이메일 또는 사용자 이름'}
-            </label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">person</span>
-              </div>
-              <input 
-                className="w-full h-14 pl-12 pr-4 bg-card-light dark:bg-input-dark border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" 
-                placeholder={t('auth_email_placeholder') || '사용자 정보를 입력하세요'} 
-                type="text"
-              />
-            </div>
-          </div>
-
-          {/* Password Input */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-bold text-gray-700 dark:text-gray-300 ml-1">
-              {t('auth_password_label') || '비밀번호'}
-            </label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">lock</span>
-              </div>
-              <input 
-                className="w-full h-14 pl-12 pr-12 bg-card-light dark:bg-input-dark border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" 
-                placeholder={t('auth_password_placeholder') || '비밀번호를 입력하세요'} 
-                type="password"
-              />
-              <button className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer focus:outline-none" type="button">
-                <span className="material-symbols-outlined text-xl">visibility_off</span>
-              </button>
-            </div>
-            
-            {isLogin && (
-              <div className="flex justify-end pt-1">
-                <a className="text-sm font-medium text-primary hover:text-blue-500 transition-colors" href="#">
-                   {t('auth_forgot_password') || '비밀번호를 잊으셨나요?'}
-                </a>
-              </div>
-            )}
-          </div>
-        </form>
-      </div>
-
-      {/* Footer / Actions */}
-      <div className="px-6 pb-8">
-        <button 
-          onClick={onSuccess}
-          className="w-full h-14 bg-primary hover:bg-blue-600 active:scale-[0.98] text-white font-bold text-lg rounded-xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 mb-6"
-        >
-          <span>{isLogin ? (t('auth_login_btn') || '로그인') : (t('auth_signup_btn') || '회원가입')}</span>
-          <span className="material-symbols-outlined text-xl">login</span>
-        </button>
-
-        <div className="flex items-center justify-center gap-2 text-sm">
-          <span className="text-gray-500 dark:text-gray-400">
-            {isLogin ? (t('auth_no_account') || '계정이 없으신가요?') : (t('auth_has_account') || '이미 계정이 있으신가요?')}
-          </span>
+  const renderInput = (label, icon, placeholder, type = 'text', showToggle = false) => (
+    <div className="space-y-2 group">
+      <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{label}</label>
+      <div className="relative flex items-center">
+        <span className="absolute left-4 text-gray-500 group-focus-within:text-primary transition-colors">
+          <span className="material-symbols-outlined text-[20px]">{icon}</span>
+        </span>
+        <input 
+          className="w-full h-14 bg-card-dark border border-white/5 rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-base outline-none"
+          type={showToggle && showPass ? 'text' : type}
+          placeholder={placeholder}
+        />
+        {showToggle && (
           <button 
-            className="font-bold text-primary hover:text-blue-500 transition-colors"
-            onClick={() => setIsLogin(!isLogin)}
+            type="button" 
+            onClick={() => setShowPass(!showPass)}
+            className="absolute right-4 text-gray-500 hover:text-white transition-colors"
           >
-             {isLogin ? (t('auth_signup_link') || '회원가입') : (t('auth_login_link') || '로그인')}
+            <span className="material-symbols-outlined text-[20px]">
+              {showPass ? 'visibility' : 'visibility_off'}
+            </span>
           </button>
-        </div>
+        )}
+      </div>
+    </div>
+  );
 
-        <div className="mt-8 mb-4 border-t border-gray-100 dark:border-gray-800 w-full relative">
-          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background-light dark:bg-background-dark px-2 text-xs text-gray-400">
-            {t('auth_or') || '또는'}
-          </span>
+  const LoginScreen = () => (
+    <div className="flex flex-col h-full animate-fade-in-up">
+      {renderHeader(t('auth_login_title') || "Welcome Back", t('auth_login_desc') || "Sign in to see where your friends are and catch up.", ScreenType.ONBOARDING)}
+      <div className="flex-1 px-6 space-y-6">
+        {renderInput(t('auth_email_label') || "Email or Username", "person", t('auth_email_placeholder') || "Enter email or username")}
+        <div className="space-y-2">
+          {renderInput(t('auth_password_label') || "Password", "lock", t('auth_password_placeholder') || "Enter your password", "password", true)}
+          <div className="flex justify-end px-1">
+            <button onClick={() => onNavigate(ScreenType.FORGOT_PASSWORD)} className="text-sm font-bold text-primary hover:text-blue-400 transition-colors">
+              {t('auth_forgot_password') || "Forgot Password?"}
+            </button>
+          </div>
         </div>
-
-        <div className="flex justify-center gap-6">
-          <button className="size-12 rounded-full bg-card-light dark:bg-card-dark border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
-            <svg className="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .533 5.347.533 12s5.333 12 11.947 12c3.6 0 6.347-1.187 8.44-3.427 2.173-2.173 2.813-5.24 2.813-7.653 0-.68-.053-1.347-.147-2H12.48z"></path></svg>
-          </button>
-          <button className="size-12 rounded-full bg-card-light dark:bg-card-dark border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
-             <svg className="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12c0-5.523-4.477-10-10-10z"></path></svg>
-          </button>
-          <button className="size-12 rounded-full bg-card-light dark:bg-card-dark border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors">
-             <svg className="size-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.684.81-1.81 1.58-2.932 1.58-.028 0-.056 0-.084-.002-.12-1.28.36-2.52 1.055-3.33.684-.81 1.838-1.53 2.924-1.53.084 0 .163.004.214.004zM16.96 16.79c-1.21 1.76-2.07 3.01-3.69 3.01-.81 0-1.26-.48-2.34-.48-1.07 0-1.65.48-2.38.48-1.62 0-2.83-1.61-3.88-3.12-2.11-3.04-2.28-7.66 2.07-7.66 1.3 0 2.25.88 3.01.88.75 0 1.78-.88 3.32-.88 1.13 0 2.14.56 2.82 1.54-2.45 1.48-2.06 4.96.42 6.07-.15.48-.36.96-.54 1.34z"></path></svg>
+        <button 
+          onClick={onLogin}
+          className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+        >
+          {t('auth_login') || "Sign In"}
+          <span className="material-symbols-outlined">login</span>
+        </button>
+        <div className="flex items-center justify-center gap-2 pt-4">
+          <span className="text-gray-500 font-medium">{t('auth_no_account') || "New here?"}</span>
+          <button onClick={() => onNavigate(ScreenType.SIGNUP)} className="text-primary font-bold hover:underline transition-all">
+            {t('auth_signup') || "Create Account"}
           </button>
         </div>
       </div>
     </div>
   );
+
+  const SignupScreen = () => (
+    <div className="flex flex-col h-full animate-fade-in-up">
+      {renderHeader(t('auth_signup_title') || "Join Us", t('auth_signup_desc') || "Create an account to start sharing your world with friends.", ScreenType.LOGIN)}
+      <div className="flex-1 px-6 space-y-5">
+        {renderInput(t('auth_nickname') || "Full Name", "person", "Alex Doe")}
+        {renderInput(t('auth_email') || "Email Address", "mail", "alex@example.com")}
+        {renderInput(t('auth_password') || "Password", "lock", "••••••••", "password", true)}
+        {renderInput(t('auth_confirm_password') || "Confirm Password", "verified_user", "••••••••", "password")}
+        
+        <div className="pt-4">
+          <button 
+            onClick={onLogin}
+            className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+          >
+            {t('auth_create_account') || "Create Account"}
+            <span className="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const ForgotPasswordScreen = () => (
+    <div className="flex flex-col h-full animate-fade-in-up text-center">
+      <div className="pt-20 px-6">
+        <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-10">
+          <span className="material-symbols-outlined text-primary text-5xl">lock_reset</span>
+        </div>
+        <h1 className="text-3xl font-extrabold text-white mb-4">{t('auth_forgot_password_title') || "Forgot Password?"}</h1>
+        <p className="text-gray-400 font-medium mb-12">{t('auth_forgot_password_desc') || "No worries! Enter your email and we'll send you a link to reset your password."}</p>
+        
+        <div className="text-left mb-10">
+          {renderInput(t('auth_email') || "Email Address", "mail", "name@example.com")}
+        </div>
+
+        <button 
+          onClick={() => onNavigate(ScreenType.CHECK_MAIL)}
+          className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
+        >
+          {t('auth_send_reset_link') || "Send Reset Link"}
+        </button>
+        
+        <button onClick={() => onNavigate(ScreenType.LOGIN)} className="mt-8 text-gray-500 font-bold flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors">
+          <span className="material-symbols-outlined text-sm">arrow_back</span>
+          {t('auth_back_to_login') || "Back to Login"}
+        </button>
+      </div>
+    </div>
+  );
+
+  const CheckMailScreen = () => (
+    <div className="flex flex-col h-full animate-fade-in-up items-center justify-center text-center px-10">
+      <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mb-10">
+        <span className="material-symbols-outlined text-primary text-6xl">mark_email_read</span>
+      </div>
+      <h1 className="text-4xl font-extrabold text-white mb-4">{t('auth_check_mail_title') || "Check your mail"}</h1>
+      <p className="text-gray-400 font-medium mb-10 leading-relaxed">{t('auth_check_mail_desc') || "We have sent password recovery instructions to your email."}</p>
+      
+      <button 
+        onClick={() => onNavigate(ScreenType.RESET_PASSWORD)}
+        className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg active:scale-[0.98] transition-all"
+      >
+        {t('auth_go_to_email') || "Go to Email App"}
+      </button>
+
+      <p className="mt-8 text-gray-500 font-medium">
+        {t('auth_no_receive_mail') || "Didn't receive email?"} <button className="text-primary font-bold hover:underline transition-all">{t('auth_resend') || "Resend"}</button>
+      </p>
+    </div>
+  );
+
+  const ResetPasswordScreen = () => (
+    <div className="flex flex-col h-full animate-fade-in-up">
+      {renderHeader(t('auth_reset_password_title') || "Reset Password", t('auth_reset_password_desc') || "Your new password must be different from previously used passwords.")}
+      <div className="px-6 space-y-8">
+        <div className="space-y-4">
+          {renderInput(t('auth_new_password_label') || "New Password", "lock", t('auth_new_password_placeholder') || "Enter at least 8 characters", "password", true)}
+          <div className="px-1 pt-1 space-y-2">
+            <div className="flex gap-1.5 h-1.5 w-full">
+              <div className="h-full flex-1 rounded-full bg-yellow-500"></div>
+              <div className="h-full flex-1 rounded-full bg-yellow-500"></div>
+              <div className="h-full flex-1 rounded-full bg-gray-800"></div>
+              <div className="h-full flex-1 rounded-full bg-gray-800"></div>
+            </div>
+            <p className="text-xs font-bold text-yellow-500">{t('auth_password_strength_medium') || "Medium strength"}</p>
+          </div>
+        </div>
+        {renderInput(t('auth_confirm_password_label') || "Confirm Password", "lock_reset", t('auth_confirm_password_placeholder') || "Re-enter your password", "password")}
+        <button 
+          onClick={() => onNavigate(ScreenType.PASSWORD_UPDATED)}
+          className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
+        >
+          {t('auth_reset_password_btn') || "Reset Password"}
+        </button>
+      </div>
+    </div>
+  );
+
+  const PasswordUpdatedScreen = () => (
+    <div className="flex flex-col h-full animate-fade-in-up items-center justify-center text-center px-10">
+      <div className="w-32 h-32 bg-green-500/20 rounded-full flex items-center justify-center mb-10 animate-pulse">
+        <span className="material-symbols-outlined text-green-500 text-6xl">check_circle</span>
+      </div>
+      <h1 className="text-4xl font-extrabold text-white mb-4">{t('auth_password_updated_title') || "Password Updated"}</h1>
+      <p className="text-gray-400 font-medium mb-10 leading-relaxed">{t('auth_password_updated_desc') || "Your password has been changed successfully. You can now log in with your new credentials."}</p>
+      
+      <button 
+        onClick={() => onNavigate(ScreenType.LOGIN)}
+        className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg active:scale-[0.98] transition-all"
+      >
+        {t('auth_back_to_login') || "Back to Login"}
+      </button>
+    </div>
+  );
+
+  switch (currentScreen) {
+    case ScreenType.LOGIN: return <LoginScreen />;
+    case ScreenType.SIGNUP: return <SignupScreen />;
+    case ScreenType.FORGOT_PASSWORD: return <ForgotPasswordScreen />;
+    case ScreenType.CHECK_MAIL: return <CheckMailScreen />;
+    case ScreenType.RESET_PASSWORD: return <ResetPasswordScreen />;
+    case ScreenType.PASSWORD_UPDATED: return <PasswordUpdatedScreen />;
+    default: return <LoginScreen />;
+  }
 };
 
 export default Auth;

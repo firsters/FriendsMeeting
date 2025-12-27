@@ -1,10 +1,12 @@
+
 import React from 'react';
-import { ScreenType } from '../constants/ScreenType';
-import { useTranslation } from '../context/LanguageContext';
+import { ScreenType } from '../types';
 
-const Welcome = ({ onNavigate }) => {
-  const { t } = useTranslation();
+interface OnboardingProps {
+  onNavigate: (screen: ScreenType) => void;
+}
 
+const Onboarding: React.FC<OnboardingProps> = ({ onNavigate }) => {
   return (
     <div className="relative flex flex-col h-full overflow-hidden bg-background-dark transition-all duration-500">
       <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-primary/10 to-transparent pointer-events-none"></div>
@@ -41,7 +43,7 @@ const Welcome = ({ onNavigate }) => {
                 alt="Alex"
               />
               <div className="flex-1">
-                <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-0.5">{t('onboarding_new_message') || "New Message"}</p>
+                <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-0.5">New Message</p>
                 <p className="text-sm font-medium text-white">"Hey! I'm at the cafe 📍"</p>
               </div>
             </div>
@@ -56,11 +58,10 @@ const Welcome = ({ onNavigate }) => {
 
         <div className="text-center space-y-4 max-w-[320px]">
           <h1 className="text-[34px] font-extrabold tracking-tight text-white leading-tight font-display">
-            {t('welcome_title_stay_close') || "Stay Close,"} <br/>
-            {t('welcome_title_wherever') || "Wherever You Are"}
+            Stay Close, <br/>Wherever You Are
           </h1>
           <p className="text-base text-gray-400 font-medium leading-relaxed">
-            {t('welcome_desc') || "Share your real-time location with friends and coordinate meetups instantly."}
+            Share your real-time location with friends and coordinate meetups instantly.
           </p>
         </div>
       </div>
@@ -70,16 +71,16 @@ const Welcome = ({ onNavigate }) => {
           onClick={() => onNavigate(ScreenType.SIGNUP)}
           className="w-full flex items-center justify-center gap-2 h-16 rounded-2xl bg-primary hover:bg-blue-600 active:scale-[0.98] transition-all text-white font-bold text-lg shadow-xl shadow-primary/30"
         >
-          <span>{t('onboarding_get_started') || "Get Started"}</span>
+          <span>Get Started</span>
           <span className="material-symbols-outlined">arrow_forward</span>
         </button>
         <div className="flex justify-center items-center gap-2 text-sm font-medium">
-          <span className="text-gray-500">{t('auth_has_account') || "Already have an account?"}</span>
+          <span className="text-gray-500">Already have an account?</span>
           <button 
             onClick={() => onNavigate(ScreenType.LOGIN)}
             className="text-primary font-bold hover:underline"
           >
-            {t('auth_login_link') || "Log in"}
+            Log in
           </button>
         </div>
       </div>
@@ -87,4 +88,4 @@ const Welcome = ({ onNavigate }) => {
   );
 };
 
-export default Welcome;
+export default Onboarding;

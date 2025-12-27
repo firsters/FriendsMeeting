@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { ScreenType } from '../constants/ScreenType';
-import { useTranslation } from '../context/LanguageContext';
 
-const CombinedView = ({ onNavigate }) => {
-  const { t } = useTranslation();
+import React, { useState } from 'react';
+import { ScreenType } from '../types';
+
+interface MapViewProps {
+  onNavigate: (screen: ScreenType) => void;
+}
+
+const MapView: React.FC<MapViewProps> = ({ onNavigate }) => {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const friends = [
@@ -14,7 +17,7 @@ const CombinedView = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="relative h-full flex flex-col bg-background-dark overflow-hidden font-sans">
+    <div className="relative h-full flex flex-col bg-background-dark">
       {/* Map Section */}
       <div className="relative h-[60%] w-full bg-slate-800 overflow-hidden">
         {/* Placeholder Map Background */}
@@ -26,16 +29,16 @@ const CombinedView = ({ onNavigate }) => {
 
         {/* Top Controls */}
         <div className="absolute top-12 left-0 right-0 px-5 flex justify-between items-center z-30">
-          <button className="w-11 h-11 bg-surface-dark/60 backdrop-blur-md rounded-full text-white border border-white/10 flex items-center justify-center shadow-lg active:scale-95 transition-all">
+          <button className="w-11 h-11 bg-surface-dark/60 backdrop-blur-md rounded-full text-white border border-white/10 flex items-center justify-center shadow-lg">
             <span className="material-symbols-outlined text-[22px]">menu</span>
           </button>
           <div className="bg-surface-dark/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2 shadow-lg">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span className="text-[10px] font-bold tracking-widest text-white uppercase">{t('radar_live') || "Live Radar"}</span>
+            <span className="text-[10px] font-bold tracking-widest text-white uppercase">Live Radar</span>
           </div>
           <button 
             onClick={() => onNavigate(ScreenType.SETTINGS)}
-            className="w-11 h-11 bg-surface-dark/60 backdrop-blur-md rounded-full text-white border border-white/10 flex items-center justify-center shadow-lg active:scale-95 transition-all"
+            className="w-11 h-11 bg-surface-dark/60 backdrop-blur-md rounded-full text-white border border-white/10 flex items-center justify-center shadow-lg"
           >
             <span className="material-symbols-outlined text-[22px]">settings</span>
           </button>
@@ -62,7 +65,7 @@ const CombinedView = ({ onNavigate }) => {
             <div className="absolute w-12 h-12 bg-primary/30 rounded-full blur-md"></div>
             <div className="relative h-6 w-6 bg-primary rounded-full border-[3px] border-white dark:border-background-dark shadow-2xl z-20"></div>
             <div className="absolute -top-12 bg-primary text-white px-3 py-1.5 rounded-xl shadow-xl text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">
-              {t('map_you') || "You"}
+              You
               <div className="absolute bottom-[-5px] left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rotate-45"></div>
             </div>
           </div>
@@ -70,10 +73,10 @@ const CombinedView = ({ onNavigate }) => {
 
         {/* Map Actions */}
         <div className="absolute bottom-12 right-5 flex flex-col gap-3 z-20">
-          <button className="w-12 h-12 bg-card-dark backdrop-blur text-white rounded-2xl shadow-lg border border-white/5 flex items-center justify-center active:scale-95 transition-all">
+          <button className="w-12 h-12 bg-card-dark backdrop-blur text-white rounded-2xl shadow-lg border border-white/5 flex items-center justify-center">
             <span className="material-symbols-outlined">add</span>
           </button>
-          <button className="w-12 h-12 bg-primary text-white rounded-2xl shadow-xl shadow-primary/30 flex items-center justify-center active:scale-95 transition-all">
+          <button className="w-12 h-12 bg-primary text-white rounded-2xl shadow-xl shadow-primary/30 flex items-center justify-center">
             <span className="material-symbols-outlined">my_location</span>
           </button>
         </div>
@@ -114,7 +117,7 @@ const CombinedView = ({ onNavigate }) => {
 
         <div className="flex-1 overflow-y-auto px-6 space-y-6 scrollbar-hide py-2">
           <div className="flex justify-center mb-6">
-            <span className="text-[10px] font-bold text-gray-600 bg-white/5 px-3 py-1 rounded-full uppercase tracking-widest">{t('chat_time_today') || "Today"}</span>
+            <span className="text-[10px] font-bold text-gray-600 bg-white/5 px-3 py-1 rounded-full uppercase tracking-widest">Today</span>
           </div>
 
           <div className="flex items-end gap-3 group animate-fade-in-up">
@@ -164,14 +167,14 @@ const CombinedView = ({ onNavigate }) => {
             <div className="flex-1 relative">
               <input 
                 type="text" 
-                placeholder={t('chat_placeholder') || "Message..."} 
-                className="w-full h-12 bg-white/5 border-none rounded-full px-5 pr-12 text-sm text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 transition-all outline-none"
+                placeholder="Message..." 
+                className="w-full h-12 bg-white/5 border-none rounded-full px-5 pr-12 text-sm text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 transition-all"
               />
               <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
                 <span className="material-symbols-outlined text-xl">sentiment_satisfied</span>
               </button>
             </div>
-            <button className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all">
+            <button className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/30">
               <span className="material-symbols-outlined">send</span>
             </button>
           </div>
@@ -182,19 +185,19 @@ const CombinedView = ({ onNavigate }) => {
           <nav className="absolute bottom-0 left-0 right-0 h-16 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4">
              <button className="flex flex-col items-center gap-1 text-primary">
                <span className="material-symbols-outlined">map</span>
-               <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_map') || "Map"}</span>
+               <span className="text-[9px] font-bold uppercase tracking-widest">Map</span>
              </button>
-             <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+             <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600">
                <span className="material-symbols-outlined">group</span>
-               <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends') || "Friends"}</span>
+               <span className="text-[9px] font-bold uppercase tracking-widest">Friends</span>
              </button>
-             <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+             <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1 text-gray-600">
                <span className="material-symbols-outlined">calendar_month</span>
-               <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings') || "Meet"}</span>
+               <span className="text-[9px] font-bold uppercase tracking-widest">Meet</span>
              </button>
-             <button onClick={() => onNavigate(ScreenType.SETTINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+             <button onClick={() => onNavigate(ScreenType.SETTINGS)} className="flex flex-col items-center gap-1 text-gray-600">
                <span className="material-symbols-outlined">person</span>
-               <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_profile') || "Profile"}</span>
+               <span className="text-[9px] font-bold uppercase tracking-widest">Profile</span>
              </button>
           </nav>
         )}
@@ -203,4 +206,4 @@ const CombinedView = ({ onNavigate }) => {
   );
 };
 
-export default CombinedView;
+export default MapView;
