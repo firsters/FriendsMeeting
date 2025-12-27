@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Meeting</title>
+<!-- Material Symbols -->
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=26661"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1e2736", // Lighter shade for inputs in dark mode
+                        "surface-light": "#ffffff", // Lighter shade for inputs in light mode
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Scrollbar for horizontal lists */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
+<!-- Navigation Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<button class="text-slate-500 dark:text-slate-400 text-base font-medium hover:text-slate-900 dark:hover:text-white transition-colors">
+            Cancel
+        </button>
+<h1 class="text-lg font-bold leading-tight tracking-tight">New Meeting</h1>
+<div class="w-[50px]"></div> <!-- Spacer to balance the Cancel button -->
+</header>
+<!-- Main Content Form -->
+<main class="flex-1 w-full max-w-md mx-auto p-4 pb-32">
+<!-- Meeting Name -->
+<div class="mb-6">
+<label class="block text-slate-500 dark:text-slate-400 text-sm font-medium mb-2 pl-1">Meeting Name</label>
+<input class="w-full bg-surface-light dark:bg-surface-dark border-transparent focus:border-primary focus:ring-0 rounded-xl px-4 h-14 text-base placeholder:text-slate-400 dark:placeholder:text-slate-600 transition-all shadow-sm" placeholder="e.g. Dinner at Mario's" type="text"/>
+</div>
+<!-- Date & Time Row -->
+<div class="flex gap-4 mb-6">
+<div class="flex-1">
+<label class="block text-slate-500 dark:text-slate-400 text-sm font-medium mb-2 pl-1">Date</label>
+<div class="relative">
+<input class="w-full bg-surface-light dark:bg-surface-dark border-transparent focus:border-primary focus:ring-0 rounded-xl pl-11 pr-4 h-14 text-base text-left transition-all shadow-sm cursor-pointer" readonly="" type="text" value="Today"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">calendar_today</span>
+</div>
+</div>
+<div class="flex-1">
+<label class="block text-slate-500 dark:text-slate-400 text-sm font-medium mb-2 pl-1">Time</label>
+<div class="relative">
+<input class="w-full bg-surface-light dark:bg-surface-dark border-transparent focus:border-primary focus:ring-0 rounded-xl pl-11 pr-4 h-14 text-base text-left transition-all shadow-sm cursor-pointer" readonly="" type="text" value="7:00 PM"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">schedule</span>
+</div>
+</div>
+</div>
+<!-- Location Section -->
+<div class="mb-6">
+<label class="block text-slate-500 dark:text-slate-400 text-sm font-medium mb-2 pl-1">Location</label>
+<!-- Location Input -->
+<div class="flex items-center w-full bg-surface-light dark:bg-surface-dark rounded-xl px-4 h-14 shadow-sm mb-3 focus-within:ring-1 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500 mr-3">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full h-full p-0 text-base placeholder:text-slate-400 dark:placeholder:text-slate-600" placeholder="Search for a location" type="text"/>
+<button class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-primary text-[20px]">my_location</span>
+</button>
+</div>
+<!-- Map Preview -->
+<div class="relative w-full h-40 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 group">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Map view showing city streets and location pin" data-location="New York City" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAcGzrUa6y8bmPAk3MFvabYJo5ZmEH8z2KKNgt_Th-5HFIlkW7L_aPPCaxnL_V4Y_J1s2N8txXOAI9FKn3RDZ7XI6l2y_1c61W377UgyHddTPqJ3dyW2kdU-hJw3nJO0sovHhzQvBkATXE5y10Ti-mDPxsriFDIB24ZripTEY1kXIC8EMUKDxCz5r9e6QvxuvfuJgvSOzV5YG8yaN65-5npaMgnd7-AZp3OXiO3imHsygXm6sL6MaqwOUKnTeuF0bCAoa8ejGjuGPM'); opacity: 0.8;">
+</div>
+<!-- Overlay Gradient -->
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent"></div>
+<div class="absolute bottom-3 left-3 flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-white text-sm">location_on</span>
+</div>
+<div>
+<p class="text-white text-xs font-bold">Mario's Italian</p>
+<p class="text-slate-300 text-[10px]">123 Pasta Lane, NY</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Participants -->
+<div class="mb-8">
+<div class="flex items-center justify-between mb-3 px-1">
+<label class="text-slate-500 dark:text-slate-400 text-sm font-medium">Invite Friends</label>
+<span class="text-primary text-xs font-semibold cursor-pointer">View All</span>
+</div>
+<div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+<!-- Add Button -->
+<button class="flex-shrink-0 w-14 h-14 rounded-full border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center hover:border-primary hover:bg-primary/5 dark:hover:border-primary dark:hover:bg-primary/10 transition-all group">
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500 group-hover:text-primary transition-colors">add</span>
+</button>
+<!-- Avatar 1 -->
+<div class="flex-shrink-0 relative">
+<img alt="Portrait of a male friend smiling" class="w-14 h-14 rounded-full object-cover border-2 border-surface-light dark:border-background-dark shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTwEZuADC0isKdSsxTTN1T7cbTfDD46NFIeg_-Ff2ZMmlNj0SdksSOvwB_rd_QVOQthHalthjLUSr0Rx8zt9RPR3Y2ucUXhiZkGlx-4iPJJCylv-EivkPAayr4ucjQNTB8XIGjTq_IuMyZEV9o96cUcjmlyt-5fBOOV3xtL17RVunTVAgiLzMpGBVoD9wBWoYH5R3WD9J_akl1h-Y_xvCmvTjqENTclq0VFy8Htwg3GMyi4_5rAwZJzGCKE73xietlS4_tQzlkt_8"/>
+<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-background-light dark:border-background-dark rounded-full"></div>
+</div>
+<!-- Avatar 2 -->
+<div class="flex-shrink-0 relative">
+<img alt="Portrait of a female friend" class="w-14 h-14 rounded-full object-cover border-2 border-surface-light dark:border-background-dark shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbZp9IVa5R33KTR2mLfgcYOBXmNnoik2buMcxN7_FGW99A4BiHNoJzEUDtPCQdxn4Qq7rdWUPgV-9w-3tOf30lvXSJj2YNSMVdtAhGk1pi5vmrGVIOl_TTPF0PacbtX7tr04y3Qbj2N8JjiZV8y3_z8FgohXZI2Tcn-tYJvCk3ymIfD5EIHX4GEb3bxXjwjh1PEWDLGLedFOPkHOSQrkFrrdJIPwxS9u2AvKEkM_i3oqVy7eEK1Tylk0pNvDb1C0ShPvq3VH7ev4s"/>
+</div>
+<!-- Avatar 3 -->
+<div class="flex-shrink-0 relative">
+<img alt="Portrait of a male friend" class="w-14 h-14 rounded-full object-cover border-2 border-surface-light dark:border-background-dark shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqOYedz-bqGSYYTpogl91v531LnDDr10sxDQpUAMvJlGLmJFt2rvMAAOROeCKheDsya5YVUnNtE-BsBeueg41SXtGBuFINGY8kRcJnKSxLvymeJABLRPnZkIgmMRRrRbV9dKVdy3n2ymk_1VhRaqbhNXZOn4dKFWZpWXMQXxCDRLIb_EWVFg8aaU_zLVWb1ey_j38APq_i-AdDl--GJCMVgEGdckfl7yaKYg0iHgKx9aex_Er9I2yKs7NVKVNqWGt5NMlgrcl0tQA"/>
+</div>
+<!-- Avatar 4 -->
+<div class="flex-shrink-0 relative opacity-50">
+<img alt="Portrait of a female friend" class="w-14 h-14 rounded-full object-cover border-2 border-surface-light dark:border-background-dark shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvM1m-GC9vRFgne3VcxuRgyfd9N4xiHpV0lpAu_dUEQHNLuF63kMU4CjctVJNAvb_NgmeUptouVbHEtaRwHUfJ57tBoZXQcpvoXsB7431-vIlTBSrkq_EonuNl3TWtPutFNj5QJIcG911OUaz0ut5k3-Uug4sQJ9fURY1kU3nepdQWr91hnOy9jFeQP6ts4CPZwBCpyRvfyo_t_PucqaGhiPSi8SZz-XC6WZh_xTzwVMlEs53wauiy3HJPRW0uPK_9LiWib-M98uM"/>
+<span class="absolute inset-0 flex items-center justify-center text-white font-bold text-xs bg-black/40 rounded-full">?</span>
+</div>
+</div>
+</div>
+<!-- Notes (Optional) -->
+<div class="mb-6">
+<label class="block text-slate-500 dark:text-slate-400 text-sm font-medium mb-2 pl-1">Notes</label>
+<textarea class="w-full bg-surface-light dark:bg-surface-dark border-transparent focus:border-primary focus:ring-0 rounded-xl px-4 py-3 min-h-[100px] text-base placeholder:text-slate-400 dark:placeholder:text-slate-600 resize-none shadow-sm" placeholder="Add description or important details..."></textarea>
+</div>
+</main>
+<!-- Sticky Footer Action -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-light/80 dark:bg-background-dark/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 z-40">
+<div class="max-w-md mx-auto">
+<button class="w-full bg-primary hover:bg-blue-600 active:scale-[0.98] transition-all text-white font-bold text-lg h-14 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">check_circle</span>
+                Create Meeting
+            </button>
+</div>
+</div>
+</body></html>

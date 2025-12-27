@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X, Calendar, Clock, MapPin, Users, Hash } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Calendar, Clock, MapPin, Users, Hash, ChevronRight, Plus, CheckCircle } from 'lucide-react';
 import { Input, Button } from '../components/UI';
+import LocationPicker from '../pages/LocationPicker';
 
 const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    date: '',
-    time: '',
+    date: 'Today',
+    time: '7:00 PM',
     participants: '',
     code: '',
+    location: null, // Stores { name, address, etc. }
   });
 
   const handleSubmit = (e) => {
@@ -18,101 +21,195 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
     else onJoin(formData.code);
   };
 
+  const handleLocationConfirm = (location) => {
+    setFormData({ ...formData, location });
+    setShowLocationPicker(false);
+  };
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: '100%' }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: '100%' }}
-      className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex flex-col"
-    >
-      <div className="p-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white uppercase tracking-tight">
-          {type === 'create' ? 'New Meeting' : 'Join Meeting'}
-        </h2>
-        <button onClick={onClose} className="p-2 bg-slate-800 rounded-full text-slate-400">
-          <X size={20} />
-        </button>
-      </div>
+    <AnimatePresence>
+      <motion.div 
+        key="meeting-overlay"
+        initial={{ opacity: 0, y: '100dvh' }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: '100dvh' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="fixed inset-0 z-[100] bg-slate-900 flex flex-col overflow-hidden"
+      >
+        <header className="sticky top-0 z-[110] flex items-center justify-between px-4 py-4 bg-slate-900/90 backdrop-blur-xl border-b border-white/5">
+          <button 
+            onClick={onClose} 
+            className="text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors px-2"
+          >
+            Cancel
+          </button>
+          <h1 className="text-sm font-extrabold uppercase tracking-[0.2em] text-white">
+            {type === 'create' ? 'New Meeting' : 'Join Meeting'}
+          </h1>
+          <div className="w-12"></div> 
+        </header>
 
-      <form onSubmit={handleSubmit} className="flex-1 p-6 space-y-6 overflow-y-auto">
-        {type === 'create' ? (
-          <>
-            <Input 
-              label="Meeting Name" 
-              placeholder="e.g. Afternoon Hike" 
-              icon={MapPin}
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              required
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <Input 
-                label="Date" 
-                type="date" 
-                icon={Calendar}
-                value={formData.date}
-                onChange={(e) => setFormData({...formData, date: e.target.value})}
-                required
-              />
-              <Input 
-                label="Time" 
-                type="time" 
-                icon={Clock}
-                value={formData.time}
-                onChange={(e) => setFormData({...formData, time: e.target.value})}
-                required
-              />
-            </div>
-            <Input 
-              label="Participants" 
-              placeholder="Search friends to add..." 
-              icon={Users}
-              value={formData.participants}
-              onChange={(e) => setFormData({...formData, participants: e.target.value})}
-            />
-            
-            <div className="p-4 glass rounded-2xl border border-white/5">
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">Suggestion</p>
-              <div className="flex gap-2">
-                {['☕️', '🍕', '🏃‍♂️', '🎬'].map((emoji, i) => (
-                  <button 
-                    key={i} 
-                    type="button"
-                    className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-xl hover:bg-slate-700 transition-colors"
+        <main className="flex-1 w-full max-w-md mx-auto p-6 pb-32 overflow-y-auto no-scrollbar">
+          {type === 'create' ? (
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Meeting Name */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Meeting Name</label>
+                <div className="relative group">
+                  <input 
+                    className="w-full h-16 bg-slate-800/50 border-white/5 rounded-3xl px-6 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-slate-800 transition-all placeholder:text-slate-600 shadow-inner"
+                    placeholder="e.g. Dinner at Mario's"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Date & Time */}
+              <div className="flex gap-4">
+                <div className="flex-1 space-y-3">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Date</label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-primary-400">
+                      <Calendar size={18} />
+                    </div>
+                    <input 
+                      className="w-full h-16 bg-slate-800/50 border-white/5 rounded-3xl pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-slate-800 transition-all shadow-inner cursor-pointer"
+                      value={formData.date}
+                      readOnly
+                    />
+                  </div>
+                </div>
+                <div className="flex-1 space-y-3">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Time</label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-primary-400">
+                      <Clock size={18} />
+                    </div>
+                    <input 
+                      className="w-full h-16 bg-slate-800/50 border-white/5 rounded-3xl pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-slate-800 transition-all shadow-inner cursor-pointer"
+                      value={formData.time}
+                      readOnly
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Location Selection Logic from Stitch */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Location</label>
+                <button 
+                  type="button"
+                  onClick={() => setShowLocationPicker(true)}
+                  className="flex items-center w-full bg-slate-800/50 hover:bg-slate-800 active:scale-[0.98] rounded-2xl px-5 h-16 border border-white/5 transition-all group shadow-inner"
+                >
+                  <MapPin size={22} className="text-primary-400 mr-4" />
+                  <span className={`flex-1 text-left text-sm font-bold truncate ${formData.location ? 'text-white' : 'text-slate-500 italic'}`}>
+                    {formData.location ? formData.location.name : 'Select meeting point...'}
+                  </span>
+                  <ChevronRight size={20} className="text-slate-600 group-hover:text-primary-400 transition-colors" />
+                </button>
+
+                {/* Map Preview from Stitch */}
+                {formData.location && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="relative w-full h-44 rounded-3xl overflow-hidden shadow-2xl border border-white/5 group"
                   >
-                    {emoji}
-                  </button>
-                ))}
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center opacity-60 grayscale hover:grayscale-0 transition-all duration-700" 
+                      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80')" }}
+                    ></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 to-transparent"></div>
+                    <div className="absolute bottom-4 left-4 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-primary-600 flex items-center justify-center shadow-2xl border border-white/10">
+                        <MapPin size={20} className="text-white fill-white/20" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-white text-xs font-extrabold tracking-tight truncate">{formData.location.name}</p>
+                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-tight truncate opacity-80">{formData.location.address}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </div>
-            </div>
-          </>
-        ) : (
-          <div className="space-y-8 py-10">
-            <div className="text-center space-y-2">
-              <div className="w-16 h-16 bg-primary-500/10 rounded-3xl mx-auto flex items-center justify-center border border-primary-500/20 mb-4">
-                <Hash size={32} className="text-primary-400" />
-              </div>
-              <p className="text-slate-400">Enter the meeting code or ID provided by the host to join the group.</p>
-            </div>
-            <Input 
-              label="Meeting Code" 
-              placeholder="e.g. #MEET-1234" 
-              icon={Hash}
-              value={formData.code}
-              onChange={(e) => setFormData({...formData, code: e.target.value})}
-              required
-              className="text-center text-2xl font-bold tracking-widest"
-            />
-          </div>
-        )}
 
-        <div className="pt-6">
-          <Button type="submit" className="w-full py-4 text-lg">
-            {type === 'create' ? 'Create Meeting' : 'Join Now'}
-          </Button>
-        </div>
-      </form>
-    </motion.div>
+              {/* Invite Friends from Stitch */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between px-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Invite Friends</label>
+                  <button type="button" className="text-primary-400 text-[10px] font-bold uppercase tracking-widest hover:text-primary-300">View All</button>
+                </div>
+                <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                  <button type="button" className="flex-shrink-0 w-14 h-14 rounded-2xl border-2 border-dashed border-slate-700 flex items-center justify-center hover:border-primary-500 hover:bg-primary-500/10 transition-all group">
+                    <Plus size={20} className="text-slate-500 group-hover:text-primary-400" />
+                  </button>
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex-shrink-0 relative">
+                      <div className={`w-14 h-14 rounded-2xl bg-slate-800 border-2 border-slate-900 shadow-xl flex items-center justify-center text-xs font-bold text-white`}>
+                        {['JD', 'SM', 'TL'][i-1]}
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-4 border-slate-900 rounded-full"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </form>
+          ) : (
+            <div className="space-y-12 py-10">
+              <div className="text-center space-y-4">
+                <div className="w-24 h-24 bg-primary-600/10 rounded-[2.5rem] mx-auto flex items-center justify-center border border-primary-500/20 mb-6 group relative">
+                  <Hash size={48} className="text-primary-400 group-hover:scale-110 transition-transform" />
+                  <div className="absolute inset-0 bg-primary-500/5 blur-2xl rounded-full"></div>
+                </div>
+                <h2 className="text-2xl font-extrabold tracking-tighter text-white uppercase italic">Enter Access Code</h2>
+                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.15em] max-w-[240px] mx-auto leading-relaxed">
+                  Join a private meeting by entering the unique ID provided by the host.
+                </p>
+              </div>
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Meeting Code</label>
+                <input 
+                  className="w-full h-20 bg-slate-800/50 border-white/5 rounded-3xl text-center text-3xl font-black tracking-[0.3em] text-primary-400 focus:ring-4 focus:ring-primary-500/20 transition-all shadow-2xl placeholder:opacity-20"
+                  placeholder="X7Y-3A"
+                  value={formData.code}
+                  onChange={(e) => setFormData({...formData, code: e.target.value.toUpperCase()})}
+                  maxLength={6}
+                />
+              </div>
+            </div>
+          )}
+        </main>
+
+        <footer className="fixed bottom-0 left-0 right-0 p-6 bg-slate-900/95 backdrop-blur-2xl border-t border-white/5 z-[110]">
+          <div className="max-w-md mx-auto">
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleSubmit}
+              className="w-full bg-primary-600 hover:bg-primary-500 text-white font-extrabold text-sm tracking-widest uppercase h-16 rounded-[1.5rem] shadow-2xl shadow-primary-900/40 flex items-center justify-center gap-3 transition-all"
+            >
+              <CheckCircle size={20} />
+              {type === 'create' ? 'Create Meeting' : 'Join Now'}
+            </motion.button>
+          </div>
+        </footer>
+
+        {/* Nested Location Picker Overlay */}
+        <AnimatePresence>
+          {showLocationPicker && (
+            <div className="fixed inset-0 z-[150] overflow-hidden">
+              <LocationPicker 
+                onConfirm={handleLocationConfirm}
+                onBack={() => setShowLocationPicker(false)}
+              />
+            </div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

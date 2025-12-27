@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Eye, EyeOff, MapPin, ArrowRight, ChevronLeft, Github, Chrome } from 'lucide-react';
 import { Button, Input } from '../components/UI';
+import ForgotPassword from './ForgotPassword';
 
 const Auth = ({ onAuthSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+
+  if (showForgotPassword) {
+    return <ForgotPassword onBack={() => setShowForgotPassword(false)} />;
+  }
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-slate-900 text-white overflow-hidden max-w-md mx-auto shadow-2xl">
@@ -107,7 +113,13 @@ const Auth = ({ onAuthSuccess }) => {
 
           {isLogin && (
             <div className="flex justify-end pr-1">
-              <button className="text-[10px] font-bold text-primary-400 uppercase tracking-widest hover:text-primary-300 transition-colors">Forgot Password?</button>
+              <button 
+                type="button"
+                onClick={() => setShowForgotPassword(true)}
+                className="text-[10px] font-bold text-primary-400 uppercase tracking-widest hover:text-primary-300 transition-colors"
+                >
+                  Forgot Password?
+              </button>
             </div>
           )}
 
