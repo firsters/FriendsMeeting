@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
-import { useTranslation } from '../context/LanguageContext';
 
 const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => {
-  const { t, language, changeLanguage } = useTranslation();
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -61,7 +59,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
         <button onClick={() => onNavigate(ScreenType.MAP)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-all active:scale-95">
           <span className="material-symbols-outlined text-white">arrow_back_ios_new</span>
         </button>
-        <h1 className="text-lg font-extrabold text-white">{t('settings_title') || "Settings"}</h1>
+        <h1 className="text-lg font-extrabold text-white">Settings</h1>
         <div className="w-10"></div>
       </header>
 
@@ -77,18 +75,18 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1 opacity-60">@alexdoe</p>
         </div>
 
-        {renderSectionHeader(t('settings_general') || "General")}
+        {renderSectionHeader("General")}
         <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
           {renderSettingItem({
             icon: "language",
-            label: t('settings_language') || "Language",
+            label: "Language",
             color: "bg-blue-600",
-            value: language === 'ko' ? '한국어' : 'English',
-            onClick: () => changeLanguage(language === 'ko' ? 'en' : 'ko')
+            value: "English",
+            onClick: () => {} // Simplified for now
           })}
           {renderSettingItem({
             icon: "volume_up",
-            label: t('settings_sound') || "Sound Effects",
+            label: "Sound Effects",
             color: "bg-purple-600",
             isToggle: true,
             isActive: toggles.sound,
@@ -97,11 +95,11 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           })}
         </div>
 
-        {renderSectionHeader(t('settings_notifications') || "Notifications")}
+        {renderSectionHeader("Notifications")}
         <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
           {renderSettingItem({
             icon: "notifications",
-            label: t('settings_push') || "Push Notifications",
+            label: "Push Notifications",
             color: "bg-red-500",
             isToggle: true,
             isActive: toggles.push,
@@ -109,7 +107,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           })}
           {renderSettingItem({
             icon: "chat_bubble",
-            label: t('settings_new_message') || "New Messages",
+            label: "New Messages",
             color: "bg-emerald-500",
             isToggle: true,
             isActive: toggles.chat,
@@ -117,7 +115,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           })}
           {renderSettingItem({
             icon: "near_me",
-            label: t('settings_nearby_friends') || "Nearby Friends",
+            label: "Nearby Friends",
             color: "bg-orange-500",
             isToggle: true,
             isActive: toggles.nearby,
@@ -126,17 +124,17 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           })}
         </div>
 
-        {renderSectionHeader(t('settings_privacy') || "Privacy & Security")}
+        {renderSectionHeader("Privacy & Security")}
         <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
           {renderSettingItem({
             icon: "person_search",
-            label: t('settings_who_find') || "Who can find me",
+            label: "Who can find me",
             color: "bg-indigo-600",
-            value: t('friends_all') || "Friends"
+            value: "Friends"
           })}
           {renderSettingItem({
             icon: "visibility",
-            label: t('settings_show_online') || "Show Online Status",
+            label: "Show Online Status",
             color: "bg-teal-500",
             isToggle: true,
             isActive: toggles.online,
@@ -144,7 +142,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           })}
           {renderSettingItem({
             icon: "block",
-            label: t('settings_blocked') || "Blocked Users",
+            label: "Blocked Users",
             color: "bg-rose-500",
             isLast: true
           })}
@@ -152,11 +150,11 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
 
         {deferredPrompt && (
           <>
-            {renderSectionHeader(t('settings_support') || "Support")}
+            {renderSectionHeader("Support")}
             <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
               {renderSettingItem({
                 icon: "download",
-                label: t('settings_install') || "Install App",
+                label: "Install App",
                 color: "bg-emerald-600",
                 onClick: handleInstallClick,
                 isLast: true
@@ -171,7 +169,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
             className="w-full h-16 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-[2rem] font-extrabold text-base flex items-center justify-center gap-3 transition-all border border-red-500/10 active:scale-[0.98]"
           >
             <span className="material-symbols-outlined">logout</span>
-            {t('settings_logout') || "Log Out"}
+            Log Out
           </button>
         </div>
       </main>
@@ -179,19 +177,19 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
       <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 max-w-md mx-auto z-50">
         <button onClick={() => onNavigate(ScreenType.MAP)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
           <span className="material-symbols-outlined">map</span>
-          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_map') || "Map"}</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">Map</span>
         </button>
         <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
           <span className="material-symbols-outlined">group</span>
-          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends') || "Friends"}</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">Friends</span>
         </button>
         <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
           <span className="material-symbols-outlined">calendar_month</span>
-          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings') || "Meet"}</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">Meet</span>
         </button>
         <button className="flex flex-col items-center gap-1 text-primary">
           <span className="material-symbols-outlined">person</span>
-          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_profile') || "Profile"}</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">Profile</span>
         </button>
       </nav>
     </div>

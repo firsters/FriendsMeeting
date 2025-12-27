@@ -7,12 +7,11 @@ import CombinedView from './pages/CombinedView';
 import MeetingScreens from './pages/MeetingScreens';
 import FriendScreens from './pages/FriendScreens';
 import Profile from './pages/Profile';
-import { useTranslation } from './context/LanguageContext';
 import './index.css';
 
 function App() {
-  const { t } = useTranslation();
-  const [currentScreen, setCurrentScreen] = useState(ScreenType.ONBOARDING);
+  // Directly start on the LOGIN screen as requested
+  const [currentScreen, setCurrentScreen] = useState(ScreenType.LOGIN);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
@@ -80,13 +79,13 @@ function App() {
                />;
 
       default:
-        return <Welcome onNavigate={navigate} />;
+        return <Auth currentScreen={ScreenType.LOGIN} onNavigate={navigate} onLogin={handleLogin} />;
     }
   };
 
   return (
     <div className="h-screen w-full flex justify-center bg-black overflow-hidden font-sans antialiased">
-      <div className="relative w-full max-w-md h-full bg-background-dark shadow-2xl flex flex-col">
+      <div className="relative w-full max-w-md h-full bg-background-dark shadow-2xl flex flex-col border-x border-white/5">
         {renderScreen()}
       </div>
     </div>

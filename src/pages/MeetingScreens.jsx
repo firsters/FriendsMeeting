@@ -1,27 +1,25 @@
 import React from 'react';
 import { ScreenType } from '../constants/ScreenType';
-import { useTranslation } from '../context/LanguageContext';
 
 const MeetingScreens = ({ currentScreen, onNavigate }) => {
-  const { t } = useTranslation();
 
   const renderBottomNav = () => (
     <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 max-w-md mx-auto z-50">
        <button onClick={() => onNavigate(ScreenType.MAP)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
          <span className="material-symbols-outlined">map</span>
-         <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_map') || "Map"}</span>
+         <span className="text-[9px] font-bold uppercase tracking-widest">Map</span>
        </button>
        <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
          <span className="material-symbols-outlined">group</span>
-         <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends') || "Friends"}</span>
+         <span className="text-[9px] font-bold uppercase tracking-widest">Friends</span>
        </button>
        <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1 text-primary">
          <span className="material-symbols-outlined">calendar_month</span>
-         <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings') || "Meet"}</span>
+         <span className="text-[9px] font-bold uppercase tracking-widest">Meet</span>
        </button>
        <button onClick={() => onNavigate(ScreenType.SETTINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
          <span className="material-symbols-outlined">person</span>
-         <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_profile') || "Profile"}</span>
+         <span className="text-[9px] font-bold uppercase tracking-widest">Profile</span>
        </button>
     </nav>
   );
@@ -30,7 +28,7 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
       <header className="px-6 pt-10 pb-4 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('meetings_title') || "My Meetings"}</h1>
+          <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">My Meetings</h1>
           <button 
             onClick={() => onNavigate(ScreenType.CREATE_MEETING)}
             className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
@@ -39,9 +37,9 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
           </button>
         </div>
         <div className="flex p-1 bg-white/5 rounded-2xl">
-          <button className="flex-1 py-3 rounded-xl text-sm font-bold bg-white text-primary shadow-sm">{t('meetings_upcoming') || "Upcoming"}</button>
-          <button className="flex-1 py-3 rounded-xl text-sm font-bold text-gray-500">{t('meetings_active') || "Active"}</button>
-          <button className="flex-1 py-3 rounded-xl text-sm font-bold text-gray-500">{t('meetings_past') || "Past"}</button>
+          <button className="flex-1 py-3 rounded-xl text-sm font-bold bg-white text-primary shadow-sm">Upcoming</button>
+          <button className="flex-1 py-3 rounded-xl text-sm font-bold text-gray-500">Active</button>
+          <button className="flex-1 py-3 rounded-xl text-sm font-bold text-gray-500">Past</button>
         </div>
       </header>
 
@@ -49,7 +47,7 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
         <div className="relative p-5 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 overflow-hidden group cursor-pointer active:scale-[0.98] transition-all" onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}>
            <div className="absolute top-4 right-4 bg-primary px-3 py-1 rounded-full flex items-center gap-1.5">
              <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
-             <span className="text-[8px] font-bold text-white uppercase tracking-widest">{t('live_now') || "Live Now"}</span>
+             <span className="text-[8px] font-bold text-white uppercase tracking-widest">Live Now</span>
            </div>
            <div className="flex gap-4">
              <div className="w-16 h-16 rounded-2xl bg-cover bg-center shrink-0 shadow-lg" style={{backgroundImage: 'url("https://images.unsplash.com/photo-1543269865-cbf427effbad?w=100")'}}></div>
@@ -74,7 +72,7 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
 
         <div className="pt-4">
           <div className="flex items-center gap-4 mb-4">
-            <h4 className="text-xs font-bold text-gray-600 uppercase tracking-widest whitespace-nowrap">{t('time_tomorrow') || "Tomorrow"}</h4>
+            <h4 className="text-xs font-bold text-gray-600 uppercase tracking-widest whitespace-nowrap">Tomorrow</h4>
             <div className="h-px w-full bg-white/5"></div>
           </div>
           
@@ -111,14 +109,14 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
   const CreateScreen = () => (
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
       <header className="px-4 py-6 border-b border-white/5 flex items-center justify-between sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
-        <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="text-gray-400 font-bold text-sm">{t('cancel') || "Cancel"}</button>
-        <h2 className="text-lg font-extrabold text-white font-display">{t('create_meeting_title') || "New Meeting"}</h2>
+        <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="text-gray-400 font-bold text-sm">Cancel</button>
+        <h2 className="text-lg font-extrabold text-white font-display">New Meeting</h2>
         <div className="w-12"></div>
       </header>
       
       <main className="flex-1 p-6 space-y-8 overflow-y-auto scrollbar-hide pb-32">
         <div className="space-y-2">
-          <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{t('meeting_name_label') || "Meeting Name"}</label>
+          <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">Meeting Name</label>
           <input 
             type="text" 
             placeholder="e.g. Dinner at Mario's" 
@@ -128,14 +126,14 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{t('meeting_date_label') || "Date"}</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">Date</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary text-xl">calendar_today</span>
               <input type="text" value="Today" readOnly className="w-full h-14 bg-card-dark border-none rounded-2xl pl-12 text-white font-bold outline-none" />
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{t('meeting_time_label') || "Time"}</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">Time</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary text-xl">schedule</span>
               <input type="text" value="7:00 PM" readOnly className="w-full h-14 bg-card-dark border-none rounded-2xl pl-12 text-white font-bold outline-none" />
@@ -144,10 +142,10 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{t('meeting_location_label') || "Location"}</label>
+          <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">Location</label>
           <div className="relative mb-4">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary text-xl">search</span>
-            <input type="text" placeholder={t('search_location_placeholder') || "Search for a location"} className="w-full h-14 bg-card-dark border-none rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-700 outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
+            <input type="text" placeholder="Search for a location" className="w-full h-14 bg-card-dark border-none rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-700 outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
             <button className="absolute right-4 top-1/2 -translate-y-1/2 text-primary">
               <span className="material-symbols-outlined text-xl">my_location</span>
             </button>
@@ -169,8 +167,8 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
 
         <div className="space-y-4">
           <div className="flex justify-between items-center px-1">
-            <label className="text-xs font-bold uppercase tracking-widest text-gray-500">{t('invite_friends') || "Invite Friends"}</label>
-            <button className="text-[10px] font-bold text-primary uppercase">{t('view_all') || "View All"}</button>
+            <label className="text-xs font-bold uppercase tracking-widest text-gray-500">Invite Friends</label>
+            <button className="text-[10px] font-bold text-primary uppercase">View All</button>
           </div>
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
             <button className="w-14 h-14 rounded-full border-2 border-dashed border-gray-700 flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary transition-all shrink-0">
@@ -189,7 +187,7 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
           className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-xl shadow-primary/30 flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
         >
           <span className="material-symbols-outlined">check_circle</span>
-          {t('create_meeting_btn') || "Create Meeting"}
+          Create Meeting
         </button>
       </div>
     </div>
@@ -201,7 +199,7 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
         <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="p-2 -ml-2 rounded-full hover:bg-white/5 transition-colors">
           <span className="material-symbols-outlined text-white">arrow_back_ios_new</span>
         </button>
-        <h2 className="text-lg font-extrabold text-white font-display">{t('meeting_details_title') || "Meeting Details"}</h2>
+        <h2 className="text-lg font-extrabold text-white font-display">Meeting Details</h2>
         <button className="p-2 -mr-2 rounded-full hover:bg-white/5 transition-colors">
           <span className="material-symbols-outlined text-white">more_horiz</span>
         </button>
