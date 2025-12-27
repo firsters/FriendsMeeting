@@ -1,14 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Map, Users, MessageSquare, Bell, User } from 'lucide-react';
+import { useTranslation } from '../context/LanguageContext';
 
 const Navigation = ({ activeTab, onTabChange }) => {
+  const { t } = useTranslation();
   const tabs = [
-    { id: 'map', icon: Map, label: 'Map' },
-    { id: 'friends', icon: Users, label: 'Friends' },
-    { id: 'chat', icon: MessageSquare, label: 'Chat' },
-    { id: 'notifications', icon: Bell, label: 'Alerts' },
-    { id: 'profile', icon: User, label: 'Profile' },
+    { id: 'map', icon: Map, label: t('nav_map') },
+    { id: 'friends', icon: Users, label: t('nav_friends') },
+    { id: 'chat', icon: MessageSquare, label: t('nav_meetings') },
+    { id: 'notifications', icon: Bell, label: t('nav_alerts') },
+    { id: 'profile', icon: User, label: t('nav_profile') },
   ];
 
   return (

@@ -1,8 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, ArrowRight, MessageSquare } from 'lucide-react';
+import { useTranslation } from '../context/LanguageContext';
 
-const Welcome = ({ onStart }) => {
+const Welcome = ({ onGetStarted }) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-slate-900 text-white">
       {/* Background Decor */}
@@ -18,7 +21,7 @@ const Welcome = ({ onStart }) => {
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-600 text-white shadow-lg shadow-primary-900/40">
             <MapPin size={18} />
           </div>
-          <span className="text-sm font-bold tracking-widest uppercase">FriendsMeeting</span>
+          <span className="text-sm font-bold tracking-widest uppercase">{t('welcome_title')}</span>
         </div>
       </motion.div>
 
@@ -42,7 +45,7 @@ const Welcome = ({ onStart }) => {
           <div className="absolute top-6 right-6">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/60 backdrop-blur-md rounded-full border border-white/20 shadow-lg">
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white">Online now</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-white">{t('online')}</span>
             </div>
           </div>
           
@@ -57,8 +60,8 @@ const Welcome = ({ onStart }) => {
                 A
               </div>
               <div className="flex-1">
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">New message from Alex</p>
-                <p className="text-sm font-medium text-white italic">"Hey! I'm at the cafe 📍"</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Alex</p>
+                <p className="text-sm font-medium text-white italic">"Hey! I'm here 📍"</p>
               </div>
             </motion.div>
           </div>
@@ -79,7 +82,7 @@ const Welcome = ({ onStart }) => {
             transition={{ delay: 0.3 }}
             className="text-4xl font-extrabold tracking-tighter text-white leading-none"
           >
-            Stay Close, <br/><span className="text-primary-400">Wherever</span> You Are
+            {t('welcome_subtitle_1')} <br/><span className="text-primary-400">{t('welcome_subtitle_2')}</span> {t('welcome_subtitle_3')}
           </motion.h1>
           <motion.p 
             initial={{ y: 10, opacity: 0 }}
@@ -87,7 +90,7 @@ const Welcome = ({ onStart }) => {
             transition={{ delay: 0.4 }}
             className="text-sm text-slate-400 font-medium leading-relaxed max-w-[280px] mx-auto uppercase tracking-wide opacity-80"
           >
-            Share real-time location and coordinate meetups instantly with integrated chat.
+            {t('welcome_desc')}
           </motion.p>
         </div>
       </div>
@@ -97,15 +100,15 @@ const Welcome = ({ onStart }) => {
         <motion.button 
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={onStart}
+          onClick={onGetStarted}
           className="w-full flex items-center justify-center gap-3 h-16 rounded-[1.5rem] bg-primary-600 hover:bg-primary-500 transition-all text-white font-bold text-sm tracking-widest uppercase shadow-2xl shadow-primary-900/40 mb-5"
         >
-          <span>Get Started</span>
+          <span>{t('welcome_start')}</span>
           <ArrowRight size={20} />
         </motion.button>
         <div className="flex justify-center items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
-          <span className="text-slate-500">Already have an account?</span>
-          <button className="text-primary-400 hover:text-primary-300 transition-colors" onClick={onStart}>Log in</button>
+          <span className="text-slate-500">{t('welcome_login_prompt')}</span>
+          <button className="text-primary-400 hover:text-primary-300 transition-colors" onClick={onGetStarted}>{t('welcome_login_link')}</button>
         </div>
       </div>
     </div>

@@ -6,15 +6,15 @@ const FriendsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const requests = [
-    { id: '1', name: 'Sarah Jenkins', status: 'Wants to share location', avatar: 'S' },
-    { id: '2', name: 'Mike Ross', status: 'Mutual friend: Harvey S.', avatar: 'M' },
+    { id: '1', name: 'Sarah Jenkins', status: '위치 공유를 요청했습니다', avatar: 'S' },
+    { id: '2', name: 'Mike Ross', status: '함께 아는 친구: Harvey S.', avatar: 'M' },
   ];
 
   const friends = [
-    { id: '1', name: 'Jessica Pearson', status: 'Downtown • 2km away', avatar: 'J', online: true },
-    { id: '2', name: 'Louis Litt', status: 'Last seen 2h ago', avatar: 'L', online: false },
-    { id: '3', name: 'Donna Paulsen', status: 'Central Park • 500m away', avatar: 'D', online: true },
-    { id: '4', name: 'Rachel Zane', status: 'Idle for 10m', avatar: 'R', online: true, idle: true },
+    { id: '1', name: 'Jessica Pearson', status: '도심 • 2km 거리', avatar: 'J', online: true },
+    { id: '2', name: 'Louis Litt', status: '2시간 전 마지막 확인', avatar: 'L', online: false },
+    { id: '3', name: 'Donna Paulsen', status: '센트럴 파크 • 500m 거리', avatar: 'D', online: true },
+    { id: '4', name: 'Rachel Zane', status: '10분 동안 활동 없음', avatar: 'R', online: true, idle: true },
   ];
 
   return (
@@ -22,7 +22,7 @@ const FriendsList = () => {
       {/* Top App Bar */}
       <div className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md p-4 pb-2 border-b border-white/5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold leading-tight tracking-tight">Friends</h2>
+          <h2 className="text-2xl font-bold leading-tight tracking-tight">친구 목록</h2>
           <div className="flex items-center gap-3">
             <button className="flex items-center justify-center rounded-full w-10 h-10 bg-slate-800 text-white hover:bg-slate-700 transition-colors">
               <QrCode size={20} />
@@ -40,7 +40,7 @@ const FriendsList = () => {
           </div>
           <input 
             className="w-full bg-slate-800 border-none rounded-2xl py-3 pl-11 pr-4 text-sm font-medium placeholder:text-slate-500 focus:ring-2 focus:ring-primary-500/30 transition-all"
-            placeholder="Search by username..."
+            placeholder="사용자 이름으로 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -50,7 +50,7 @@ const FriendsList = () => {
       <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-24">
         {/* Pending Requests */}
         <section>
-          <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3 px-1">Requests ({requests.length})</h3>
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3 px-1">친구 요청 ({requests.length})</h3>
           <div className="space-y-3">
             {requests.map(req => (
               <motion.div 
@@ -74,7 +74,7 @@ const FriendsList = () => {
                     <X size={18} />
                   </button>
                   <button className="flex items-center justify-center rounded-xl h-9 px-4 bg-primary-600 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-primary-700 transition-colors shadow-sm">
-                    Accept
+                    수락
                   </button>
                 </div>
               </motion.div>
@@ -84,7 +84,7 @@ const FriendsList = () => {
 
         {/* All Friends */}
         <section>
-          <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3 px-1">All Friends (42)</h3>
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-3 px-1">모든 친구 (42)</h3>
           <div className="space-y-1">
             {friends.map(friend => (
               <motion.div 

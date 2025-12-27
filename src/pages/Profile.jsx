@@ -3,10 +3,20 @@ import { motion } from 'framer-motion';
 import { 
   ArrowLeft, Edit3, Globe, Volume2, Bell, MessageSquare, 
   Navigation, Eye, ShieldAlert, BadgeHelp, Info, LogOut, ChevronRight,
-  FileText, ShieldCheck, Code
+  FileText, ShieldCheck, Code, Download
 } from 'lucide-react';
+import { useTranslation } from '../context/LanguageContext';
 
-const Profile = ({ onLogout }) => {
+const Profile = ({ onLogout, deferredPrompt, onInstallSuccess }) => {
+  const { t, language, changeLanguage } = useTranslation();
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      onInstallSuccess();
+    }
+  };
   const [nickname, setNickname] = useState('Alex Doe');
   const [handle, setHandle] = useState('@alexdoe');
 
@@ -17,7 +27,7 @@ const Profile = ({ onLogout }) => {
         <button className="flex size-10 items-center justify-center rounded-full text-white hover:bg-white/10 transition-colors">
           <ArrowLeft size={22} />
         </button>
-        <h1 className="text-lg font-bold tracking-tight uppercase tracking-widest">Settings</h1>
+        <h1 className="text-lg font-bold tracking-tight uppercase tracking-widest">{t('settings_title')}</h1>
         <div className="size-10"></div>
       </header>
 
@@ -42,36 +52,47 @@ const Profile = ({ onLogout }) => {
         </section>
 
         {/* Settings Group: General */}
-        <SettingsGroup title="General">
-          <SettingsItem icon={<Globe size={20} />} title="Language" value="English" />
-          <SettingsToggle icon={<Volume2 size={20} />} title="Sound Effects" active={true} color="bg-purple-500" />
+        <SettingsGroup title={t('settings_general')}>
+          <div onClick={() => changeLanguage(language === 'ko' ? 'en' : 'ko')}>
+            <SettingsItem icon={<Globe size={20} />} title={t('settings_language')} value={language === 'ko' ? '한국어' : 'English'} />
+          </div>
+          <SettingsToggle icon={<Volume2 size={20} />} title={t('settings_sound')} active={true} color="bg-purple-500" />
         </SettingsGroup>
 
         {/* Settings Group: Notifications */}
-        <SettingsGroup title="Notifications">
-          <SettingsToggle icon={<Bell size={20} />} title="Push Notifications" active={true} color="bg-red-500" />
-          <SettingsToggle icon={<MessageSquare size={20} />} title="New Messages" active={true} color="bg-green-500" />
-          <SettingsToggle icon={<Navigation size={20} />} title="Nearby Friends" active={false} color="bg-orange-500" />
+        <SettingsGroup title={t('settings_notifications')}>
+          <SettingsToggle icon={<Bell size={20} />} title={t('settings_push')} active={true} color="bg-red-500" />
+          <SettingsToggle icon={<MessageSquare size={20} />} title={t('settings_new_message')} active={true} color="bg-green-500" />
+          <SettingsToggle icon={<Navigation size={20} />} title={t('settings_nearby_friends')} active={false} color="bg-orange-500" />
         </SettingsGroup>
 
         {/* Settings Group: Privacy & Security */}
-        <SettingsGroup title="Privacy & Security">
-          <SettingsItem icon={<Eye size={20} />} title="Who can find me" value="Friends" />
-          <SettingsToggle icon={<Eye size={20} />} title="Show Online Status" active={true} color="bg-teal-500" />
-          <SettingsItem icon={<ShieldAlert size={20} />} title="Blocked Users" />
+        <SettingsGroup title={t('settings_privacy')}>
+          <SettingsItem icon={<Eye size={20} />} title={t('settings_who_find')} value={t('friends_all')} />
+          <SettingsToggle icon={<Eye size={20} />} title={t('settings_show_online')} active={true} color="bg-teal-500" />
+          <SettingsItem icon={<ShieldAlert size={20} />} title={t('settings_blocked')} />
         </SettingsGroup>
 
         {/* Settings Group: Support */}
-        <SettingsGroup title="Support">
-          <SettingsItem icon={<BadgeHelp size={20} />} title="Help Center" />
-          <SettingsItem icon={<Info size={20} />} title="App Version" value="v1.0.4" hasArrow={false} />
+        <SettingsGroup title={t('settings_support')}>
+          <SettingsItem icon={<BadgeHelp size={20} />} title={t('settings_help')} />
+          {deferredPrompt && (
+            <div onClick={handleInstallClick}>
+              <SettingsItem 
+                icon={<Download size={20} />} 
+                title={t('settings_install')} 
+                value="Install" 
+              />
+            </div>
+          )}
+          <SettingsItem icon={<Info size={20} />} title={t('settings_version')} value="v1.0.4" hasArrow={false} />
         </SettingsGroup>
 
         {/* Settings Group: Legal */}
-        <SettingsGroup title="Legal">
-          <SettingsItem icon={<FileText size={20} />} title="이용약관" />
-          <SettingsItem icon={<ShieldCheck size={20} />} title="개인정보처리방침" />
-          <SettingsItem icon={<Code size={20} />} title="오픈소스 라이선스" />
+        <SettingsGroup title={t('settings_legal')}>
+          <SettingsItem icon={<FileText size={20} />} title={t('settings_terms')} />
+          <SettingsItem icon={<ShieldCheck size={20} />} title={t('settings_privacy_policy')} />
+          <SettingsItem icon={<Code size={20} />} title={t('settings_license')} />
         </SettingsGroup>
 
         {/* Logout Button */}
@@ -81,7 +102,7 @@ const Profile = ({ onLogout }) => {
             className="flex w-full items-center justify-center gap-3 rounded-2xl bg-red-500/10 p-5 text-red-500 transition-all hover:bg-red-500/20 active:scale-[0.98] border border-red-500/20 font-bold uppercase tracking-widest text-xs"
           >
             <LogOut size={20} />
-            Log Out
+            {t('settings_logout')}
           </button>
         </div>
       </main>

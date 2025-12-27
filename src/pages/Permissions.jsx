@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Map, Bell, ArrowLeft, CheckCircle2, Navigation, AlertCircle, ShieldCheck } from 'lucide-react';
+import { useTranslation } from '../context/LanguageContext';
 
-const Permissions = ({ onComplete }) => {
+const Permissions = ({ onGrant }) => {
+  const { t } = useTranslation();
   const [permissions, setPermissions] = useState({
     location: false,
     notifications: false
@@ -19,7 +21,7 @@ const Permissions = ({ onComplete }) => {
         <button onClick={() => {}} className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-white/10 transition-colors">
           <ArrowLeft size={22} />
         </button>
-        <h2 className="text-sm font-bold uppercase tracking-widest flex-1 text-center pr-10">Permissions</h2>
+        <h2 className="text-sm font-bold uppercase tracking-widest flex-1 text-center pr-10">{t('perm_title')}</h2>
       </div>
 
       <div className="flex-1 flex flex-col pb-32 overflow-y-auto no-scrollbar">
@@ -49,10 +51,10 @@ const Permissions = ({ onComplete }) => {
         {/* Headline & Body from Stitch */}
         <div className="flex flex-col items-center px-8 text-center mb-8">
           <h2 className="text-3xl font-extrabold tracking-tighter leading-tight mb-4 text-white">
-            Let's get you <span className="text-primary-400">connected</span>
+            {t('perm_subtitle_1')} <span className="text-primary-400">{t('perm_subtitle_2')}</span>{t('perm_subtitle_3')}
           </h2>
           <p className="text-sm text-slate-500 font-bold uppercase tracking-wide opacity-80 leading-relaxed max-w-xs">
-            To get the most out of the map, we need access to a few things. We respect your privacy.
+            {t('perm_desc')}
           </p>
         </div>
 
@@ -68,20 +70,20 @@ const Permissions = ({ onComplete }) => {
                 <Navigation size={28} />
               </div>
               <div className="flex flex-1 flex-col justify-center gap-1">
-                <p className="text-base font-bold text-white tracking-tight">Location Services</p>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">Required to share position and get proximity alerts.</p>
+                <p className="text-base font-bold text-white tracking-tight">{t('perm_location')}</p>
+                <p className="text-xs text-slate-500 font-medium leading-relaxed">{t('perm_location_desc')}</p>
               </div>
             </div>
             <div className="flex items-center justify-between pl-[64px] gap-4">
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
                 <AlertCircle size={14} className="text-amber-500" />
-                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Select 'Always'</span>
+                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">{t('perm_location_always')}</span>
               </div>
               <button 
                 onClick={() => handleToggle('location')}
                 className={`flex min-w-[100px] h-10 px-6 rounded-full text-xs font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 ${permissions.location ? 'bg-green-600 text-white shadow-green-900/20' : 'bg-primary-600 text-white shadow-primary-900/20'}`}
               >
-                {permissions.location ? 'Enabled' : 'Enable'}
+                {permissions.location ? t('perm_set_done') : t('perm_set')}
               </button>
             </div>
           </motion.div>
@@ -96,8 +98,8 @@ const Permissions = ({ onComplete }) => {
                 <Bell size={28} />
               </div>
               <div className="flex flex-1 flex-col justify-center gap-1">
-                <p className="text-base font-bold text-white tracking-tight">Notifications</p>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">Alerts for messages and when friends are nearby.</p>
+                <p className="text-base font-bold text-white tracking-tight">{t('perm_notifications')}</p>
+                <p className="text-xs text-slate-500 font-medium leading-relaxed">{t('perm_notifications_desc')}</p>
               </div>
             </div>
             <div className="flex items-center justify-end gap-4">
@@ -105,7 +107,7 @@ const Permissions = ({ onComplete }) => {
                 onClick={() => handleToggle('notifications')}
                 className={`flex min-w-[100px] h-10 px-6 rounded-full text-xs font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 ${permissions.notifications ? 'bg-green-600 text-white shadow-green-900/20' : 'bg-slate-700 text-white'}`}
               >
-                {permissions.notifications ? 'Allowed' : 'Allow'}
+                {permissions.notifications ? t('perm_enabled') : t('perm_enable')}
               </button>
             </div>
           </motion.div>
@@ -118,16 +120,16 @@ const Permissions = ({ onComplete }) => {
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={onComplete}
+            onClick={onGrant}
             disabled={!permissions.location}
             className={`flex w-full items-center justify-center h-16 rounded-[1.5rem] font-bold text-sm tracking-widest uppercase shadow-2xl transition-all ${permissions.location ? 'bg-primary-600 text-white shadow-primary-900/40' : 'bg-slate-800 text-slate-600 cursor-not-allowed border border-white/5'}`}
           >
-            Continue
+            {t('continue')}
           </motion.button>
           <div className="flex items-center justify-center gap-2 opacity-50 px-2">
             <ShieldCheck size={14} className="text-primary-400" />
             <p className="text-[10px] font-bold text-slate-500 text-center uppercase tracking-widest leading-relaxed">
-              We never share your data outside this app.
+              {t('perm_privacy_note')}
             </p>
           </div>
         </div>

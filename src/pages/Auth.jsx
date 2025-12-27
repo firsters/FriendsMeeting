@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Eye, EyeOff, MapPin, ArrowRight, ChevronLeft, Github, Chrome } from 'lucide-react';
 import { Button, Input } from '../components/UI';
 import ForgotPassword from './ForgotPassword';
+import { useTranslation } from '../context/LanguageContext';
 
 const Auth = ({ onAuthSuccess }) => {
+  const { t } = useTranslation();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -54,13 +56,13 @@ const Auth = ({ onAuthSuccess }) => {
             >
               {isLogin ? (
                 <>
-                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic italic tracking-tighter">Locate & Connect</h1>
-                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Find your friends in the city</p>
+                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic italic tracking-tighter">{t('auth_locate_connect')}</h1>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{t('auth_locate_desc')}</p>
                 </>
               ) : (
                 <>
-                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic italic tracking-tighter">Join Network</h1>
-                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Start sharing your journey</p>
+                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic italic tracking-tighter">{t('auth_join_network')}</h1>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{t('auth_join_desc')}</p>
                 </>
               )}
             </motion.div>
@@ -71,21 +73,21 @@ const Auth = ({ onAuthSuccess }) => {
         <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); onAuthSuccess(); }}>
           {!isLogin && (
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Nickname</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{t('auth_nickname')}</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-primary-400 transition-colors">
                   <User size={20} />
                 </div>
                 <input 
                   className="w-full h-16 bg-slate-800/50 border-white/5 rounded-3xl pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-slate-800 transition-all placeholder:text-slate-600 shadow-inner"
-                  placeholder="e.g. TravelerTom"
+                  placeholder={t('auth_nickname_placeholder')}
                 />
               </div>
             </div>
           )}
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Email</label>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{t('auth_email')}</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-primary-400 transition-colors">
                 <Mail size={20} />
@@ -93,13 +95,13 @@ const Auth = ({ onAuthSuccess }) => {
               <input 
                 type="email"
                 className="w-full h-16 bg-slate-800/50 border-white/5 rounded-3xl pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-slate-800 transition-all placeholder:text-slate-600 shadow-inner"
-                placeholder="name@example.com"
+                placeholder={t('auth_email_placeholder')}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Password</label>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">비밀번호</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-primary-400 transition-colors">
                 <Lock size={20} />
@@ -126,7 +128,7 @@ const Auth = ({ onAuthSuccess }) => {
                 onClick={() => setShowForgotPassword(true)}
                 className="text-[10px] font-bold text-primary-400 uppercase tracking-widest hover:text-primary-300 transition-colors"
                 >
-                  Forgot Password?
+                  {t('auth_forgot_password')}
               </button>
             </div>
           )}
@@ -138,13 +140,13 @@ const Auth = ({ onAuthSuccess }) => {
             whileTap={{ scale: 0.98 }}
             className="w-full h-16 bg-primary-600 hover:bg-primary-500 text-white rounded-[1.5rem] font-bold text-sm tracking-widest uppercase shadow-2xl shadow-primary-900/40 flex items-center justify-center gap-3 transition-all"
           >
-            {isLogin ? 'Log In' : 'Sign Up'}
+            {isLogin ? t('auth_login') : t('auth_signup')}
             <ArrowRight size={20} />
           </motion.button>
 
           <div className="relative py-4">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
-            <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest text-slate-600 bg-slate-900 px-4">Or continue with</div>
+            <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest text-slate-600 bg-slate-900 px-4">{t('auth_or_continue_with')}</div>
           </div>
 
           <div className="flex gap-4">
@@ -160,12 +162,12 @@ const Auth = ({ onAuthSuccess }) => {
 
       <footer className="p-8 text-center pt-2">
         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
+          {isLogin ? t('auth_no_account') : t('auth_has_account')}
           <button 
             onClick={() => setIsLogin(!isLogin)}
             className="text-primary-400 ml-2 hover:text-primary-300 transition-colors"
           >
-            {isLogin ? "Sign Up" : "Log In"}
+            {isLogin ? t('auth_signup') : t('auth_login')}
           </button>
         </p>
       </footer>

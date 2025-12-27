@@ -4,8 +4,10 @@ import { Calendar, Plus, Users, ChevronRight, MapPin, Clock, Hash } from 'lucide
 import { Button } from '../components/UI';
 import MeetingDetails from './MeetingDetails';
 import MeetingOverlay from '../components/MeetingOverlay';
+import { useTranslation } from '../context/LanguageContext';
 
 const MeetingList = () => {
+  const { t } = useTranslation();
   const [selectedMeeting, setSelectedMeeting] = useState(null);
   const [overlayType, setOverlayType] = useState(null); // 'create' | 'join'
 
@@ -19,34 +21,34 @@ const MeetingList = () => {
     <div className="flex flex-col h-full bg-slate-900 overflow-hidden relative">
       <div className="p-6 flex-1 overflow-y-auto">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-white">Meetings</h2>
+          <h2 className="text-2xl font-bold text-white">{t('meeting_list_title')}</h2>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" className="rounded-xl px-3 py-2 text-primary-400 border-primary-500/20" onClick={() => setOverlayType('join')}>
                <Hash size={16} className="mr-1" />
-               Join
+               {t('meeting_join')}
             </Button>
             <Button variant="primary" size="sm" className="rounded-xl px-4 py-2" onClick={() => setOverlayType('create')}>
               <Plus size={18} className="mr-1" />
-              Create
+              {t('meeting_create')}
             </Button>
           </div>
         </div>
 
         <div className="space-y-6 pb-20">
           <div>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-4">Upcoming</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-4">{t('meeting_upcoming')}</span>
             <div className="space-y-4">
               {meetings.filter(m => m.status === 'upcoming').map(meeting => (
-                <MeetingCard key={meeting.id} meeting={meeting} onClick={() => setSelectedMeeting(meeting)} />
+                <MeetingCard key={meeting.id} meeting={meeting} t={t} onClick={() => setSelectedMeeting(meeting)} />
               ))}
             </div>
           </div>
 
           <div>
-             <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-4">Past</span>
+             <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-4">{t('meeting_past')}</span>
              <div className="space-y-4">
               {meetings.filter(m => m.status === 'past').map(meeting => (
-                <MeetingCard key={meeting.id} meeting={meeting} onClick={() => setSelectedMeeting(meeting)} />
+                <MeetingCard key={meeting.id} meeting={meeting} t={t} onClick={() => setSelectedMeeting(meeting)} />
               ))}
             </div>
           </div>
@@ -74,7 +76,7 @@ const MeetingList = () => {
   );
 };
 
-const MeetingCard = ({ meeting, onClick }) => (
+const MeetingCard = ({ meeting, onClick, t }) => (
   <motion.div 
     whileHover={{ y: -2 }}
     onClick={onClick}
@@ -110,10 +112,10 @@ const MeetingCard = ({ meeting, onClick }) => (
             </div>
           )}
         </div>
-        <span className="text-[10px] text-slate-500 font-semibold">{meeting.friends} participants</span>
+        <span className="text-[10px] text-slate-500 font-semibold">{meeting.friends}{t('meeting_participants')}</span>
       </div>
       <div className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest ${meeting.status === 'upcoming' ? 'bg-primary-500/20 text-primary-400' : 'bg-slate-800 text-slate-500'}`}>
-        {meeting.status}
+        {meeting.status === 'upcoming' ? t('meeting_status_upcoming') : t('meeting_status_past')}
       </div>
     </div>
   </motion.div>
