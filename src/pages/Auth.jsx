@@ -5,9 +5,9 @@ import { Button, Input } from '../components/UI';
 import ForgotPassword from './ForgotPassword';
 import { useTranslation } from '../context/LanguageContext';
 
-const Auth = ({ onAuthSuccess }) => {
+const Auth = ({ type = 'login', onBack, onSuccess }) => {
   const { t } = useTranslation();
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(type === 'login');
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
@@ -16,7 +16,7 @@ const Auth = ({ onAuthSuccess }) => {
   }
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-slate-900 text-white overflow-hidden max-w-md mx-auto shadow-2xl">
+    <div className="relative flex h-full w-full flex-col bg-slate-900 text-white overflow-y-auto no-scrollbar">
       <div className="relative h-72 w-full overflow-hidden shrink-0">
         <img 
           src="/assets/auth_hero.png" 
@@ -28,7 +28,7 @@ const Auth = ({ onAuthSuccess }) => {
         {/* Top App Bar Overlaid */}
         <div className="absolute top-0 left-0 right-0 flex items-center px-4 py-4 justify-between bg-transparent z-10">
           <button 
-            onClick={() => setIsLogin(true)} 
+            onClick={onBack} 
             className="flex items-center justify-center size-10 rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-white/10 transition-colors"
           >
             <ChevronLeft size={24} />
@@ -56,12 +56,12 @@ const Auth = ({ onAuthSuccess }) => {
             >
               {isLogin ? (
                 <>
-                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic italic tracking-tighter">{t('auth_locate_connect')}</h1>
+                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic">{t('auth_locate_connect')}</h1>
                   <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{t('auth_locate_desc')}</p>
                 </>
               ) : (
                 <>
-                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic italic tracking-tighter">{t('auth_join_network')}</h1>
+                  <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic">{t('auth_join_network')}</h1>
                   <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{t('auth_join_desc')}</p>
                 </>
               )}
@@ -70,7 +70,7 @@ const Auth = ({ onAuthSuccess }) => {
         </div>
 
         {/* Form Section */}
-        <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); onAuthSuccess(); }}>
+        <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); onSuccess(); }}>
           {!isLogin && (
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{t('auth_nickname')}</label>
@@ -101,7 +101,7 @@ const Auth = ({ onAuthSuccess }) => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">비밀번호</label>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{t('auth_password')}</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-primary-400 transition-colors">
                 <Lock size={20} />
