@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, Eye, EyeOff, MapPin, ArrowRight, ChevronLeft, Github, Chrome } from 'lucide-react';
-import { Button, Input } from '../components/UI';
+import { Mail, Lock, User, Eye, EyeOff, MapPin, ChevronLeft, Shield } from 'lucide-react';
 import ForgotPassword from './ForgotPassword';
 import { useTranslation } from '../context/LanguageContext';
 
@@ -15,113 +14,95 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
     return <ForgotPassword onBack={() => setShowForgotPassword(false)} />;
   }
 
+  const headerBg = 'linear-gradient(0deg, rgba(16, 22, 34, 1) 0%, rgba(16, 22, 34, 0.6) 50%, rgba(16, 22, 34, 0.2) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDnDxG3dSGWecuREn3JtejWbiUFuaJeiVw3X4BH85kzNAZ5Mg-FEfdF8uFNNsdw3iic2KT9jPugu8psUu2n8ogAHZZptyRvXezcAvfSfXWG5-vWGwZ6Bbvau6EwzccSqHZpu9fvFX6C3EFnJhOHXX2_lgMQa4hdDTbKtNnBOW4Ot56zGHvDo0TQFgRT9QVpRqHmzqMDRpJ5CJbtV0pMtdy2vP5cazIHcdqZw8vCqLVM9JH5X-swoK2Q8IIbfKxfVpHaTdtTORJhr74")';
+
   return (
-    <div className="relative flex h-full w-full flex-col bg-slate-900 text-white overflow-y-auto no-scrollbar items-center">
-      {/* Cinematic Background */}
-      <div className="fixed inset-0 z-0">
-        <img 
-          src="/assets/auth_hero.png" 
-          alt="Friends Meeting"
-          className="w-full h-full object-cover opacity-50 scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/30 via-slate-900/60 to-slate-900"></div>
-        <div className="absolute inset-0 backdrop-blur-[2px]"></div>
-      </div>
-      
-      {/* Top App Bar Overlaid */}
-      <div className="absolute top-0 left-0 right-0 flex items-center px-4 py-4 justify-between bg-transparent z-20">
-        <button 
-          onClick={onBack} 
-          className="flex items-center justify-center size-10 rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-white/10 transition-colors border border-white/5"
-        >
-          <ChevronLeft size={24} />
-        </button>
-      </div>
+    <div className="relative flex min-h-screen w-full flex-col justify-between overflow-x-hidden max-w-md mx-auto shadow-2xl bg-slate-50 dark:bg-[#101622] text-slate-900 dark:text-white font-display antialiased">
+      {/* Main Content Wrapper */}
+      <div className="flex flex-col flex-1">
+        {/* Header Section */}
+        <div className="pt-6 relative">
+          <div 
+            className="flex flex-col justify-end overflow-hidden bg-[#101622] min-h-[240px] relative px-6 pb-6"
+            style={{ 
+              backgroundImage: headerBg,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          >
+            {/* Logo/Icon Overlay */}
+            <div className="absolute top-6 left-0 right-0 flex justify-center">
+              <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-900/30 backdrop-blur-sm bg-opacity-90">
+                <MapPin size={32} className="text-white" />
+              </div>
+            </div>
 
-      <div className="flex-1 w-full flex flex-col items-center justify-center px-6 py-20 relative z-10">
-        {/* Floating Icon from Stitch */}
-        <motion.div 
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="mb-8"
-        >
-          <div className="w-20 h-20 bg-primary-600 rounded-[2rem] flex items-center justify-center shadow-[0_0_50px_rgba(37,99,235,0.4)] ring-4 ring-slate-900 transform -rotate-6">
-            <MapPin size={36} className="text-white" />
+            <div className="text-center z-10">
+              <h1 className="text-white tracking-tight text-3xl font-bold leading-tight mb-2">
+                {isLogin ? t('auth_locate_connect') : t('auth_join_network')}
+              </h1>
+              <p className="text-slate-300 text-base font-normal leading-normal">
+                {isLogin ? t('auth_locate_desc') : t('auth_join_desc')}
+              </p>
+            </div>
           </div>
-        </motion.div>
+          
+          {/* Back Button */}
+          <button 
+            onClick={onBack} 
+            className="absolute top-4 left-4 size-10 rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-white/10 transition-colors flex items-center justify-center z-20 border border-white/5"
+          >
+            <ChevronLeft size={24} />
+          </button>
+        </div>
 
-        <main className="w-full glass rounded-[3rem] p-8 border border-white/10 shadow-2xl backdrop-blur-3xl bg-slate-900/40">
-          {/* Header Section with Stitch Aesthetic */}
-          <div className="mb-8 text-center">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={isLogin ? 'login' : 'signup'}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isLogin ? (
-                  <>
-                    <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic">{t('auth_locate_connect')}</h1>
-                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{t('auth_locate_desc')}</p>
-                  </>
-                ) : (
-                  <>
-                    <h1 className="text-3xl font-black tracking-tighter mb-1 uppercase italic">{t('auth_join_network')}</h1>
-                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{t('auth_join_desc')}</p>
-                  </>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Form Section */}
+        {/* Form Area */}
+        <div className="px-6 py-6 flex flex-col gap-5">
           <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); onSuccess(); }}>
             {!isLogin && (
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{t('auth_nickname')}</label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-primary-400 transition-colors">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium leading-normal ml-1">{t('auth_nickname')}</label>
+                <div className="relative flex items-center group">
+                  <span className="absolute left-4 text-slate-400 group-focus-within:text-primary-500 transition-colors">
                     <User size={20} />
-                  </div>
+                  </span>
                   <input 
-                    className="w-full h-16 bg-white/5 border border-white/5 rounded-3xl pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-white/10 transition-all placeholder:text-slate-600"
+                    className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-4 text-base font-normal placeholder:text-slate-400 transition-all"
                     placeholder={t('auth_nickname_placeholder')}
                   />
                 </div>
               </div>
             )}
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{t('auth_email')}</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-primary-400 transition-colors">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium leading-normal ml-1">{t('auth_email')}</label>
+              <div className="relative flex items-center group">
+                <span className="absolute left-4 text-slate-400 group-focus-within:text-primary-500 transition-colors">
                   <Mail size={20} />
-                </div>
+                </span>
                 <input 
                   type="email"
-                  className="w-full h-16 bg-white/5 border border-white/5 rounded-3xl pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-white/10 transition-all placeholder:text-slate-600"
+                  className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-4 text-base font-normal placeholder:text-slate-400 transition-all"
                   placeholder={t('auth_email_placeholder')}
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">{t('auth_password')}</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-primary-400 transition-colors">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium leading-normal ml-1">{t('auth_password')}</label>
+              <div className="relative flex items-center group">
+                <span className="absolute left-4 text-slate-400 group-focus-within:text-primary-500 transition-colors">
                   <Lock size={20} />
-                </div>
+                </span>
                 <input 
                   type={showPassword ? 'text' : 'password'}
-                  className="w-full h-16 bg-white/5 border border-white/5 rounded-3xl pl-12 pr-14 text-sm font-bold focus:ring-2 focus:ring-primary-500/30 focus:bg-white/10 transition-all placeholder:text-slate-600"
+                  className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-12 text-base font-normal placeholder:text-slate-400 transition-all"
                   placeholder="••••••••"
                 />
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-0 inset-y-0 px-4 flex items-center text-slate-500 hover:text-white transition-colors"
+                  className="absolute right-0 top-0 bottom-0 px-4 flex items-center justify-center text-slate-400 hover:text-primary-500 transition-colors"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -133,51 +114,52 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
                 <button 
                   type="button"
                   onClick={() => setShowForgotPassword(true)}
-                  className="text-[10px] font-bold text-primary-400 uppercase tracking-widest hover:text-primary-300 transition-colors"
-                  >
-                    {t('auth_forgot_password')}
+                  className="text-primary-600 text-sm font-medium hover:text-primary-500 transition-colors"
+                >
+                  {t('auth_forgot_password')}
                 </button>
               </div>
             )}
 
-            <div className="h-2"></div>
-
-            <motion.button 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full h-16 bg-primary-600 hover:bg-primary-500 text-white rounded-[1.5rem] font-bold text-sm tracking-widest uppercase shadow-2xl shadow-primary-900/40 flex items-center justify-center gap-3 transition-all"
-            >
-              {isLogin ? t('auth_login') : t('auth_signup')}
-              <ArrowRight size={20} />
-            </motion.button>
-
-            <div className="relative py-4">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
-              <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest text-slate-500 bg-slate-900/0 px-4">{t('auth_or_continue_with')}</div>
-            </div>
-
-            <div className="flex gap-4">
-              <button className="flex-1 h-14 rounded-2xl bg-white text-slate-900 flex items-center justify-center hover:bg-slate-100 transition-all font-bold group">
-                <Chrome size={20} className="mr-2" />
-              </button>
-              <button className="flex-1 h-14 rounded-2xl bg-slate-800 text-white flex items-center justify-center border border-white/10 hover:bg-slate-700 transition-all group">
-                <Github size={20} className="mr-2" />
-              </button>
-            </div>
-          </form>
-        </main>
-
-        <footer className="w-full p-8 text-center pt-6 mb-10">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            {isLogin ? t('auth_no_account') : t('auth_has_account')}
-            <button 
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary-400 ml-2 hover:text-primary-300 transition-colors font-black"
-            >
-              {isLogin ? t('auth_signup') : t('auth_login')}
+            <button className="flex w-full items-center justify-center rounded-xl h-14 bg-primary-600 text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary-500 active:scale-[0.98] transition-all shadow-lg shadow-primary-900/20 mt-2">
+              <span className="truncate">{isLogin ? t('auth_login') : t('auth_signup')}</span>
             </button>
-          </p>
-        </footer>
+          </form>
+
+          {/* Social Login Divider */}
+          <div className="relative flex py-2 items-center mt-4">
+            <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+            <span className="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium uppercase tracking-wider">{t('auth_or_continue_with')}</span>
+            <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+          </div>
+
+          {/* Social Buttons Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            <button className="flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] hover:bg-slate-50 dark:hover:bg-[#1f2b40] transition-colors group">
+              <svg className="w-5 h-5 fill-slate-900 dark:fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16.96 15.14C17.06 15.68 17.07 15.7 17.5 16.34C17.9 16.91 18.27 17.65 18.27 17.65C18.73 18.3 18.91 18.5 19.38 18.49C19.82 18.49 20.02 18.36 20.48 18.37C20.97 18.38 21.13 18.49 21.57 18.49C22.07 18.49 22.25 18.25 22.78 17.51C23.59 16.37 24 15.17 24 13.9C24 11.53 22.18 10.3 20.9 10.3C19.46 10.3 18.59 11.13 18.59 12.28C18.59 13.56 19.67 14.43 21.05 14.43C21.13 14.43 21.2 14.43 21.26 14.43C21.08 15.93 20.45 17.47 19.5 18.67C19.46 18.72 19.42 18.77 19.38 18.82C18.8 19.57 18.27 20.24 17.56 20.24C16.88 20.24 16.63 19.8 15.84 19.8C15.02 19.8 14.74 20.22 14.1 20.22C13.43 20.22 12.87 19.59 12.27 18.71C11.66 17.84 10.74 16.14 10.74 14.4C10.74 11.49 12.59 10 14.28 10C15.39 10 16.27 10.75 16.96 10.75C17.59 10.75 18.57 10 19.78 10C20.26 10 21.94 10.15 22.78 11.4C22.68 11.45 20.98 12.44 20.98 14.46C20.98 16.18 22.38 16.98 22.45 17.02C22.42 17.11 22.18 17.96 21.6 18.81C21.11 19.53 20.55 20.25 19.95 20.25C19.34 20.25 19.14 19.87 18.39 19.87C17.61 19.87 17.39 20.25 16.82 20.25C16.2 20.25 15.68 19.59 15.18 18.85C14.15 17.36 13.38 14.63 13.38 14.4C13.38 14.17 13.42 11.59 15.82 10.19C15.54 10.05 14.93 9.8 14.28 9.8C11.96 9.8 9.42 11.83 9.42 15.08C9.42 17.89 11.9 21.5 14.86 21.5C15.82 21.5 16.58 20.85 16.96 15.14ZM16.34 7.96C16.99 7.15 17.44 6.03 17.3 4.9C16.36 4.94 15.22 5.53 14.54 6.34C13.93 7.04 13.4 8.19 13.56 9.27C14.58 9.35 15.68 8.77 16.34 7.96Z"></path></svg>
+            </button>
+            <button className="flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] hover:bg-slate-50 dark:hover:bg-[#1f2b40] transition-colors group">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Section */}
+      <div className="px-6 py-8 flex flex-col items-center gap-4 border-t border-slate-100 dark:border-white/5">
+        <p className="text-slate-500 text-sm font-normal text-center">
+          {isLogin ? t('auth_no_account') : t('auth_has_account')}
+          <button 
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-primary-600 font-medium hover:text-primary-500 ml-2"
+          >
+            {isLogin ? t('auth_signup') : t('auth_login')}
+          </button>
+        </p>
+        <div className="flex items-center gap-1 opacity-50">
+          <Shield size={14} className="text-slate-500" />
+          <span className="text-slate-500 text-xs font-normal">Secured connection</span>
+        </div>
       </div>
     </div>
   );
