@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Search, Mic, Plus, Minus, Navigation, MapPin, MyLocation, Store, Park, Utensils, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Search, Mic, Plus, Minus, Navigation, MapPin, MyLocation, Store, Trees, Utensils, ChevronRight } from 'lucide-react';
 
 const LocationPicker = ({ onConfirm, onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,7 +14,7 @@ const LocationPicker = ({ onConfirm, onBack }) => {
   });
 
   const suggestions = [
-    { id: 1, name: "City Hall Park", info: "0.1 mi • Public Park", icon: <Park size={18} />, color: "bg-emerald-500/20 text-emerald-400" },
+    { id: 1, name: "City Hall Park", info: "0.1 mi • Public Park", icon: <Trees size={18} />, color: "bg-emerald-500/20 text-emerald-400" },
     { id: 2, name: "Nobu Downtown", info: "0.3 mi • Japanese Restaurant", icon: <Utensils size={18} />, color: "bg-amber-500/20 text-amber-400" }
   ];
 
