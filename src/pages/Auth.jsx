@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, User, Eye, EyeOff, MapPin, ChevronLeft, Shield } from 'lucide-react';
 import ForgotPassword from './ForgotPassword';
 import { useTranslation } from '../context/LanguageContext';
 
@@ -14,60 +13,53 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
     return <ForgotPassword onBack={() => setShowForgotPassword(false)} />;
   }
 
-  const headerBg = 'linear-gradient(0deg, rgba(16, 22, 34, 1) 0%, rgba(16, 22, 34, 0.6) 50%, rgba(16, 22, 34, 0.2) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDnDxG3dSGWecuREn3JtejWbiUFuaJeiVw3X4BH85kzNAZ5Mg-FEfdF8uFNNsdw3iic2KT9jPugu8psUu2n8ogAHZZptyRvXezcAvfSfXWG5-vWGwZ6Bbvau6EwzccSqHZpu9fvFX6C3EFnJhOHXX2_lgMQa4hdDTbKtNnBOW4Ot56zGHvDo0TQFgRT9QVpRqHmzqMDRpJ5CJbtV0pMtdy2vP5cazIHcdqZw8vCqLVM9JH5X-swoK2Q8IIbfKxfVpHaTdtTORJhr74")';
+  const mapBgUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuDnDxG3dSGWecuREn3JtejWbiUFuaJeiVw3X4BH85kzNAZ5Mg-FEfdF8uFNNsdw3iic2KT9jPugu8psUu2n8ogAHZZptyRvXezcAvfSfXWG5-vWGwZ6Bbvau6EwzccSqHZpu9fvFX6C3EFnJhOHXX2_lgMQa4hdDTbKtNnBOW4Ot56zGHvDo0TQFgRT9QVpRqHmzqMDRpJ5CJbtV0pMtdy2vP5cazIHcdqZw8vCqLVM9JH5X-swoK2Q8IIbfKxfVpHaTdtTORJhr74";
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col justify-between overflow-x-hidden max-w-md mx-auto shadow-2xl bg-[#f5f6f8] dark:bg-[#101622] text-slate-900 dark:text-white font-display antialiased">
+    <div className="relative flex min-h-screen w-full flex-col justify-between overflow-x-hidden max-w-md mx-auto shadow-2xl bg-[#101622] text-white font-display antialiased">
       {/* Main Content Wrapper */}
       <div className="flex flex-col flex-1">
         {/* Header Section */}
-        <div className="pt-6 relative px-0">
+        <div className="pt-8 pb-4 relative px-4 text-center">
           <div 
-            className="flex flex-col justify-end overflow-hidden bg-[#101622] min-h-[240px] relative rounded-none"
+            className="absolute inset-x-0 top-0 h-[280px] opacity-40 pointer-events-none"
             style={{ 
-              backgroundImage: headerBg,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
+              backgroundImage: `linear-gradient(180deg, rgba(16, 22, 34, 0) 0%, rgba(16, 22, 34, 1) 100%), url("${mapBgUrl}")`,
+              backgroundSize: '80% auto',
+              backgroundPosition: 'center 20px',
+              backgroundRepeat: 'no-repeat'
             }}
-          >
-            {/* Logo/Icon Overlay */}
-            <div className="absolute top-6 left-0 right-0 flex justify-center">
-              <div className="w-16 h-16 bg-[#256af4] rounded-2xl flex items-center justify-center shadow-lg shadow-[#256af4]/30 backdrop-blur-sm bg-opacity-90">
-                <MapPin size={32} className="text-white" />
-              </div>
-            </div>
-
-            <div className="flex flex-col p-6 text-center z-10">
-              <h1 className="text-white tracking-tight text-3xl font-bold leading-tight mb-2">
-                 {isLogin ? t('auth_locate_connect') : t('auth_join_network')}
-              </h1>
-              <p className="text-slate-300 text-base font-normal leading-normal">
-                {isLogin ? t('auth_locate_desc') : t('auth_join_desc')}
-              </p>
+          />
+          
+          {/* Logo Icon */}
+          <div className="flex justify-center mb-8 relative z-10">
+            <div className="w-16 h-16 bg-[#256af4] rounded-2xl flex items-center justify-center shadow-lg shadow-[#256af4]/30 backdrop-blur-sm bg-opacity-90">
+              <span className="material-symbols-outlined text-white text-3xl">location_on</span>
             </div>
           </div>
-          
-          {/* Back Button */}
-          <button 
-            onClick={onBack} 
-            className="absolute top-4 left-4 size-10 rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-white/10 transition-colors flex items-center justify-center z-20 border border-white/5"
-          >
-            <ChevronLeft size={24} />
-          </button>
+
+          <div className="relative z-10 flex flex-col gap-2">
+            <h1 className="text-white tracking-tight text-3xl font-bold leading-tight">
+              {isLogin ? (t('auth_locate_connect') || 'Locate & Chat') : (t('auth_join_network') || 'Join Network')}
+            </h1>
+            <p className="text-slate-400 text-sm font-normal">
+              {isLogin ? (t('auth_locate_desc') || 'Sign in to see where your friends are.') : (t('auth_join_desc') || 'Join to share your journey.')}
+            </p>
+          </div>
         </div>
 
         {/* Login Form Area */}
-        <div className="px-6 py-4 flex flex-col gap-5">
+        <div className="px-6 py-4 flex flex-col gap-5 relative z-10">
           <form className="flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); onSuccess(); }}>
             {!isLogin && (
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium leading-normal">{t('auth_nickname')}</label>
+                <label className="text-slate-200 text-sm font-medium">{t('auth_nickname')}</label>
                 <div className="relative flex items-center">
-                  <span className="absolute left-4 text-slate-400">
-                    <User size={20} />
+                  <span className="absolute left-4 text-slate-500">
+                    <span className="material-symbols-outlined text-[20px]">person</span>
                   </span>
                   <input 
-                    className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#256af4]/50 focus:border-[#256af4] border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-4 text-base font-normal transition-all placeholder:text-slate-400"
+                    className="flex w-full rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#256af4]/50 focus:border-[#256af4] border border-slate-700 bg-[#182234] h-14 pl-11 pr-4 text-base font-normal placeholder:text-slate-500 transition-all"
                     placeholder={t('auth_nickname_placeholder')}
                     type="text"
                   />
@@ -76,36 +68,36 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
             )}
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium leading-normal">{t('auth_email')}</label>
+              <label className="text-slate-200 text-sm font-medium">{t('auth_email') || 'Email or Username'}</label>
               <div className="relative flex items-center">
-                <span className="absolute left-4 text-slate-400">
-                  <Mail size={20} />
+                <span className="absolute left-4 text-slate-500">
+                  <span className="material-symbols-outlined text-[20px]">person</span>
                 </span>
                 <input 
-                  className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#256af4]/50 focus:border-[#256af4] border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-4 text-base font-normal transition-all placeholder:text-slate-400"
-                  placeholder={t('auth_email_placeholder')}
+                  className="flex w-full rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#256af4]/50 focus:border-[#256af4] border border-slate-700 bg-[#182234] h-14 pl-11 pr-4 text-base font-normal placeholder:text-slate-500 transition-all"
+                  placeholder={t('auth_email_placeholder') || 'Enter your email or username'}
                   type="email"
                 />
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium leading-normal">{t('auth_password')}</label>
+              <label className="text-slate-200 text-sm font-medium">{t('auth_password') || 'Password'}</label>
               <div className="relative flex items-center">
-                <span className="absolute left-4 text-slate-400">
-                  <Lock size={20} />
+                <span className="absolute left-4 text-slate-500">
+                  <span className="material-symbols-outlined text-[20px]">lock</span>
                 </span>
                 <input 
-                  className="flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#256af4]/50 focus:border-[#256af4] border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] h-14 pl-11 pr-12 text-base font-normal transition-all placeholder:text-slate-400"
-                  placeholder="••••••••"
+                  className="flex w-full rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#256af4]/50 focus:border-[#256af4] border border-slate-700 bg-[#182234] h-14 pl-11 pr-12 text-base font-normal transition-all placeholder:text-slate-500"
+                  placeholder={t('auth_password_placeholder') || 'Enter your password'}
                   type={showPassword ? 'text' : 'password'}
                 />
                 <button 
-                  className="absolute right-0 top-0 bottom-0 px-4 flex items-center justify-center text-slate-400 hover:text-[#256af4] transition-colors"
+                  className="absolute right-0 top-0 bottom-0 px-4 flex items-center justify-center text-slate-500 hover:text-[#256af4] transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                   type="button"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  <span className="material-symbols-outlined text-[20px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
                 </button>
               </div>
             </div>
@@ -117,29 +109,29 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
                   onClick={() => setShowForgotPassword(true)}
                   type="button"
                 >
-                  {t('auth_forgot_password')}
+                  {t('auth_forgot_password') || 'Forgot Password?'}
                 </button>
               </div>
             )}
 
-            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 bg-[#256af4] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-blue-600 active:scale-[0.98] transition-all shadow-lg shadow-[#256af4]/20">
-              <span className="truncate">{isLogin ? t('auth_login') : t('auth_signup')}</span>
+            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 bg-[#256af4] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-blue-600 active:scale-[0.98] transition-all shadow-lg shadow-[#256af4]/20 mt-2">
+              <span className="truncate">{isLogin ? (t('auth_login') || 'Log In') : (t('auth_signup') || 'Sign Up')}</span>
             </button>
           </form>
 
           {/* Social Login Divider */}
-          <div className="relative flex py-2 items-center">
-            <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
-            <span className="flex-shrink-0 mx-4 text-slate-400 text-xs font-medium uppercase tracking-wider">{t('auth_or_continue_with')}</span>
-            <div className="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+          <div className="relative flex py-4 items-center">
+            <div className="flex-grow border-t border-slate-800"></div>
+            <span className="flex-shrink-0 mx-4 text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">OR CONTINUE WITH</span>
+            <div className="flex-grow border-t border-slate-800"></div>
           </div>
 
           {/* Social Buttons Grid */}
           <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] hover:bg-slate-50 dark:hover:bg-[#1f2b40] transition-colors group">
-              <svg className="w-5 h-5 fill-slate-900 dark:fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16.96 15.14C17.06 15.68 17.07 15.7 17.5 16.34C17.9 16.91 18.27 17.65 18.27 17.65C18.73 18.3 18.91 18.5 19.38 18.49C19.82 18.49 20.02 18.36 20.48 18.37C20.97 18.38 21.13 18.49 21.57 18.49C22.07 18.49 22.25 18.25 22.78 17.51C23.59 16.37 24 15.17 24 13.9C24 11.53 22.18 10.3 20.9 10.3C19.46 10.3 18.59 11.13 18.59 12.28C18.59 13.56 19.67 14.43 21.05 14.43C21.13 14.43 21.2 14.43 21.26 14.43C21.08 15.93 20.45 17.47 19.5 18.67C19.46 18.72 19.42 18.77 19.38 18.82C18.8 19.57 18.27 20.24 17.56 20.24C16.88 20.24 16.63 19.8 15.84 19.8C15.02 19.8 14.74 20.22 14.1 20.22C13.43 20.22 12.87 19.59 12.27 18.71C11.66 17.84 10.74 16.14 10.74 14.4C10.74 11.49 12.59 10 14.28 10C15.39 10 16.27 10.75 16.96 10.75C17.59 10.75 18.57 10 19.78 10C20.26 10 21.94 10.15 22.78 11.4C22.68 11.45 20.98 12.44 20.98 14.46C20.98 16.18 22.38 16.98 22.45 17.02C22.42 17.11 22.18 17.96 21.6 18.81C21.11 19.53 20.55 20.25 19.95 20.25C19.34 20.25 19.14 19.87 18.39 19.87C17.61 19.87 17.39 20.25 16.82 20.25C16.2 20.25 15.68 19.59 15.18 18.85C14.15 17.36 13.38 14.63 13.38 14.4C13.38 14.17 13.42 11.59 15.82 10.19C15.54 10.05 14.93 9.8 14.28 9.8C11.96 9.8 9.42 11.83 9.42 15.08C9.42 17.89 11.9 21.5 14.86 21.5C15.82 21.5 16.58 20.85 16.96 15.14ZM16.34 7.96C16.99 7.15 17.44 6.03 17.3 4.9C16.36 4.94 15.22 5.53 14.54 6.34C13.93 7.04 13.4 8.19 13.56 9.27C14.58 9.35 15.68 8.77 16.34 7.96Z"></path></svg>
+            <button className="flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-700 bg-[#182234] hover:bg-[#1f2b40] transition-colors group">
+              <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16.96 15.14C17.06 15.68 17.07 15.7 17.5 16.34C17.9 16.91 18.27 17.65 18.27 17.65C18.73 18.3 18.91 18.5 19.38 18.49C19.82 18.49 20.02 18.36 20.48 18.37C20.97 18.38 21.13 18.49 21.57 18.49C22.07 18.49 22.25 18.25 22.78 17.51C23.59 16.37 24 15.17 24 13.9C24 11.53 22.18 10.3 20.9 10.3C19.46 10.3 18.59 11.13 18.59 12.28C18.59 13.56 19.67 14.43 21.05 14.43C21.13 14.43 21.2 14.43 21.26 14.43C21.08 15.93 20.45 17.47 19.5 18.67C19.46 18.72 19.42 18.77 19.38 18.82C18.8 19.57 18.27 20.24 17.56 20.24C16.88 20.24 16.63 19.8 15.84 19.8C15.02 19.8 14.74 20.22 14.1 20.22C13.43 20.22 12.87 19.59 12.27 18.71C11.66 17.84 10.74 16.14 10.74 14.4C10.74 11.49 12.59 10 14.28 10C15.39 10 16.27 10.75 16.96 10.75C17.59 10.75 18.57 10 19.78 10C20.26 10 21.94 10.15 22.78 11.4C22.68 11.45 20.98 12.44 20.98 14.46C20.98 16.18 22.38 16.98 22.45 17.02C22.42 17.11 22.18 17.96 21.6 18.81C21.11 19.53 20.55 20.25 19.95 20.25C19.34 20.25 19.14 19.87 18.39 19.87C17.61 19.87 17.39 20.25 16.82 20.25C16.2 20.25 15.68 19.59 15.18 18.85C14.15 17.36 13.38 14.63 13.38 14.4C13.38 14.17 13.42 11.59 15.82 10.19C15.54 10.05 14.93 9.8 14.28 9.8C11.96 9.8 9.42 11.83 9.42 15.08C9.42 17.89 11.9 21.5 14.86 21.5C15.82 21.5 16.58 20.85 16.96 15.14ZM16.34 7.96C16.99 7.15 17.44 6.03 17.3 4.9C16.36 4.94 15.22 5.53 14.54 6.34C13.93 7.04 13.4 8.19 13.56 9.27C14.58 9.35 15.68 8.77 16.34 7.96Z"></path></svg>
             </button>
-            <button className="flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#182234] hover:bg-slate-50 dark:hover:bg-[#1f2b40] transition-colors group">
+            <button className="flex items-center justify-center gap-2 h-12 rounded-xl border border-slate-700 bg-[#182234] hover:bg-[#1f2b40] transition-colors group">
               <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
             </button>
           </div>
@@ -147,20 +139,20 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
       </div>
 
       {/* Footer Section */}
-      <div className="px-6 py-8 flex flex-col items-center gap-4">
+      <div className="px-6 py-10 flex flex-col items-center gap-4 relative z-10">
         <p className="text-slate-500 text-sm font-normal text-center">
-          {isLogin ? t('auth_no_account') : t('auth_has_account')} 
+          {isLogin ? (t('auth_no_account') || "Don't have an account?") : (t('auth_has_account') || "Already have an account?") } 
           <button 
             className="text-[#256af4] font-medium hover:text-blue-400 ml-1"
             onClick={() => setIsLogin(!isLogin)}
             type="button"
           >
-            {isLogin ? t('auth_signup') : t('auth_login')}
+            {isLogin ? (t('auth_signup') || 'Sign Up') : (t('auth_login') || 'Log In')}
           </button>
         </p>
-        <div className="flex items-center gap-1 opacity-50">
-          <Shield className="text-slate-500" size={16} />
-          <span className="text-slate-500 text-xs font-normal">Secured connection</span>
+        <div className="flex items-center gap-1.5 opacity-40">
+          <span className="material-symbols-outlined text-[16px] text-slate-500">lock</span>
+          <span className="text-slate-500 text-xs font-medium">Secured connection</span>
         </div>
       </div>
     </div>
