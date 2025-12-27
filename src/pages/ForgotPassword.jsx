@@ -56,7 +56,7 @@ const ForgotPassword = ({ onBack }) => {
             </div>
             
             <div className="text-center mb-10 space-y-4">
-              <h1 className="text-4xl font-black tracking-tighter uppercase italic italic tracking-tighter">Forgot?</h1>
+              <h1 className="text-4xl font-black tracking-tighter uppercase italic tracking-tighter">Forgot?</h1>
               <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.15em] leading-relaxed max-w-[280px] mx-auto opacity-70">
                 Don't worry! It happens. Enter your email below to receive a secure recovery link.
               </p>
@@ -110,7 +110,7 @@ const ForgotPassword = ({ onBack }) => {
               </div>
 
               <div className="flex flex-col items-center gap-4 text-center">
-                <h1 className="text-4xl font-black tracking-tighter uppercase italic italic">Check Mail</h1>
+                <h1 className="text-4xl font-black tracking-tighter uppercase italic">Check Mail</h1>
                 <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.15em] leading-relaxed max-w-[280px] opacity-70">
                   Instructions for password recovery have been sent to your primary inbox.
                 </p>
@@ -202,7 +202,7 @@ const ForgotPassword = ({ onBack }) => {
               <svg height="100%" width="100%">
                 <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
                   <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
-                 pattern>
+                </pattern>
                 <rect width="100%" height="100%" fill="url(#grid)" />
               </svg>
             </div>
@@ -220,7 +220,7 @@ const ForgotPassword = ({ onBack }) => {
             </div>
 
             <div className="text-center space-y-4 relative z-10">
-              <h1 className="text-4xl font-black tracking-tighter uppercase italic italic">Unlocked!</h1>
+              <h1 className="text-4xl font-black tracking-tighter uppercase italic">Unlocked!</h1>
               <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.15em] leading-relaxed max-w-[280px] mx-auto opacity-70">
                 Your credentials have been successfully updated. You can now access your location networks with the new secret.
               </p>
