@@ -16,7 +16,7 @@ const Auth = ({ type = 'login', onBack, onSuccess }) => {
   const mapBgUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuDnDxG3dSGWecuREn3JtejWbiUFuaJeiVw3X4BH85kzNAZ5Mg-FEfdF8uFNNsdw3iic2KT9jPugu8psUu2n8ogAHZZptyRvXezcAvfSfXWG5-vWGwZ6Bbvau6EwzccSqHZpu9fvFX6C3EFnJhOHXX2_lgMQa4hdDTbKtNnBOW4Ot56zGHvDo0TQFgRT9QVpRqHmzqMDRpJ5CJbtV0pMtdy2vP5cazIHcdqZw8vCqLVM9JH5X-swoK2Q8IIbfKxfVpHaTdtTORJhr74";
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col justify-between overflow-x-hidden max-w-md mx-auto shadow-2xl bg-[#101622] text-white font-display antialiased">
+    <div className="relative flex min-h-full w-full flex-col justify-between overflow-x-hidden max-w-md mx-auto bg-[#101622] text-white font-display antialiased">
       {/* Main Content Wrapper */}
       <div className="flex flex-col flex-1">
         {/* Header Section */}
