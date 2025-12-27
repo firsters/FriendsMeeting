@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Camera, Plus, GripHorizontal, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { Input, Button } from '../components/UI';
 import { useTranslation } from '../context/LanguageContext';
 
 const ChatInterface = ({ height, onImageClick }) => {
@@ -36,7 +34,6 @@ const ChatInterface = ({ height, onImageClick }) => {
 
   const handleImageSelect = () => {
     setIsUploading(true);
-    // Simulate compression and upload
     setTimeout(() => {
       setMessages([...messages, {
         id: Date.now().toString(),
@@ -50,36 +47,36 @@ const ChatInterface = ({ height, onImageClick }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0b0f17]">
+    <div className="flex flex-col h-full bg-[#F5F5F5] font-sans">
       {/* Message List */}
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar"
+        className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar"
         style={{ height: `${height - 80}px` }}
       >
         {messages.map((msg) => (
           <div key={msg.id} className={`flex flex-col ${msg.sender === 'Me' ? 'items-end' : 'items-start'}`}>
-            <div className={`flex items-center gap-1.5 mb-0.5 ${msg.sender === 'Me' ? 'flex-row-reverse' : 'flex-row'}`}>
-              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">{msg.sender === 'Me' ? t('chat_me') : msg.sender}</span>
-              <span className="text-[9px] text-slate-700 font-medium">{msg.time}</span>
+            {/* Sender & Time - Caption style */}
+            <div className={`flex items-baseline gap-2 mb-1 ${msg.sender === 'Me' ? 'flex-row-reverse' : 'flex-row'}`}>
+              <span className="text-[12px] font-bold text-[#212121]">{msg.sender === 'Me' ? t('chat_me') : msg.sender}</span>
+              <span className="text-[10px] text-[#757575] font-medium">{msg.time}</span>
             </div>
             
             {msg.type === 'text' ? (
-              <div className={`max-w-[85%] px-3 py-1.5 rounded-2xl text-[13px] leading-relaxed shadow-sm ${
+              <div className={`max-w-[85%] px-3 py-2 text-[14px] leading-[1.5] shadow-sm tracking-tight ${
                 msg.sender === 'Me' 
-                  ? 'bg-blue-600 text-white rounded-tr-none' 
-                  : 'bg-[#1e293b] text-slate-200 rounded-tl-none border border-white/5'
+                  ? 'bg-[#E3F2FD] text-[#212121] rounded-[16px_16px_0px_16px]' 
+                  : 'bg-white text-[#212121] rounded-[16px_16px_16px_0px] border border-[#E0E0E0]'
               }`}>
                 {msg.text}
               </div>
             ) : (
               <div 
-                className="max-w-[70%] p-0.5 bg-[#1e293b] rounded-2xl overflow-hidden shadow-2xl border border-white/10 cursor-pointer hover:opacity-95 transition-all active:scale-[0.98]"
+                className="max-w-[75%] p-1 bg-white rounded-[12px] overflow-hidden shadow-md border border-[#E0E0E0] cursor-pointer hover:opacity-95 transition-all active:scale-[0.98]"
                 onClick={() => onImageClick(msg.imageUrl)}
               >
-                <div className="relative aspect-video w-full rounded-[14px] overflow-hidden">
+                <div className="relative aspect-video w-full rounded-[8px] overflow-hidden bg-[#E0E0E0]">
                   <img src={msg.imageUrl} alt="chat" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
                 </div>
               </div>
             )}
@@ -88,24 +85,21 @@ const ChatInterface = ({ height, onImageClick }) => {
         
         {isUploading && (
           <div className="flex flex-col items-end">
-            <div className="max-w-[70%] p-0.5 bg-[#1e293b]/50 rounded-2xl overflow-hidden border border-white/5 animate-pulse flex items-center justify-center aspect-video w-full">
-              <div className="flex flex-col items-center gap-2">
-                <Loader2 size={20} className="text-blue-500 animate-spin" />
-                <span className="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">{t('chat_uploading')}</span>
-              </div>
+            <div className="max-w-[75%] p-1 bg-white rounded-[12px] overflow-hidden border border-[#E0E0E0] animate-pulse aspect-video w-full flex items-center justify-center">
+              <span className="material-symbols-outlined text-[#4285F4] animate-spin">sync</span>
             </div>
           </div>
         )}
       </div>
 
       {/* Input Area */}
-      <div className="p-3 bg-[#0b0f17] border-t border-white/5 shrink-0">
+      <div className="p-3 bg-white border-t border-[#E0E0E0] shrink-0">
         <div className="flex items-center gap-2">
           <button 
             onClick={handleImageSelect}
-            className="p-2.5 text-slate-500 hover:text-white transition-colors bg-[#1e293b] rounded-xl active:scale-90"
+            className="p-2 text-[#757575] hover:text-[#4285F4] transition-colors"
           >
-            <Plus size={20} />
+            <span className="material-symbols-outlined">add_circle</span>
           </button>
           <div className="flex-1 relative">
             <input 
@@ -113,21 +107,21 @@ const ChatInterface = ({ height, onImageClick }) => {
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder={t('chat_placeholder')}
-              className="w-full bg-[#1e293b] border-none rounded-xl py-2.5 px-4 text-[13px] text-slate-200 outline-none focus:ring-1 focus:ring-blue-500/50 transition-all font-medium placeholder:text-slate-600"
+              className="w-full bg-[#F5F5F5] border border-[#E0E0E0] rounded-xl py-2 px-4 text-[14px] text-[#212121] outline-none focus:ring-1 focus:ring-[#4285F4] transition-all placeholder:text-[#BDBDBD]"
             />
             <button 
               onClick={handleImageSelect}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-white transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#757575] hover:text-[#4285F4]"
             >
-              <Camera size={18} />
+              <span className="material-symbols-outlined text-[20px]">photo_camera</span>
             </button>
           </div>
           <button 
             onClick={handleSend}
             disabled={!inputText.trim()}
-            className="p-2.5 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-900/20 disabled:opacity-40 disabled:grayscale transition-all active:scale-90"
+            className="p-2.5 bg-[#4285F4] text-white rounded-full shadow-md disabled:opacity-40 transition-all active:scale-90"
           >
-            <Send size={18} />
+            <span className="material-symbols-outlined text-[20px]">send</span>
           </button>
         </div>
       </div>

@@ -61,22 +61,24 @@ const CombinedView = () => {
   }, [isResizing]);
 
   return (
-    <div ref={containerRef} className="h-full w-full flex flex-col bg-slate-900 relative overflow-hidden">
+    <div ref={containerRef} className="h-full w-full flex flex-col bg-white relative overflow-hidden font-sans">
       {/* Map Section */}
-      <div id="map-view" className="flex-1 relative overflow-hidden bg-slate-950">
+      <div id="map-view" className="flex-1 relative overflow-hidden bg-[#f0f0f0]">
         <MapView />
         
         {/* Map Overlays - Radar Live Badge & Controls */}
-        <div className="absolute top-0 left-0 right-0 p-5 pt-14 flex justify-between items-start z-30 pointer-events-none">
-          <button className="flex items-center justify-center w-11 h-11 bg-slate-900/40 backdrop-blur-xl rounded-full text-white border border-white/5 shadow-2xl hover:bg-slate-900/60 transition-all pointer-events-auto active:scale-95">
-            <Menu size={22} />
+        <div className="absolute top-0 left-0 right-0 p-5 pt-12 flex justify-between items-start z-30 pointer-events-none">
+          <button className="flex items-center justify-center w-11 h-11 bg-white rounded-full text-[#212121] shadow-[0px_4px_12px_rgba(0,0,0,0.15)] hover:bg-[#F5F5F5] transition-all pointer-events-auto active:scale-95 border border-[#E0E0E0]">
+            <span className="material-symbols-outlined">menu</span>
           </button>
-          <div className="bg-slate-900/60 backdrop-blur-xl px-4 py-1.5 rounded-full border border-white/5 flex items-center gap-2 shadow-2xl">
-            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
-            <span className="text-[10px] font-bold tracking-[0.2em] text-white/90 uppercase">{t('radar_live')}</span>
+          
+          <div className="bg-white px-4 py-2 rounded-full border border-[#E0E0E0] flex items-center gap-2 shadow-[0px_4px_12px_rgba(0,0,0,0.1)]">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#4285F4] animate-pulse"></div>
+            <span className="text-[10px] font-bold tracking-wider text-[#212121] uppercase">{t('radar_live')}</span>
           </div>
-          <button className="flex items-center justify-center w-11 h-11 bg-slate-900/40 backdrop-blur-xl rounded-full text-white border border-white/5 shadow-2xl hover:bg-slate-900/60 transition-all pointer-events-auto active:scale-95">
-            <SettingsIcon size={22} />
+
+          <button className="flex items-center justify-center w-11 h-11 bg-white rounded-full text-[#212121] shadow-[0px_4px_12px_rgba(0,0,0,0.15)] hover:bg-[#F5F5F5] transition-all pointer-events-auto active:scale-95 border border-[#E0E0E0]">
+            <span className="material-symbols-outlined">settings</span>
           </button>
         </div>
       </div>
@@ -85,44 +87,44 @@ const CombinedView = () => {
       <motion.div 
         id="chat-container"
         animate={{ height: keyboardVisible ? '60%' : `${chatHeight}px` }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="shrink-0 z-40 flex flex-col bg-[#0b0f17] border-t border-white/5 shadow-[0_-10px_40px_rgba(0,0,0,0.6)]"
+        transition={{ type: 'spring', damping: 30, stiffness: 300, mass: 1 }}
+        className="shrink-0 z-40 flex flex-col bg-[#F5F5F5] shadow-[0_-8px_32px_rgba(0,0,0,0.08)] relative"
       >
-        {/* Resize Handle - Pill Design */}
+        {/* Resize Handle - 8px Height Material Style */}
         <div 
           id="resize-handle"
           onMouseDown={startResizing}
           onTouchStart={startResizing}
-          className="h-7 w-full flex justify-center items-center cursor-ns-resize group active:bg-white/5 transition-colors absolute -top-3.5 left-0 z-50 pointer-events-auto"
+          className="h-2 w-full flex justify-center items-center cursor-ns-resize bg-[#E0E0E0] hover:bg-[#D6D6D6] transition-colors absolute -top-0 left-0 z-50 pointer-events-auto shadow-[0_-2px_4px_rgba(0,0,0,0.02)]"
         >
-          <div className="w-12 h-1.5 bg-slate-700/60 rounded-full group-hover:bg-slate-500 transition-colors shadow-inner"></div>
+          {/* Pill Grip - 32x4 rounded */}
+          <div className="w-8 h-1 bg-[#BDBDBD] rounded-full" />
         </div>
 
         {/* Chat Header */}
-        <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-[#0b0f17] shrink-0">
+        <div className="px-6 py-4 border-b border-[#E0E0E0] flex justify-between items-center bg-white shrink-0 mt-2">
           <div className="flex-1 min-w-0">
-            <h2 className="text-base font-bold text-white tracking-tight flex items-center gap-2 truncate">
+            <h2 className="text-base font-bold text-[#212121] tracking-tight flex items-center gap-2 truncate">
               Friday Night Out
-              <ChevronRight size={14} className="text-slate-500 shrink-0" />
+              <span className="material-symbols-outlined text-[18px] text-[#757575]">chevron_right</span>
             </h2>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="flex h-1.5 w-1.5 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#34A853]"></span>
               </span>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">3 {t('meeting_participants')}</p>
+              <p className="text-[11px] font-medium text-[#757575] tracking-tight truncate">3 {t('meeting_participants')}</p>
             </div>
           </div>
-          <div className="flex -space-x-2.5 ml-4">
-            <div className="h-8 w-8 rounded-full ring-2 ring-[#0b0f17] bg-[#256af4] flex items-center justify-center text-[10px] font-bold text-white shadow-lg">S</div>
-            <div className="h-8 w-8 rounded-full ring-2 ring-[#0b0f17] bg-accent-blue flex items-center justify-center text-[10px] font-bold text-white shadow-lg">M</div>
-            <div className="h-8 w-8 rounded-full ring-2 ring-[#0b0f17] bg-slate-800 text-white flex items-center justify-center text-[10px] font-bold shadow-lg">+1</div>
+          <div className="flex -space-x-1.5 ml-4">
+            <div className="h-8 w-8 rounded-full ring-2 ring-white bg-[#4285F4] flex items-center justify-center text-[10px] font-bold text-white shadow-sm">S</div>
+            <div className="h-8 w-8 rounded-full ring-2 ring-white bg-[#34A853] flex items-center justify-center text-[10px] font-bold text-white shadow-sm">M</div>
+            <div className="h-8 w-8 rounded-full ring-2 ring-white bg-[#F5F5F5] border border-[#E0E0E0] text-[#757575] flex items-center justify-center text-[10px] font-bold">+1</div>
           </div>
         </div>
         
         <div className="flex-1 overflow-hidden">
           <ChatInterface 
-            height={keyboardVisible ? (window.innerHeight * 0.6) : chatHeight - 70} 
+            height={keyboardVisible ? (window.innerHeight * 0.6) : chatHeight - 74} 
             onImageClick={setSelectedImage} 
           />
         </div>

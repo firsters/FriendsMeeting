@@ -37,7 +37,7 @@ function App() {
   const handleLogout = () => setCurrentStep('auth-login');
 
   return (
-    <div className="h-full w-full max-w-md mx-auto relative shadow-2xl border-x border-slate-800 bg-slate-900 flex flex-col">
+    <div className="h-full w-full max-w-md mx-auto relative shadow-xl border-x border-[#E0E0E0] bg-white flex flex-col">
       <div className="flex-1 relative overflow-y-auto">
         {currentStep === 'welcome' && <Welcome onGetStarted={handleGetStarted} />}
         

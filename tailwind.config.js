@@ -5,29 +5,31 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#256af4",
-          50: "#f0f9ff",
-          100: "#e0f2fe",
-          200: "#bae6fd",
-          300: "#7dd3fc",
-          400: "#38bdf8",
-          500: "#256af4", // Overwritten with design primary
-          600: "#1d4ed8",
-          700: "#1e40af",
-          800: "#1e3a8a",
-          900: "#1e3a8a",
-          950: "#172554",
+          DEFAULT: "#4285F4",
+          50: "#e8f0fe",
+          100: "#d2e3fc",
+          200: "#aecbfa",
+          300: "#8ab4f8",
+          400: "#669df6",
+          500: "#4285F4",
+          600: "#1a73e8",
+          700: "#1967d2",
+          800: "#185abc",
+          900: "#174ea6",
         },
-        "background-light": "#f5f6f8",
-        "background-dark": "#101622",
-        accent: {
-          pink: "#f472b6",
-          purple: "#a855f7",
-          blue: "#3b82f6",
-        },
+        success: "#34A853",
+        warning: "#F9AB00",
+        error: "#EA4335",
+        "bg-main": "#FFFFFF",
+        "bg-secondary": "#F5F5F5",
+        "text-primary": "#212121",
+        "text-secondary": "#757575",
+        "text-placeholder": "#BDBDBD",
+        "border-light": "#E0E0E0",
       },
       fontFamily: {
-        "display": ["Inter", "sans-serif"]
+        "display": ["Roboto", "Noto Sans KR", "sans-serif"],
+        "sans": ["Roboto", "Noto Sans KR", "sans-serif"]
       },
       animation: {
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
