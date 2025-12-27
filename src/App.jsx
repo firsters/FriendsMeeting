@@ -13,7 +13,7 @@ import './index.css';
 
 function App() {
   const { t } = useTranslation();
-  const [currentStep, setCurrentStep] = useState('welcome');
+  const [currentStep, setCurrentStep] = useState('auth-login');
   const [activeTab, setActiveTab] = useState('map');
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
@@ -33,8 +33,8 @@ function App() {
   const handleGetStarted = () => setCurrentStep('auth-login');
   const handleAuthSuccess = () => setCurrentStep('permissions');
   const handleGrantPermissions = () => setCurrentStep('home');
-  const handleBack = () => setCurrentStep('welcome');
-  const handleLogout = () => setCurrentStep('welcome');
+  const handleBack = () => setCurrentStep('auth-login');
+  const handleLogout = () => setCurrentStep('auth-login');
 
   return (
     <div className="h-full w-full max-w-md mx-auto relative shadow-2xl overflow-hidden border-x border-slate-800 bg-slate-900 flex flex-col">
