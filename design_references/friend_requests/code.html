@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Friend Requests</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5314"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto border-x border-slate-200 dark:border-slate-800 shadow-xl">
+<!-- Header -->
+<header class="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
+<button class="flex items-center justify-center w-10 h-10 -ml-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-900 dark:text-white transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">Friend Requests</h1>
+<button class="flex items-center justify-center w-10 h-10 -mr-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 text-primary transition-colors">
+<span class="material-symbols-outlined">person_add</span>
+</button>
+</header>
+<!-- Segmented Control -->
+<div class="px-4 py-4">
+<div class="flex p-1 rounded-xl bg-slate-200 dark:bg-slate-800 relative">
+<!-- Received Tab -->
+<label class="flex-1 text-center cursor-pointer relative z-10">
+<input checked="" class="peer sr-only" name="request_type" type="radio" value="received"/>
+<div class="py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-slate-900 dark:peer-checked:text-white peer-checked:shadow-sm">
+                        Received <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">3</span>
+</div>
+</label>
+<!-- Sent Tab -->
+<label class="flex-1 text-center cursor-pointer relative z-10">
+<input class="peer sr-only" name="request_type" type="radio" value="sent"/>
+<div class="py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:text-slate-900 dark:peer-checked:text-white peer-checked:shadow-sm">
+                        Sent
+                    </div>
+</label>
+</div>
+</div>
+<!-- Content Area: Received Requests -->
+<div class="flex-1 overflow-y-auto pb-6">
+<!-- Section Title -->
+<div class="px-4 mb-2">
+<h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">New Requests</h3>
+</div>
+<!-- List Item 1 -->
+<div class="group flex flex-col gap-3 p-4 border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="h-12 w-12 shrink-0 rounded-full bg-slate-200 bg-cover bg-center ring-2 ring-white dark:ring-slate-700" data-alt="Portrait of Sarah Jenkins smiling" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC5w09tSv0WBGjyom9nkmvkPhUEBA5HokOIROoE7-vqIlf5OxCNIKC65vLqpVQCdSLaT4vKX-4SesUoT7VE5yT-afuL3chvJUbtb1nt5g1MAQtqxBxjYUrLWfTzsvKD-vrUqdR63qMi1P948Cq-C6bX95ThxatnNlgefQ6F6eoP1uy2XchKw_NVKt-Q3wc0tj8epRNijXb2GvIKn5Es9Dc24wB5enhm1_GmXoMLr6V7XQKZ7ituox5e5ZUyAgvuGVml-SBow4hatv0');"></div>
+<div class="flex flex-col min-w-0">
+<p class="truncate text-base font-semibold text-slate-900 dark:text-white">Sarah Jenkins</p>
+<div class="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400">
+<span class="truncate">@sarah_j</span>
+<span class="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="truncate text-xs">Mutual friend: Alex</span>
+</div>
+</div>
+</div>
+<span class="text-xs text-slate-400 whitespace-nowrap">2m ago</span>
+</div>
+<div class="flex gap-3 pl-[60px]">
+<button class="flex-1 flex items-center justify-center gap-2 h-9 rounded-lg bg-primary hover:bg-blue-600 active:bg-blue-700 text-white text-sm font-medium transition-colors shadow-sm shadow-blue-500/20">
+                        Confirm
+                    </button>
+<button class="flex-1 flex items-center justify-center gap-2 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium transition-colors border border-slate-200 dark:border-slate-700">
+                        Delete
+                    </button>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="group flex flex-col gap-3 p-4 border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="h-12 w-12 shrink-0 rounded-full bg-slate-200 bg-cover bg-center ring-2 ring-white dark:ring-slate-700" data-alt="Portrait of Mike Ross" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAPgPH_0fo6wQU-VhFBJhfhvG9EddV961xUaIrwOj5rs3ZNoe7oi916RPxmTW7jwtnaBgZZSDZHMK-M_-rsaXjlSTR9PLLOJL4c1D4aXnWoM1ZfhtlCegXR6BQNCfkTlZB4j-jMtVlvY5YZ6eqb4pl39JnRgOvM5Wse2i3ROIdQ2kCI6exXtV51N5rgvwkCHDxyGxFzUIMv7n73BMgmqgi949Quo8CmPK7eyCUFz28of7m7eLBdF9-LwTrrsSATVFaXs0oBqct-k9Q');"></div>
+<div class="flex flex-col min-w-0">
+<p class="truncate text-base font-semibold text-slate-900 dark:text-white">Mike Ross</p>
+<p class="truncate text-sm text-slate-500 dark:text-slate-400">@mikey_r</p>
+</div>
+</div>
+<span class="text-xs text-slate-400 whitespace-nowrap">1h ago</span>
+</div>
+<div class="flex gap-3 pl-[60px]">
+<button class="flex-1 flex items-center justify-center gap-2 h-9 rounded-lg bg-primary hover:bg-blue-600 active:bg-blue-700 text-white text-sm font-medium transition-colors shadow-sm shadow-blue-500/20">
+                        Confirm
+                    </button>
+<button class="flex-1 flex items-center justify-center gap-2 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium transition-colors border border-slate-200 dark:border-slate-700">
+                        Delete
+                    </button>
+</div>
+</div>
+<!-- List Item 3 -->
+<div class="group flex flex-col gap-3 p-4 border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="h-12 w-12 shrink-0 rounded-full bg-slate-200 bg-cover bg-center ring-2 ring-white dark:ring-slate-700" data-alt="Portrait of Jessica Pearson looking professional" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBc3gRzPcfi70rTcDDM-t37GQgrFLpA4CNSQPbfqcc8LYXZOalU-hv6jzdxyyFj-xTPAibokAexf7buW7OKZHEnSvvQR9eck-F6m01nc7h85y7g2uSG4K0YenPCSL-UGXplU56t6VZoLiWCUXkcOOiMbXZ_-KpFsiKdsdg_m9Be1Lg0DMZPnF_mwFPkU4KAnARJYk-7pbHexLz3RM8DwtRvlwZiV3dJOd6sAAwfGHcVy6__wNeoJ8mY0g3RwbXJMGVjXHygSCUUNEA');"></div>
+<div class="flex flex-col min-w-0">
+<p class="truncate text-base font-semibold text-slate-900 dark:text-white">Jessica Pearson</p>
+<div class="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400">
+<span class="truncate">@j_pearson</span>
+<span class="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="truncate text-xs text-primary font-medium">From Contacts</span>
+</div>
+</div>
+</div>
+<span class="text-xs text-slate-400 whitespace-nowrap">1d ago</span>
+</div>
+<div class="flex gap-3 pl-[60px]">
+<button class="flex-1 flex items-center justify-center gap-2 h-9 rounded-lg bg-primary hover:bg-blue-600 active:bg-blue-700 text-white text-sm font-medium transition-colors shadow-sm shadow-blue-500/20">
+                        Confirm
+                    </button>
+<button class="flex-1 flex items-center justify-center gap-2 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium transition-colors border border-slate-200 dark:border-slate-700">
+                        Delete
+                    </button>
+</div>
+</div>
+<!-- Separator for Sent (Visual representation of second tab content) -->
+<div class="px-4 mt-8 mb-2 flex items-center justify-between">
+<h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Sent Requests</h3>
+<span class="text-xs text-slate-400">Example view if "Sent" was active</span>
+</div>
+<!-- Sent Item 1 -->
+<div class="flex items-center justify-between p-4 bg-white/5 dark:bg-slate-800/20 rounded-xl mx-4 mb-3 border border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="h-10 w-10 shrink-0 rounded-full bg-slate-200 bg-cover bg-center opacity-80" data-alt="Portrait of David Kim" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9GeI8-if1ijlazeg80ISaHNO3VvBdzKMyecgs-9Ky1AUXMidwrSGBBRwnKk_fw5l-kejYq8pEoVK9qHRbJsXKqXUbDQ4RZX_0mo90mT2DmgevTl1aoEOP0bwgMbStCSdklmKtqSHYl7W2eRs31puMLiODVEwpAB-dU1MiMs8EEH9URQYvQHlEe8Mx_0z7UVTOkl-ooU_p6BWc3gjvwRQ3q12JVHxhQpwPxo51xMm8WhBFzMZFzPEg8FbBwZfl0yikwQfa8ObHUB0');"></div>
+<div class="flex flex-col justify-center min-w-0">
+<p class="truncate text-sm font-semibold text-slate-900 dark:text-white">David Kim</p>
+<p class="truncate text-xs text-slate-500 dark:text-slate-400">Pending • Sent 2 days ago</p>
+</div>
+</div>
+<button class="shrink-0 px-3 h-8 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    Cancel
+                </button>
+</div>
+<!-- Sent Item 2 -->
+<div class="flex items-center justify-between p-4 bg-white/5 dark:bg-slate-800/20 rounded-xl mx-4 mb-3 border border-slate-100 dark:border-slate-800">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="h-10 w-10 shrink-0 rounded-full bg-slate-200 bg-cover bg-center opacity-80" data-alt="Portrait of a man with sunglasses" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAfarCJmx1ic2TBWmCvu6WfqeeShR-5gmGMPz-erB2ktnLjrowsZJzKjrJavmed6HrJuZMhw-Kj1kGkyukYrFAQSI-TviFyNM3AxIR85-JdpPjlkFvFFVZzzb6tZO2_ORooJck61j69Hy2SePvsPhz5tENVN7pDP8t1ULrkK2EK6HKb_jjcDh3_DDbtssJZq_aw-ltMm0P2Qt4SNZX6Xbl7oqG13k7OWdJ36NBmFvT4C3jj2kBbTcBq0GzDIWJS4kyb-rs52jvLqTc');"></div>
+<div class="flex flex-col justify-center min-w-0">
+<p class="truncate text-sm font-semibold text-slate-900 dark:text-white">Marcus Chen</p>
+<p class="truncate text-xs text-slate-500 dark:text-slate-400">Pending • Sent yesterday</p>
+</div>
+</div>
+<button class="shrink-0 px-3 h-8 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    Cancel
+                </button>
+</div>
+</div>
+<!-- Sticky Bottom Action (Optional hint) -->
+<div class="p-4 bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-slate-800">
+<button class="w-full h-12 flex items-center justify-center gap-2 text-primary font-semibold text-sm hover:bg-primary/5 rounded-xl transition-colors">
+<span class="material-symbols-outlined text-xl">share</span>
+                Invite friends via link
+            </button>
+</div>
+</div>
+</body></html>

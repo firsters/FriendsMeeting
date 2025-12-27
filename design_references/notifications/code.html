@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notifications UI</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5313"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1b2434",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-gray-100 dark:bg-gray-900 flex justify-center min-h-screen">
+<div class="relative flex h-full min-h-screen w-full max-w-md flex-col bg-background-light dark:bg-background-dark font-display overflow-x-hidden shadow-2xl">
+<!-- Header -->
+<div class="sticky top-0 z-20 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-4 py-3 pb-2">
+<div class="flex items-center justify-between mb-4 mt-2">
+<h2 class="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-tight">Notifications</h2>
+<button class="text-primary text-sm font-semibold hover:opacity-80 transition-opacity">Mark all read</button>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary px-4 shadow-sm shadow-primary/20 ring-1 ring-inset ring-primary">
+<span class="material-symbols-outlined text-white text-[18px]">notifications</span>
+<span class="text-white text-sm font-medium">All</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-surface-dark px-4 ring-1 ring-inset ring-gray-200 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-[18px]">person_add</span>
+<span class="text-slate-700 dark:text-slate-200 text-sm font-medium">Requests</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-surface-dark px-4 ring-1 ring-inset ring-gray-200 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-[18px]">my_location</span>
+<span class="text-slate-700 dark:text-slate-200 text-sm font-medium">Alerts</span>
+</button>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto">
+<!-- Section: New -->
+<div class="pt-4">
+<h4 class="text-slate-500 dark:text-[#90a4cb] text-xs font-bold uppercase tracking-wider px-5 mb-2">New</h4>
+<!-- Item 1: Friend Request (Actionable) -->
+<div class="group relative flex gap-4 px-4 py-4 hover:bg-gray-50 dark:hover:bg-surface-dark/50 transition-colors cursor-pointer border-b border-gray-100 dark:border-gray-800/50">
+<!-- Unread Indicator -->
+<div class="absolute right-4 top-4 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-white dark:ring-background-dark"></div>
+<div class="bg-center bg-no-repeat bg-cover rounded-full h-12 w-12 shrink-0 ring-2 ring-white dark:ring-gray-700 shadow-sm" data-alt="Portrait of a young man smiling in outdoor lighting" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDShWPddMijFdFZIkNyGwRChkdP2UrRfpG6Kn4sW5sFfOpIlQJxlYHJi7SXCI-wa5NOyp33vhFiufR05kfpSwIhLBizjdqDiM7PF5pERF80WYReb75FsEFeiBU70qgsCPLOF1GYaj5MKMRzkmNSYr7vtwKviUB4bYL--eC3MjQca5s9E6e2XqWj4kXe2cNhXrXuzSQulkN0yo4Hhk5Hu5TJ0iNS2He55-OYyW9MgeE6JlmRWDQcW6A1r96uaurEEusA5pWW48aQ5Gw");'>
+</div>
+<div class="flex flex-1 flex-col justify-start">
+<div class="flex justify-between items-start pr-4">
+<p class="text-slate-900 dark:text-white text-sm font-medium leading-snug">
+<span class="font-bold">Alex Morgan</span> sent you a friend request
+                            </p>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">2 min ago</p>
+<div class="flex gap-2 mt-3">
+<button class="flex-1 max-w-[100px] h-8 items-center justify-center rounded-lg bg-primary text-white text-xs font-semibold shadow-sm hover:bg-blue-600 transition-colors">
+                                Accept
+                            </button>
+<button class="flex-1 max-w-[100px] h-8 items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-800 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors">
+                                Delete
+                            </button>
+</div>
+</div>
+</div>
+<!-- Item 2: Location Alert (Passive) -->
+<div class="group relative flex gap-4 px-4 py-4 hover:bg-gray-50 dark:hover:bg-surface-dark/50 transition-colors cursor-pointer border-b border-gray-100 dark:border-gray-800/50">
+<!-- Unread Indicator -->
+<div class="absolute right-4 top-4 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-white dark:ring-background-dark"></div>
+<div class="flex items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30 shrink-0 h-12 w-12">
+<span class="material-symbols-outlined text-green-600 dark:text-green-400 text-[24px]">location_on</span>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-slate-900 dark:text-white text-sm font-medium leading-snug pr-4">
+<span class="font-bold">Sarah</span> arrived at <span class="text-primary font-semibold">Central Park</span>
+</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">12 min ago</p>
+</div>
+<div class="flex items-center self-center">
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-600 text-[20px]">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Section: Earlier -->
+<div class="pt-6">
+<h4 class="text-slate-500 dark:text-[#90a4cb] text-xs font-bold uppercase tracking-wider px-5 mb-2">Earlier</h4>
+<!-- Item 3: Chat Message -->
+<div class="group flex gap-4 px-4 py-4 hover:bg-gray-50 dark:hover:bg-surface-dark/50 transition-colors cursor-pointer border-b border-gray-100 dark:border-gray-800/50">
+<div class="bg-center bg-no-repeat bg-cover rounded-full h-12 w-12 shrink-0 ring-2 ring-white dark:ring-gray-700 shadow-sm" data-alt="Portrait of a woman with curly hair laughing" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDT2NcX51WmehIwk0aHSSF8Bp8GDY4VUB2ZFf93cG7vbNiXEFLFeqi3xTGxkkma4D4Y6kRavOj6Dxqk4tQHAShWzXXmWzcODpcLuHXnSKyk9KprJ755YwJiib1-AaiN_NVBa_rRnvsYKyJFlJo8LvE2ZDl0ZRjapbyy3KHLB0Yrc_7Ae8q2KknzUNeaTRY6fQoh6C7rBBW5FsfkmDxSS5QEXTro9vrupGRkHnckNi5-Yqnhag0mIQrSyyrdzj5UPW-uMmkC8_M6ywc");'>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<div class="flex justify-between w-full">
+<p class="text-slate-900 dark:text-white text-sm font-bold">Emily Chen</p>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-snug line-clamp-1 mt-0.5">
+                            Hey! Are we still meeting at the cafe later?
+                        </p>
+<p class="text-slate-400 dark:text-slate-500 text-xs mt-1">2 hours ago</p>
+</div>
+<div class="flex items-center self-center">
+<div class="h-2 w-2 rounded-full bg-transparent"></div> <!-- Placeholder for alignment -->
+</div>
+</div>
+<!-- Item 4: Meeting Invite -->
+<div class="group flex gap-4 px-4 py-4 hover:bg-gray-50 dark:hover:bg-surface-dark/50 transition-colors cursor-pointer border-b border-gray-100 dark:border-gray-800/50">
+<div class="flex items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30 shrink-0 h-12 w-12">
+<span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-[24px]">event</span>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-slate-900 dark:text-white text-sm font-medium leading-snug">
+<span class="font-bold">Team Coffee</span> invited by John
+                        </p>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Yesterday at 3:00 PM</p>
+</div>
+<div class="shrink-0 self-center">
+<button class="flex px-3 h-8 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 text-primary text-xs font-semibold hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+                            Join
+                        </button>
+</div>
+</div>
+<!-- Item 5: System Alert -->
+<div class="group flex gap-4 px-4 py-4 hover:bg-gray-50 dark:hover:bg-surface-dark/50 transition-colors cursor-pointer border-b border-gray-100 dark:border-gray-800/50">
+<div class="flex items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30 shrink-0 h-12 w-12">
+<span class="material-symbols-outlined text-orange-600 dark:text-orange-400 text-[24px]">share_location</span>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-slate-900 dark:text-white text-sm font-medium leading-snug">
+                            You started sharing live location with <span class="font-bold">Family Group</span>
+</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Yesterday at 10:00 AM</p>
+</div>
+</div>
+<!-- Item 6: Old Chat -->
+<div class="group flex gap-4 px-4 py-4 hover:bg-gray-50 dark:hover:bg-surface-dark/50 transition-colors cursor-pointer">
+<div class="bg-center bg-no-repeat bg-cover rounded-full h-12 w-12 shrink-0 ring-2 ring-white dark:ring-gray-700 shadow-sm" data-alt="Portrait of a man with glasses looking thoughtful" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuChO3BeoGFAM-C2Nzt4M0ZbBSeJMa1GZIQEtt8ESScglW_AN86COnMkExg-5qCMRqK1W1mQR0mom8ekwYfmQApOUE2OcgWgHHsrI8QPzGfC_2rtkF8hysN-5wZRkkHUhtXB8P2zGpUEdxik8LY6Jk4R4HEuNgVWke7BFR-pPd40mmlZGiXNW9yrWp4R9vL3AuXUxaOX0knGADoT77thhgZYrSw-OenIjFsvmxnF8YlpQ1sO0XAUmfCFf4s4cAsFfXJfw0MUZp9mn1I");'>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<div class="flex justify-between w-full">
+<p class="text-slate-900 dark:text-white text-sm font-bold">David Kim</p>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-snug line-clamp-1 mt-0.5">
+                            Found the place! See you in 5.
+                        </p>
+<p class="text-slate-400 dark:text-slate-500 text-xs mt-1">2 days ago</p>
+</div>
+</div>
+</div>
+<!-- Empty State / Bottom Spacer -->
+<div class="flex flex-col items-center justify-center py-12 px-4 opacity-50">
+<span class="material-symbols-outlined text-slate-300 dark:text-slate-700 text-4xl mb-2">check_circle</span>
+<p class="text-slate-400 dark:text-slate-600 text-sm font-medium text-center">You're all caught up!</p>
+</div>
+<div class="h-10"></div>
+</div>
+</div>
+</body></html>

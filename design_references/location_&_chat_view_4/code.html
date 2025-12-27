@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Location &amp; Chat View</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5322"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1e293b",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        /* Custom scrollbar for cleaner look in chat */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display h-screen w-full flex flex-col overflow-hidden">
+<!-- TOP SECTION: Interactive Map (approx 55% height) -->
+<div class="relative h-[55%] w-full bg-slate-800 shrink-0 group/map">
+<!-- Map Background Image -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Dark aesthetic city street map view from above" data-location="Seattle, WA" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDYzKrr_kZvAA_lrM4Ix4-Pspna4q3_HD9Dh8UoI_ehdyYztvXqW0p_mS3SmRoNcDW-tTf0mzD_azXFIJHoi6_jBCHCxZpIO36sONbGlPqn2-G_HBV4vljGqBKlw8mq_4Q-xVIpK24JJfKa1ruVf6t7nL4JDYps4z7Dz0TQj8yFysbVj-Eu8ZNJaB16RcZjrcl5gVlG4riBjF1bS4B7UxARPO_C0sfF1iPG2yaZwwpZZqFY8Bu3uVZieHbJloXPpFCDvNQQx8h_U-s');">
+</div>
+<!-- Gradient Overlay for Contrast -->
+<div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/20 pointer-events-none"></div>
+<!-- Top Bar Overlay -->
+<div class="absolute top-0 left-0 right-0 p-5 pt-14 flex justify-between items-start z-30">
+<button class="flex items-center justify-center w-10 h-10 bg-surface-dark/60 backdrop-blur-md rounded-full text-white border border-white/10 shadow-lg hover:bg-surface-dark/80 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">menu</span>
+</button>
+<button class="flex items-center justify-center w-10 h-10 bg-surface-dark/60 backdrop-blur-md rounded-full text-white border border-white/10 shadow-lg hover:bg-surface-dark/80 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">settings</span>
+</button>
+</div>
+<!-- Markers Container -->
+<div class="absolute inset-0 z-10 pointer-events-none">
+<!-- Friend Marker 1 (Top Left) -->
+<div class="absolute top-[35%] left-[25%] flex flex-col items-center gap-1.5 transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer group/marker">
+<div class="relative">
+<div class="h-10 w-10 rounded-full border-[3px] border-white dark:border-surface-dark shadow-lg bg-cover bg-center transition-transform group-hover/marker:scale-110" data-alt="Portrait of a smiling woman" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBHyj22f8jSBeSjQHSeYsB7DUG08XEuo-nuRCIg3kSmIcc5jRiv423_SvvpAgCUNkgex3zcoTD5HUZpGKTJ0u7J7Dw307GSimRvLHtH41AasU-Wc8UO_YTp_v0XHOCgxDEG_HDBR2WmMqvc7wvJfSCbIXhOnnnwgX_XMn52GfPYmG43j7YsfTiUUEJ1VACTGD6sMneZHZA8vYzGzITYyRtZdIKjQjFHiMdu6k0kxUArhHR1B-IQlh0A-ttkZ4qm9OP4_gB7hQmMPU8')"></div>
+<div class="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-white dark:border-surface-dark"></div>
+</div>
+<div class="bg-white/90 dark:bg-surface-dark/90 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+<p class="text-[11px] font-bold text-slate-800 dark:text-white leading-none">Sarah</p>
+</div>
+</div>
+<!-- Friend Marker 2 (Top Right) -->
+<div class="absolute top-[28%] right-[20%] flex flex-col items-center gap-1.5 transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer group/marker">
+<div class="relative">
+<div class="h-10 w-10 rounded-full border-[3px] border-white dark:border-surface-dark shadow-lg bg-cover bg-center transition-transform group-hover/marker:scale-110" data-alt="Portrait of a man with glasses" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA-P8UtSxaphnmxIMHF4Gd7YYRjl4TLQVOGLF3YYJBdSclPLMs8G841r8QQ0_Pg8fO158G9Yx4__eCT5JaVSbwNbM3uIl7pHZXbNKFQbmtf6_9yi6RI1TIdBcQ_9mkFH7P5plfjHwHRlTTVdxDPwV_0SrQH1Svo2w9SHkZZaDZyk69XqYKtNM1HC4hud6RI8ozR_qbUE2WJzrvbYRkc0bViGk8dnaW9jIKi6YlyYvrXeJdroqpzetnHeQGDccaeOhhbU0aY3tId2Ls')"></div>
+<div class="absolute -bottom-1 -right-1 h-4 w-4 bg-yellow-500 rounded-full border-2 border-white dark:border-surface-dark"></div>
+</div>
+<div class="bg-white/90 dark:bg-surface-dark/90 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+<p class="text-[11px] font-bold text-slate-800 dark:text-white leading-none">Mike</p>
+</div>
+</div>
+<!-- User Location Pulse (Center/Bottom) -->
+<div class="absolute top-[60%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+<!-- Outer Pulse Ring -->
+<div class="absolute w-24 h-24 bg-primary/20 rounded-full animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+<!-- Inner Glow Ring -->
+<div class="absolute w-12 h-12 bg-primary/30 rounded-full blur-[2px]"></div>
+<!-- Core Dot -->
+<div class="relative h-5 w-5 bg-primary rounded-full border-[3px] border-white dark:border-surface-dark shadow-[0_0_15px_rgba(37,106,244,0.8)] z-20"></div>
+<!-- Tooltip -->
+<div class="absolute -top-10 bg-primary text-white px-2 py-1 rounded-md shadow-lg text-[10px] font-bold whitespace-nowrap">
+                    You
+                    <div class="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-primary rotate-45"></div>
+</div>
+</div>
+</div>
+<!-- FAB Controls (Overlay) -->
+<div class="absolute bottom-8 right-5 flex flex-col gap-3 z-20">
+<button class="h-11 w-11 bg-surface-light dark:bg-surface-dark text-slate-600 dark:text-slate-200 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="h-11 w-11 bg-primary text-white rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+</div>
+<!-- BOTTOM SECTION: Chat Interface -->
+<!-- Used negative margin and rounded top to create the "sheet" effect over the map -->
+<div class="flex-1 flex flex-col bg-background-light dark:bg-background-dark relative -mt-6 rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.3)] z-40 overflow-hidden border-t border-white/5">
+<!-- Draggable Handle Area -->
+<div class="w-full flex justify-center pt-3 pb-2 cursor-grab bg-background-light dark:bg-background-dark shrink-0">
+<div class="w-10 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full opacity-60"></div>
+</div>
+<!-- Chat Header -->
+<div class="px-5 pb-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-background-light dark:bg-background-dark shrink-0">
+<div>
+<h2 class="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Friday Night Out</h2>
+<div class="flex items-center gap-1.5 mt-0.5">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<p class="text-xs font-medium text-gray-500 dark:text-gray-400">3 friends online</p>
+</div>
+</div>
+<!-- Avatars overlap -->
+<div class="flex -space-x-3">
+<div class="h-9 w-9 rounded-full ring-2 ring-white dark:ring-background-dark bg-cover bg-center" data-alt="Small avatar of Sarah" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbNqgHWlC5Iw2zkZfZ5SyXDDeTaS7f_0b4DzTsgKvk-mdvRpRx8ZZQglOeMHIDuM2ahlw2pbaXWFm1iTT9tHGS-1TdR3-JtnYfZJwjs58xlJHQNeSI0r_2p_f9Ds7NzFvGEy2Z9RGW7TwDbgn4qUYVfycq-nljFWISkeNU-xi8-g2pzYiABxN8vF9IOBx-gdIvlHXJFfOt-PL9apZ3M-p19roB_rnIel5eAuLhi_sWZfEd-E_-013xgHs4tn7hILb8ke3TIEwZBZs')"></div>
+<div class="h-9 w-9 rounded-full ring-2 ring-white dark:ring-background-dark bg-cover bg-center" data-alt="Small avatar of Mike" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBXtcw1iJnku2Q9ssVgMC8EqpnD8JBYR5xKhIuTPcnkla94r4Alslpfh-mY_nYAT84aDuqggm4Xaeb7x9JmGA1bquB2KBV6Ix28D51HfRRz-9_U3nSQ0kmOMsw_rV5KE6F4z7DhWhrIfAJ9OXtTby5FL_8cuV4CpL5Q79bLibOacxT1FgVL0aX4UcjHLOu31yT5NdrZakOhokL6reBOOjICGVQnLI8aH4dsjUbuB2vpJBrxseh_IpkBG-BpaXtrAy7V93T2BwJPG0M')"></div>
+<div class="h-9 w-9 rounded-full ring-2 ring-white dark:ring-background-dark bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300">+1</div>
+</div>
+</div>
+<!-- Messages List -->
+<div class="flex-1 overflow-y-auto p-5 space-y-5 bg-background-light dark:bg-background-dark scrollbar-hide">
+<!-- Date Separator -->
+<div class="flex justify-center">
+<span class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest bg-gray-200 dark:bg-gray-800/50 px-2 py-1 rounded">Today</span>
+</div>
+<!-- Friend Message 1 -->
+<div class="flex items-end gap-3 group">
+<div class="h-8 w-8 rounded-full bg-cover bg-center shrink-0 shadow-sm" data-alt="Avatar of Sarah" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBHuPAxsFeGwI7jDzCLgdQhUpK14n4e-S8rMW7mTVb3BapGoaOL2A3JGIe4IsCga5LG89txDgyrsWFkaagtCi7x8Hnh29WV-GgBJVSReKQnLiokmfzks1Jq6GXuZdipzxq4hhL1bG78h5dsZ2vMq8_4jDa8X3o0mIfhWnMPNXdfvm3-KFEK9Kj9t0hjDlFhsPMOpdQ3e3DhpISr6X-2vtZwAX7BNWCp-rxcRENd7TspTX2enAqvbtojeZzDtAs2h1_OldhGtExrdgU')"></div>
+<div class="flex flex-col items-start gap-1 max-w-[75%]">
+<span class="text-[11px] font-medium text-gray-500 dark:text-gray-400 ml-1">Sarah</span>
+<div class="bg-white dark:bg-surface-dark p-3.5 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-gray-800">
+<p class="text-sm text-slate-700 dark:text-gray-200 leading-relaxed">Hey! I just parked near the corner. Anyone nearby? 🚗</p>
+</div>
+<span class="text-[10px] text-gray-400 ml-1 opacity-0 group-hover:opacity-100 transition-opacity">10:02 AM</span>
+</div>
+</div>
+<!-- Friend Message 2 -->
+<div class="flex items-end gap-3 group">
+<div class="h-8 w-8 rounded-full bg-cover bg-center shrink-0 shadow-sm" data-alt="Avatar of Mike" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD0DlK_DRxfuTWCeBuyTfm3gGbrjnfQQHHg2sTyt41x9GJV-yPMSi37p_FmQprs389YiaWFtPNuaExv-2ELr2irJ1iQUOAxXnC8159FWirZtnh9dUAU7pFZRO-v8-a4-pOYkhq6BOg0kZb_EqvTXIaZmGfRKVEiyac03T7LzEQ9-uxC-YKqs6VAT6xG79zV6_aP0V3QBdLS0YD1orFeFhfJpn65oAiBCLc15JYNknTGngDqok6la5F7KlF1atQLmKCGAwfTjDEDFCc')"></div>
+<div class="flex flex-col items-start gap-1 max-w-[75%]">
+<span class="text-[11px] font-medium text-gray-500 dark:text-gray-400 ml-1">Mike</span>
+<div class="bg-white dark:bg-surface-dark p-3.5 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-gray-800">
+<p class="text-sm text-slate-700 dark:text-gray-200 leading-relaxed">Traffic is heavy on 5th. Might be 5 mins late.</p>
+</div>
+<span class="text-[10px] text-gray-400 ml-1 opacity-0 group-hover:opacity-100 transition-opacity">10:04 AM</span>
+</div>
+</div>
+<!-- User Message (Self) -->
+<div class="flex items-end gap-3 justify-end group">
+<div class="flex flex-col items-end gap-1 max-w-[75%]">
+<div class="bg-primary p-3.5 rounded-2xl rounded-tr-none shadow-md shadow-blue-500/20 text-white">
+<p class="text-sm leading-relaxed">No worries! I'm walking over now. See you soon.</p>
+</div>
+<div class="flex items-center gap-1 mr-1">
+<span class="text-[10px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">10:05 AM</span>
+<span class="material-symbols-outlined text-[12px] text-primary">done_all</span>
+</div>
+</div>
+</div>
+<!-- Friend Message 3 (Typing Indicator) -->
+<div class="flex items-end gap-3">
+<div class="h-8 w-8 rounded-full bg-cover bg-center shrink-0 shadow-sm" data-alt="Avatar of Sarah" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJrQBlcz638D0T_G-kzisdrGq1GzPzzaulNGaWK2qTp9JoIBacutparcORJeNWzp83zutu5L6nNdK1NeZCU12mNKdSdA-Em_qGnFfx2Uvs9OIb7-_Vp7yEygmTZZK02X7SWH5OEX6GFxa2c1R5t4DalwURoyOAJKWuwnpaRr3i4WI0VsZRMdk1id_pMfDGph7h8omGAPMcuc-krH1cdHyux8KxrnRclY_KPzR3mNZq0E5JbEYuumDhMaGEmETaxzimfi_RxbA6peA')"></div>
+<div class="bg-white dark:bg-surface-dark px-4 py-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-1">
+<div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+<div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-75"></div>
+<div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></div>
+</div>
+</div>
+<!-- Spacer for bottom input visibility -->
+<div class="h-2"></div>
+</div>
+<!-- Input Area (Sticky Bottom) -->
+<div class="p-4 bg-white dark:bg-surface-dark border-t border-gray-200 dark:border-gray-800 pb-8 shrink-0">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center h-10 w-10 text-gray-400 hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<div class="flex-1 relative">
+<input class="w-full bg-gray-100 dark:bg-background-dark text-slate-900 dark:text-white rounded-full py-3 px-5 pr-10 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:bg-white dark:focus:bg-black transition-all border-none placeholder-gray-500 text-[15px]" placeholder="Message..." type="text"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+<span class="material-symbols-outlined" style="font-size: 20px;">sentiment_satisfied</span>
+</button>
+</div>
+<button class="h-11 w-11 bg-primary rounded-full text-white flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-size: 22px;">send</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

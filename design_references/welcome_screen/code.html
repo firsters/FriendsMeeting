@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Welcome - Friend Location &amp; Chat</title>
+<!-- Fonts -->
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5325"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- Background Decor elements for visual interest -->
+<div class="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none"></div>
+<!-- Header / Logo Area -->
+<div class="flex items-center justify-center pt-8 pb-4 z-10">
+<div class="flex items-center gap-2">
+<div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-[20px]">location_on</span>
+</div>
+<span class="text-lg font-bold tracking-tight text-gray-900 dark:text-white">LocateMate</span>
+</div>
+</div>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
+<!-- Hero Visual -->
+<div class="w-full relative aspect-[4/5] max-h-[400px] mb-8 rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
+<!-- Main Image -->
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Group of friends looking at a phone together in a city setting at night with neon lights" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCmqaxIuUuzz4qu0MVN0KTF4kkJVxbhFe8gjD01SAlzoC9mUOSEnEUlYHpUCpSPj3pDGGGlgQ9jowJ8oCNu2QOdjbgdxWWUUQvADv8TkAZZAL8NoaYi_58HeJ7Af15dz9uZU9Mj79BclC77AfbEqtLP_fecgr55QkUhB0bmYwZuXllpF9dcZ4YpTYgQ8PrYxSBSzp2npJEh0R60iv-Y_c0qDwwGrFYJMuBZWULDoeAB7ZXQr77LQMnJUKTIBiZFy6xL5OyXWqllBbo");'>
+</div>
+<!-- Overlay Gradient -->
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 via-transparent to-transparent"></div>
+<!-- Floating UI Elements (Decorative) -->
+<div class="absolute top-6 right-6">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-lg">
+<div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+<span class="text-xs font-medium text-white">Online now</span>
+</div>
+</div>
+<div class="absolute bottom-6 left-6 right-6">
+<div class="flex items-center gap-3 p-3 bg-background-dark/60 backdrop-blur-md rounded-xl border border-white/10 shadow-lg transform translate-y-2 opacity-90">
+<div class="w-10 h-10 rounded-full bg-cover bg-center" data-alt="Avatar of a young man smiling" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBPpjZSNVkegX_EE2pAKbNb9uycXx2SnFIoBMqrwV7wzpQ6xlJD30RQdK_SJkp8e0UEln2YR6ZXkAaz8oVRoMA9ZwNVKAitlz9fzuFa7JDFxNkQquOFt8XYrLP3NjHRuwXd0hiDZ9mVfMSgihD5895OQIzLq_XXaNzcXiv79rpgSq8DOIlXptJoUJpKRGMzhD_-FxlRw3W99ygfPGui2G0WUc3-dC15Wd66woosYmb1Oj5DQBji8ck3LNSFgwMGXyY662AorkjM5RE");'></div>
+<div class="flex-1">
+<p class="text-xs text-gray-300">New message from Alex</p>
+<p class="text-sm font-medium text-white">"Hey! I'm at the cafe 📍"</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination Dots (Static) -->
+<div class="flex gap-2 mb-6">
+<div class="w-6 h-1.5 rounded-full bg-primary"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+</div>
+<!-- Text Content -->
+<div class="text-center space-y-3 mb-4">
+<h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white leading-tight">
+                    Stay Close, <br/>Wherever You Are
+                </h1>
+<p class="text-base text-gray-500 dark:text-gray-400 font-normal leading-relaxed max-w-[280px] mx-auto">
+                    Share your real-time location with friends and coordinate meetups instantly with integrated chat.
+                </p>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="w-full px-6 pb-8 pt-2 z-10">
+<button class="w-full flex items-center justify-center gap-2 h-14 rounded-xl bg-primary hover:bg-primary/90 active:scale-[0.98] transition-all text-white font-bold text-base shadow-lg shadow-primary/25 mb-4">
+<span>Get Started</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<div class="flex justify-center items-center gap-1 text-sm">
+<span class="text-gray-500 dark:text-gray-400">Already have an account?</span>
+<a class="text-primary font-semibold hover:text-primary/80 transition-colors" href="#">Log in</a>
+</div>
+<!-- Safe Area Spacer for iOS Home Indicator -->
+<div class="h-2"></div>
+</div>
+</div>
+</body></html>

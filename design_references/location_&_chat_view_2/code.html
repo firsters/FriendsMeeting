@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Location &amp; Chat View</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5309"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1e293b",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display h-screen w-full flex flex-col overflow-hidden selection:bg-primary/30">
+<div class="relative h-[55%] w-full bg-slate-800 shrink-0 group/map overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center opacity-80" data-alt="Dark aesthetic city street map view from above" data-location="Seattle, WA" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDYzKrr_kZvAA_lrM4Ix4-Pspna4q3_HD9Dh8UoI_ehdyYztvXqW0p_mS3SmRoNcDW-tTf0mzD_azXFIJHoi6_jBCHCxZpIO36sONbGlPqn2-G_HBV4vljGqBKlw8mq_4Q-xVIpK24JJfKa1ruVf6t7nL4JDYps4z7Dz0TQj8yFysbVj-Eu8ZNJaB16RcZjrcl5gVlG4riBjF1bS4B7UxARPO_C0sfF1iPG2yaZwwpZZqFY8Bu3uVZieHbJloXPpFCDvNQQx8h_U-s');">
+</div>
+<div class="absolute inset-0 pointer-events-none opacity-10" style="background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 40px 40px;"></div>
+<div class="absolute inset-0 pointer-events-none border-[20px] border-black/10 rounded-[3rem]"></div>
+<div class="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/30 pointer-events-none"></div>
+<div class="absolute top-0 left-0 right-0 p-5 pt-14 flex justify-between items-start z-30">
+<button class="flex items-center justify-center w-11 h-11 bg-surface-dark/40 backdrop-blur-md rounded-full text-white border border-white/10 shadow-lg hover:bg-surface-dark/60 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 22px;">menu</span>
+</button>
+<div class="bg-surface-dark/60 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 flex items-center gap-2 shadow-lg">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-xs font-semibold tracking-wide text-white/90 uppercase">Live Radar</span>
+</div>
+<button class="flex items-center justify-center w-11 h-11 bg-surface-dark/40 backdrop-blur-md rounded-full text-white border border-white/10 shadow-lg hover:bg-surface-dark/60 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 22px;">settings</span>
+</button>
+</div>
+<div class="absolute inset-0 z-10 pointer-events-none">
+<div class="absolute top-[45%] right-4 transform -translate-y-1/2 flex items-center gap-3 p-1.5 pl-4 pr-1.5 bg-slate-900/80 backdrop-blur-xl rounded-full border border-white/20 shadow-[0_4px_25px_rgba(0,0,0,0.6),0_0_15px_rgba(37,106,244,0.3)] pointer-events-auto cursor-pointer hover:bg-slate-800 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-105 hover:pr-3 group z-40">
+<div class="flex flex-col items-end gap-0.5">
+<span class="text-[12px] font-bold text-white leading-none tracking-wide group-hover:text-primary transition-colors">Jess</span>
+<span class="text-[10px] font-medium text-blue-200/70 leading-none">1.2km</span>
+</div>
+<div class="relative">
+<div class="w-11 h-11 rounded-full border-[3px] border-primary shadow-[0_0_15px_rgba(37,106,244,0.7)] bg-cover bg-center ring-2 ring-black/40" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbNqgHWlC5Iw2zkZfZ5SyXDDeTaS7f_0b4DzTsgKvk-mdvRpRx8ZZQglOeMHIDuM2ahlw2pbaXWFm1iTT9tHGS-1TdR3-JtnYfZJwjs58xlJHQNeSI0r_2p_f9Ds7NzFvGEy2Z9RGW7TwDbgn4qUYVfycq-nljFWISkeNU-xi8-g2pzYiABxN8vF9IOBx-gdIvlHXJFfOt-PL9apZ3M-p19roB_rnIel5eAuLhi_sWZfEd-E_-013xgHs4tn7hILb8ke3TIEwZBZs')"></div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-900 z-10"></div>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-blue-600/50 relative overflow-hidden group-hover:bg-blue-600 transition-colors">
+<div class="absolute inset-0 bg-white/30 rounded-full animate-ping opacity-20"></div>
+<span class="material-symbols-outlined text-[20px] font-bold animate-pulse">chevron_right</span>
+</div>
+</div>
+<div class="absolute top-28 left-[60%] transform -translate-x-1/2 flex flex-col items-center gap-2 p-1.5 pb-2.5 bg-slate-900/80 backdrop-blur-xl rounded-full border border-white/20 shadow-[0_4px_25px_rgba(0,0,0,0.6),0_0_15px_rgba(16,185,129,0.3)] pointer-events-auto cursor-pointer z-40 hover:bg-slate-800 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 group">
+<div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/50 relative overflow-hidden group-hover:bg-emerald-400 transition-colors">
+<div class="absolute inset-0 bg-white/30 rounded-full animate-ping opacity-20"></div>
+<span class="material-symbols-outlined text-[20px] font-bold rotate-[-90deg] animate-pulse">chevron_right</span>
+</div>
+<div class="relative">
+<div class="w-11 h-11 rounded-full border-[3px] border-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.6)] bg-cover bg-center ring-2 ring-black/40" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBXtcw1iJnku2Q9ssVgMC8EqpnD8JBYR5xKhIuTPcnkla94r4Alslpfh-mY_nYAT84aDuqggm4Xaeb7x9JmGA1bquB2KBV6Ix28D51HfRRz-9_U3nSQ0kmOMsw_rV5KE6F4z7DhWhrIfAJ9OXtTby5FL_8cuV4CpL5Q79bLibOacxT1FgVL0aX4UcjHLOu31yT5NdrZakOhokL6reBOOjICGVQnLI8aH4dsjUbuB2vpJBrxseh_IpkBG-BpaXtrAy7V93T2BwJPG0M')"></div>
+</div>
+<div class="flex flex-col items-center gap-0.5 px-2">
+<span class="text-[12px] font-bold text-white leading-none tracking-wide group-hover:text-emerald-400 transition-colors">Tom</span>
+<span class="text-[10px] font-medium text-emerald-200/70 leading-none">800m</span>
+</div>
+</div>
+<div class="absolute top-[35%] left-[25%] flex flex-col items-center gap-2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer group/marker hover:z-50 transition-all duration-500 ease-out">
+<div class="relative">
+<div class="h-14 w-14 rounded-full border-[3px] border-white dark:border-surface-dark shadow-[0_8px_25px_rgba(0,0,0,0.3)] bg-cover bg-center transition-transform duration-300 group-hover/marker:scale-110 group-hover/marker:rotate-3" data-alt="Portrait of a smiling woman" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBHyj22f8jSBeSjQHSeYsB7DUG08XEuo-nuRCIg3kSmIcc5jRiv423_SvvpAgCUNkgex3zcoTD5HUZpGKTJ0u7J7Dw307GSimRvLHtH41AasU-Wc8UO_YTp_v0XHOCgxDEG_HDBR2WmMqvc7wvJfSCbIXhOnnnwgX_XMn52GfPYmG43j7YsfTiUUEJ1VACTGD6sMneZHZA8vYzGzITYyRtZdIKjQjFHiMdu6k0kxUArhHR1B-IQlh0A-ttkZ4qm9OP4_gB7hQmMPU8')"></div>
+<div class="absolute -bottom-1 -right-1 h-5 w-5 bg-green-500 rounded-full border-[3px] border-white dark:border-surface-dark shadow-sm"></div>
+</div>
+<div class="bg-surface-dark/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-white/10 transform transition-all group-hover/marker:-translate-y-1">
+<p class="text-[11px] font-bold text-white leading-none tracking-wide">Sarah</p>
+</div>
+</div>
+<div class="absolute top-[28%] right-[20%] flex flex-col items-center gap-2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer group/marker hover:z-50 transition-all duration-500 ease-out">
+<div class="relative">
+<div class="h-14 w-14 rounded-full border-[3px] border-white dark:border-surface-dark shadow-[0_8px_25px_rgba(0,0,0,0.3)] bg-cover bg-center transition-transform duration-300 group-hover/marker:scale-110 group-hover/marker:-rotate-3" data-alt="Portrait of a man with glasses" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA-P8UtSxaphnmxIMHF4Gd7YYRjl4TLQVOGLF3YYJBdSclPLMs8G841r8QQ0_Pg8fO158G9Yx4__eCT5JaVSbwNbM3uIl7pHZXbNKFQbmtf6_9yi6RI1TIdBcQ_9mkFH7P5plfjHwHRlTTVdxDPwV_0SrQH1Svo2w9SHkZZaDZyk69XqYKtNM1HC4hud6RI8ozR_qbUE2WJzrvbYRkc0bViGk8dnaW9jIKi6YlyYvrXeJdroqpzetnHeQGDccaeOhhbU0aY3tId2Ls')"></div>
+<div class="absolute -bottom-1 -right-1 h-5 w-5 bg-yellow-500 rounded-full border-[3px] border-white dark:border-surface-dark shadow-sm"></div>
+</div>
+<div class="bg-surface-dark/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-white/10 transform transition-all group-hover/marker:-translate-y-1">
+<p class="text-[11px] font-bold text-white leading-none tracking-wide">Mike</p>
+</div>
+</div>
+<div class="absolute top-[60%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+<div class="absolute w-64 h-64 border border-primary/20 rounded-full animate-[spin_4s_linear_infinite] pointer-events-none" style="background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 270deg, rgba(37, 106, 244, 0.2) 360deg);"></div>
+<div class="absolute w-24 h-24 bg-primary/20 rounded-full animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+<div class="absolute w-12 h-12 bg-primary/30 rounded-full blur-[2px]"></div>
+<div class="relative h-6 w-6 bg-primary rounded-full border-[3px] border-white dark:border-surface-dark shadow-[0_0_20px_rgba(37,106,244,0.9)] z-20 ring-4 ring-primary/20"></div>
+<div class="absolute -top-12 bg-surface-dark text-white px-3 py-1.5 rounded-lg shadow-xl text-[10px] font-bold whitespace-nowrap border border-white/10 tracking-wider uppercase">
+                    You
+                    <div class="absolute bottom-[-5px] left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-surface-dark rotate-45 border-r border-b border-white/10"></div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-8 right-5 flex flex-col gap-3 z-20">
+<button class="h-12 w-12 bg-surface-dark/90 backdrop-blur text-white rounded-2xl shadow-lg border border-white/10 flex items-center justify-center active:scale-95 transition-transform group">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">add</span>
+</button>
+<button class="h-12 w-12 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30 flex items-center justify-center active:scale-95 transition-transform group">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">my_location</span>
+</button>
+</div>
+</div>
+<div class="flex-1 flex flex-col bg-background-light dark:bg-background-dark relative -mt-6 rounded-t-[2rem] shadow-[0_-8px_40px_rgba(0,0,0,0.4)] z-40 overflow-hidden border-t border-white/10 ring-1 ring-white/5">
+<div class="w-full flex justify-center py-3 cursor-grab bg-background-light dark:bg-surface-dark/50 shrink-0 hover:bg-gray-50 dark:hover:bg-surface-dark transition-colors">
+<div class="flex flex-col gap-1 items-center opacity-40">
+<div class="w-12 h-1 bg-slate-400 rounded-full"></div>
+</div>
+</div>
+<div class="px-6 py-2 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-background-light dark:bg-background-dark shrink-0">
+<div>
+<h2 class="text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                    Friday Night Out
+                    <span class="material-symbols-outlined text-gray-400 text-sm">chevron_right</span>
+</h2>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+</span>
+<p class="text-[11px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">3 friends online</p>
+</div>
+</div>
+<div class="flex -space-x-2.5">
+<div class="h-8 w-8 rounded-full ring-2 ring-white dark:ring-background-dark bg-cover bg-center grayscale-[20%]" data-alt="Small avatar of Sarah" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbNqgHWlC5Iw2zkZfZ5SyXDDeTaS7f_0b4DzTsgKvk-mdvRpRx8ZZQglOeMHIDuM2ahlw2pbaXWFm1iTT9tHGS-1TdR3-JtnYfZJwjs58xlJHQNeSI0r_2p_f9Ds7NzFvGEy2Z9RGW7TwDbgn4qUYVfycq-nljFWISkeNU-xi8-g2pzYiABxN8vF9IOBx-gdIvlHXJFfOt-PL9apZ3M-p19roB_rnIel5eAuLhi_sWZfEd-E_-013xgHs4tn7hILb8ke3TIEwZBZs')"></div>
+<div class="h-8 w-8 rounded-full ring-2 ring-white dark:ring-background-dark bg-cover bg-center grayscale-[20%]" data-alt="Small avatar of Mike" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBXtcw1iJnku2Q9ssVgMC8EqpnD8JBYR5xKhIuTPcnkla94r4Alslpfh-mY_nYAT84aDuqggm4Xaeb7x9JmGA1bquB2KBV6Ix28D51HfRRz-9_U3nSQ0kmOMsw_rV5KE6F4z7DhWhrIfAJ9OXtTby5FL_8cuV4CpL5Q79bLibOacxT1FgVL0aX4UcjHLOu31yT5NdrZakOhokL6reBOOjICGVQnLI8aH4dsjUbuB2vpJBrxseh_IpkBG-BpaXtrAy7V93T2BwJPG0M')"></div>
+<div class="h-8 w-8 rounded-full ring-2 ring-white dark:ring-background-dark bg-surface-dark dark:bg-surface-light text-white dark:text-background-dark flex items-center justify-center text-[10px] font-bold">+1</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-4 pt-4 pb-2 space-y-3 bg-background-light dark:bg-background-dark scrollbar-hide">
+<div class="flex justify-center mb-4">
+<span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest bg-gray-200/50 dark:bg-gray-800/50 px-3 py-1 rounded-full">Today</span>
+</div>
+<div class="flex items-end gap-2.5 group">
+<div class="h-7 w-7 rounded-full bg-cover bg-center shrink-0 shadow-sm ring-1 ring-gray-100 dark:ring-gray-700" data-alt="Avatar of Sarah" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBHuPAxsFeGwI7jDzCLgdQhUpK14n4e-S8rMW7mTVb3BapGoaOL2A3JGIe4IsCga5LG89txDgyrsWFkaagtCi7x8Hnh29WV-GgBJVSReKQnLiokmfzks1Jq6GXuZdipzxq4hhL1bG78h5dsZ2vMq8_4jDa8X3o0mIfhWnMPNXdfvm3-KFEK9Kj9t0hjDlFhsPMOpdQ3e3DhpISr6X-2vtZwAX7BNWCp-rxcRENd7TspTX2enAqvbtojeZzDtAs2h1_OldhGtExrdgU')"></div>
+<div class="flex flex-col items-start gap-0.5 max-w-[80%]">
+<span class="text-[10px] font-semibold text-gray-500 dark:text-gray-400 ml-2">Sarah</span>
+<div class="bg-white dark:bg-surface-dark px-3 py-2 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-gray-800/60">
+<p class="text-[13px] text-slate-700 dark:text-gray-200 leading-snug">Hey! I just parked near the corner. Anyone nearby? 🚗</p>
+</div>
+</div>
+</div>
+<div class="flex items-end gap-2.5 group">
+<div class="h-7 w-7 rounded-full bg-cover bg-center shrink-0 shadow-sm ring-1 ring-gray-100 dark:ring-gray-700" data-alt="Avatar of Mike" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD0DlK_DRxfuTWCeBuyTfm3gGbrjnfQQHHg2sTyt41x9GJV-yPMSi37p_FmQprs389YiaWFtPNuaExv-2ELr2irJ1iQUOAxXnC8159FWirZtnh9dUAU7pFZRO-v8-a4-pOYkhq6BOg0kZb_EqvTXIaZmGfRKVEiyac03T7LzEQ9-uxC-YKqs6VAT6xG79zV6_aP0V3QBdLS0YD1orFeFhfJpn65oAiBCLc15JYNknTGngDqok6la5F7KlF1atQLmKCGAwfTjDEDFCc')"></div>
+<div class="flex flex-col items-start gap-0.5 max-w-[80%]">
+<span class="text-[10px] font-semibold text-gray-500 dark:text-gray-400 ml-2">Mike</span>
+<div class="bg-white dark:bg-surface-dark px-3 py-2 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-gray-800/60">
+<p class="text-[13px] text-slate-700 dark:text-gray-200 leading-snug">Traffic is heavy on 5th. Might be 5 mins late.</p>
+</div>
+</div>
+</div>
+<div class="flex items-end gap-2 justify-end group">
+<div class="flex flex-col items-end gap-0.5 max-w-[80%]">
+<div class="bg-primary px-3 py-2 rounded-2xl rounded-tr-none shadow-md shadow-primary/20 text-white">
+<p class="text-[13px] leading-snug">No worries! I'm walking over now.</p>
+</div>
+<div class="flex items-center gap-1 mr-1">
+<span class="text-[9px] text-gray-400 opacity-60">10:05 AM</span>
+<span class="material-symbols-outlined text-[10px] text-primary">done_all</span>
+</div>
+</div>
+</div>
+<div class="flex items-end gap-2.5 mt-2">
+<div class="h-7 w-7 rounded-full bg-cover bg-center shrink-0 shadow-sm opacity-70" data-alt="Avatar of Sarah" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJrQBlcz638D0T_G-kzisdrGq1GzPzzaulNGaWK2qTp9JoIBacutparcORJeNWzp83zutu5L6nNdK1NeZCU12mNKdSdA-Em_qGnFfx2Uvs9OIb7-_Vp7yEygmTZZK02X7SWH5OEX6GFxa2c1R5t4DalwURoyOAJKWuwnpaRr3i4WI0VsZRMdk1id_pMfDGph7h8omGAPMcuc-krH1cdHyux8KxrnRclY_KPzR3mNZq0E5JbEYuumDhMaGEmETaxzimfi_RxbA6peA')"></div>
+<div class="bg-white dark:bg-surface-dark px-3 py-2.5 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-gray-800/60 flex items-center gap-1 w-fit">
+<div class="w-1 h-1 bg-gray-400 rounded-full animate-bounce"></div>
+<div class="w-1 h-1 bg-gray-400 rounded-full animate-bounce delay-75"></div>
+<div class="w-1 h-1 bg-gray-400 rounded-full animate-bounce delay-150"></div>
+</div>
+</div>
+<div class="h-1"></div>
+</div>
+<div class="p-3 bg-white dark:bg-surface-dark border-t border-gray-200 dark:border-gray-800 pb-6 shrink-0 z-50">
+<div class="flex items-center gap-2">
+<button class="flex items-center justify-center h-10 w-10 text-gray-400 hover:text-primary bg-gray-50 dark:bg-background-dark hover:bg-gray-100 rounded-full transition-colors shrink-0">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+<div class="flex-1 relative">
+<input class="w-full bg-gray-100 dark:bg-background-dark text-slate-900 dark:text-white rounded-full py-2.5 px-4 pr-10 focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white dark:focus:bg-black transition-all border-none placeholder-gray-500 text-[14px]" placeholder="Type a message..." type="text"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 18px;">sentiment_satisfied</span>
+</button>
+</div>
+<button class="h-10 w-10 bg-primary rounded-full text-white flex items-center justify-center shadow-md hover:bg-blue-600 transition-colors active:scale-95 shrink-0">
+<span class="material-symbols-outlined" style="font-size: 20px;">send</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>

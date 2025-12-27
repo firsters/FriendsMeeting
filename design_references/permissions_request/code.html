@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Permissions Request</title>
+<!-- Tailwind CSS -->
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5312"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "card-light": "#ffffff",
+                        "card-dark": "#1C212E",
+                        "text-main-light": "#111418",
+                        "text-main-dark": "#ffffff",
+                        "text-sec-light": "#637588",
+                        "text-sec-dark": "#93adc8",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display overflow-x-hidden transition-colors duration-200">
+<!-- Top App Bar -->
+<div class="flex items-center justify-between p-4 sticky top-0 z-20 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md">
+<div class="text-text-main-light dark:text-text-main-dark flex size-12 shrink-0 items-center justify-center cursor-pointer rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back</span>
+</div>
+<h2 class="text-text-main-light dark:text-text-main-dark text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">
+            Permissions
+        </h2>
+</div>
+<!-- Main Content Area -->
+<div class="flex flex-col flex-1 pb-32"> <!-- Padding bottom for sticky footer -->
+<!-- Header Image / Illustration -->
+<div class="@container">
+<div class="px-4 py-2">
+<div class="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden rounded-xl min-h-[240px] shadow-sm relative group" data-alt="Abstract map connection visualization showing linked nodes on a dark background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBEB94vWrwZ1PJbNfqPyyHw1HVE8ShR4hnww9lUe8FMh9LmQWfxrvoV84xsdn_NFYE5-EgsEyM1j6ZxFn2cPA1zwcpHaQAFbNFqq5lYmJQwK4HMQJ6_vkUK4Jm1gE_oPWjvNx83DoTDiLMbnE-uaE--J0cv8ElRJ0lh6GKMbvE9pAOjYvzYyXOifx5Fg6ghVjfs0GBW7v9piZaPPEDb2BQt0hwMslLVhThcH2UANH-2JR9sKZwdtES-utqU0p6fye-yTBccbJafAJY");'>
+<!-- Gradient Overlay for aesthetics -->
+<div class="absolute inset-0 bg-gradient-to-t from-background-light dark:from-background-dark via-transparent to-transparent opacity-90"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="relative">
+<!-- Decorative icon cluster -->
+<div class="absolute -left-8 -top-8 size-16 rounded-full bg-blue-500/20 animate-pulse"></div>
+<div class="bg-primary text-white p-4 rounded-full shadow-lg shadow-primary/40 relative z-10">
+<span class="material-symbols-outlined" style="font-size: 48px;">map</span>
+</div>
+<div class="absolute -right-6 bottom-2 bg-card-light dark:bg-card-dark p-2 rounded-full shadow-md z-20">
+<span class="material-symbols-outlined text-green-500" style="font-size: 24px;">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Headline & Body Text -->
+<div class="flex flex-col items-center">
+<h2 class="text-text-main-light dark:text-text-main-dark tracking-tight text-[28px] font-bold leading-tight px-6 text-center pb-3 pt-4">
+                Let's get you connected
+            </h2>
+<p class="text-text-sec-light dark:text-text-sec-dark text-base font-normal leading-relaxed pb-6 px-6 text-center max-w-md">
+                To get the most out of the map, we need access to a few things. We respect your privacy and only use this data to connect you with friends.
+            </p>
+</div>
+<!-- Permissions List -->
+<div class="flex flex-col gap-4 px-4 w-full max-w-lg mx-auto">
+<!-- Location Permission Item -->
+<div class="flex flex-col gap-4 bg-card-light dark:bg-card-dark p-5 rounded-xl shadow-sm border border-black/5 dark:border-white/5">
+<div class="flex gap-4">
+<div class="text-primary flex items-center justify-center rounded-xl bg-primary/10 shrink-0 size-12">
+<span class="material-symbols-outlined" style="font-size: 24px;">location_on</span>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<div class="flex items-center gap-2 mb-1">
+<p class="text-text-main-light dark:text-text-main-dark text-base font-bold leading-normal">Location Services</p>
+</div>
+<p class="text-text-sec-light dark:text-text-sec-dark text-sm font-normal leading-relaxed">
+                            Required to share your real-time position with friends and get alerts when they arrive.
+                        </p>
+</div>
+</div>
+<!-- Action Area for Location -->
+<div class="flex items-center justify-between pl-[64px] gap-2">
+<div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-orange-100 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20">
+<span class="material-symbols-outlined text-orange-600 dark:text-orange-400" style="font-size: 14px;">info</span>
+<span class="text-xs font-semibold text-orange-700 dark:text-orange-400">Select 'Always Allow'</span>
+</div>
+<!-- Fallback for mobile size if the hint is too wide -->
+<p class="sm:hidden text-xs font-semibold text-orange-600 dark:text-orange-400">Recommends 'Always Allow'</p>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-9 px-5 bg-primary hover:bg-blue-600 text-white text-sm font-semibold leading-normal shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+<span class="truncate">Enable</span>
+</button>
+</div>
+</div>
+<!-- Notifications Permission Item -->
+<div class="flex flex-col gap-4 bg-card-light dark:bg-card-dark p-5 rounded-xl shadow-sm border border-black/5 dark:border-white/5">
+<div class="flex gap-4 items-start">
+<div class="text-purple-600 dark:text-purple-400 flex items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-500/10 shrink-0 size-12">
+<span class="material-symbols-outlined" style="font-size: 24px;">notifications</span>
+</div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-text-main-light dark:text-text-main-dark text-base font-bold leading-normal mb-1">Notifications</p>
+<p class="text-text-sec-light dark:text-text-sec-dark text-sm font-normal leading-relaxed">
+                            Get notified when friends message you or are nearby. Never miss a meetup.
+                        </p>
+</div>
+</div>
+<!-- Action Area for Notifications -->
+<div class="flex items-center justify-end gap-2">
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-9 px-5 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-text-main-light dark:text-text-main-dark text-sm font-semibold leading-normal transition-all active:scale-95">
+<span class="truncate">Allow</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-black/5 dark:border-white/5 z-30">
+<div class="max-w-lg mx-auto w-full flex flex-col gap-3">
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 bg-primary hover:bg-blue-600 text-white text-base font-bold leading-normal shadow-blue-500/25 shadow-lg transition-transform active:scale-[0.98]">
+<span class="truncate">Continue</span>
+</button>
+<p class="text-text-sec-light dark:text-text-sec-dark text-xs font-medium text-center">
+                You can change these settings at any time in your iPhone Settings.
+            </p>
+</div>
+</div>
+</body></html>

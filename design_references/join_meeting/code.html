@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Join Meeting</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5308"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#182234",
+                        "border-dark": "#314368",
+                        "text-secondary": "#90a4cb"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased text-slate-900 dark:text-white">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- Top App Bar -->
+<header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-10 bg-background-light dark:bg-background-dark/95 backdrop-blur-sm">
+<button class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center justify-start hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back_ios_new</span>
+</button>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Join Meeting</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex items-center justify-center overflow-hidden rounded-lg h-10 w-10 text-slate-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">qr_code_scanner</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col px-4 pt-4 pb-8">
+<!-- Headline -->
+<div class="mb-4">
+<h3 class="text-slate-900 dark:text-white tracking-tight text-2xl font-bold leading-tight">Join via Code</h3>
+<p class="text-slate-500 dark:text-text-secondary text-sm mt-1">Enter the ID provided by the host.</p>
+</div>
+<!-- Input Field -->
+<div class="flex flex-col gap-4 mb-6">
+<label class="flex flex-col flex-1 relative group">
+<span class="sr-only">Meeting ID or Code</span>
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 dark:text-text-secondary" style="font-size: 20px;">keyboard</span>
+</div>
+<input class="form-input flex w-full resize-none overflow-hidden rounded-xl text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark focus:border-primary h-14 placeholder:text-slate-400 dark:placeholder:text-text-secondary pl-11 pr-4 text-base font-medium leading-normal transition-all" placeholder="Ex: 482-991" type="text" value=""/>
+</label>
+</div>
+<!-- Main Action Button -->
+<button class="w-full cursor-pointer flex items-center justify-center overflow-hidden rounded-xl h-12 px-5 bg-primary hover:bg-blue-600 active:scale-[0.98] transition-all text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/25 mb-6">
+<span class="truncate">Join Meeting</span>
+</button>
+<!-- Divider -->
+<div class="flex items-center gap-4 mb-6">
+<div class="h-px bg-slate-200 dark:bg-border-dark flex-1"></div>
+<p class="text-slate-500 dark:text-text-secondary text-sm font-medium whitespace-nowrap">OR JOIN NEARBY</p>
+<div class="h-px bg-slate-200 dark:bg-border-dark flex-1"></div>
+</div>
+<!-- Nearby Gatherings Header -->
+<div class="flex items-center justify-between mb-4">
+<h4 class="text-slate-900 dark:text-white text-lg font-bold">Nearby Gatherings</h4>
+<button class="text-primary text-sm font-bold hover:underline">View Map</button>
+</div>
+<!-- Nearby List -->
+<div class="flex flex-col gap-3">
+<!-- Card 1 -->
+<div class="group flex items-center gap-4 p-3 pr-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark/50 shadow-sm hover:border-primary/50 dark:hover:border-primary/50 transition-all cursor-pointer">
+<div class="relative size-14 rounded-lg overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800">
+<img alt="Coffee Chat" class="h-full w-full object-cover" data-alt="Group of friends laughing at a cafe table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC3XHir-kweD9Xf-ojZA3499OWTG52vbSbvC9JCNpJbBgb6ZrtKjtwAlSbbrdgxv4hrzRo9MYXx3Hb3ZNkNnTbMmsIhm0a1TEqSagQeO8DM6aheMxLrEnTPIQW3UHanLGzrF6Mt0EyN1eRwKJvkU0blr-ptMlVN4Hz5_hg9mVQ7FMFMWJCxX3s92q-kHoADfAbbrp-U2-3eZhtHXkn4nKENKUckR6u8Fwpsn0zuCIpdRsO39TLAjyWp-blm-vrUbBj3p4XDzMpBaE"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-0.5">
+<h5 class="text-slate-900 dark:text-white font-bold truncate">Sunday Coffee</h5>
+<span class="inline-flex items-center rounded-full bg-green-500/10 px-1.5 py-0.5 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20">Active</span>
+</div>
+<div class="flex items-center gap-1 text-slate-500 dark:text-text-secondary text-sm truncate">
+<span class="material-symbols-outlined" style="font-size: 14px;">person</span>
+<span>Hosted by Sarah</span>
+<span class="mx-1">•</span>
+<span class="material-symbols-outlined" style="font-size: 14px;">near_me</span>
+<span>0.2 mi</span>
+</div>
+</div>
+<button class="shrink-0 flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+</button>
+</div>
+<!-- Card 2 -->
+<div class="group flex items-center gap-4 p-3 pr-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark/50 shadow-sm hover:border-primary/50 dark:hover:border-primary/50 transition-all cursor-pointer">
+<div class="relative size-14 rounded-lg overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800">
+<img alt="Dev Standup" class="h-full w-full object-cover" data-alt="People working together in a modern meeting room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC--p7fn5L12gtX1tddBt-6dg2DdGfewhMSEAOidYJz5jCOgmBk1lqrCdtDMCxd8rXk-Ql6nTqTVUBCkWbOxa7HNkQ9ffGEgcG8w-DwbNVWtxFUo4jITCyb6SYowCT-7XA_oYKYYz6oZEOa5RkwgMs92kydFJqSvhp7g4E1h7nx2GDVlZBqEP6TaNw_-rZorYsZ7QhdJhJpU4Q7k_jrGNr_j2fjvuFPKRuCtcZCYNwiX6wSwvns6K7EOz-7SX5YRRIKpvhQLqsv3EE"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-0.5">
+<h5 class="text-slate-900 dark:text-white font-bold truncate">Dev Standup</h5>
+</div>
+<div class="flex items-center gap-1 text-slate-500 dark:text-text-secondary text-sm truncate">
+<span class="material-symbols-outlined" style="font-size: 14px;">person</span>
+<span>Hosted by Mike</span>
+<span class="mx-1">•</span>
+<span class="material-symbols-outlined" style="font-size: 14px;">near_me</span>
+<span>0.8 mi</span>
+</div>
+</div>
+<button class="shrink-0 flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+</button>
+</div>
+<!-- Card 3 -->
+<div class="group flex items-center gap-4 p-3 pr-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark/50 shadow-sm hover:border-primary/50 dark:hover:border-primary/50 transition-all cursor-pointer">
+<div class="relative size-14 rounded-lg overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800">
+<img alt="Lunch Crew" class="h-full w-full object-cover" data-alt="Friends talking and eating pizza at a casual gathering" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfTOpeFShDLcshjxLElO6cpmLwq22-0r5YzAj2lgS2YaUPd09Tzmb7Kjdpa0vRMhi4rkALFtP-K0OWEIX2jKeSc1ip_s4Ql7DXlcwfmRaPfTEYrKjbkXv3gG8LvaxH4oKaZBPSsARM6S90ABbgxELqL_6DHdh92T2DEsCiASiTC7TAaOFQ8GLu6Fm37EXYViceqauT6QndjJ-MxIMBaaR97NyMNswkBwzWugm2TH09_KPVQLjxn6klNyTZAdekEpoUqwYPq27zP9c"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-0.5">
+<h5 class="text-slate-900 dark:text-white font-bold truncate">Lunch Crew</h5>
+<span class="inline-flex items-center rounded-full bg-purple-500/10 px-1.5 py-0.5 text-xs font-medium text-purple-400 ring-1 ring-inset ring-purple-500/20">Full</span>
+</div>
+<div class="flex items-center gap-1 text-slate-500 dark:text-text-secondary text-sm truncate">
+<span class="material-symbols-outlined" style="font-size: 14px;">person</span>
+<span>Hosted by Jessica</span>
+<span class="mx-1">•</span>
+<span class="material-symbols-outlined" style="font-size: 14px;">near_me</span>
+<span>1.2 mi</span>
+</div>
+</div>
+<button class="shrink-0 flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Bottom spacing -->
+<div class="h-8"></div>
+</main>
+<!-- Tab Bar Placeholder (Optional for context) -->
+<div class="sticky bottom-0 border-t border-slate-200 dark:border-border-dark bg-background-light dark:bg-background-dark py-4 px-8 flex justify-between items-center text-slate-400 dark:text-gray-500">
+<div class="flex flex-col items-center gap-1 hover:text-primary cursor-pointer">
+<span class="material-symbols-outlined">chat</span>
+<span class="text-[10px] font-medium">Chats</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-primary cursor-pointer">
+<span class="material-symbols-outlined fill-1">location_on</span>
+<span class="text-[10px] font-medium">Meet</span>
+</div>
+<div class="flex flex-col items-center gap-1 hover:text-primary cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium">Settings</span>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Password Reset Success</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5307"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased font-display">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+<!-- Subtle Background Pattern for Context (Location App) -->
+<div class="absolute inset-0 opacity-5 pointer-events-none">
+<svg height="100%" width="100%">
+<pattern height="40" id="grid" patternunits="userSpaceOnUse" width="40">
+<path class="text-neutral-900 dark:text-white" d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-width="1"></path>
+</pattern>
+<rect fill="url(#grid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<!-- Main Content Container centered vertically -->
+<div class="flex flex-1 flex-col items-center justify-center px-6 py-12 relative z-10">
+<!-- Success Icon / Illustration -->
+<div class="mb-8">
+<div class="relative flex items-center justify-center w-32 h-32 rounded-full bg-primary/10 dark:bg-primary/20">
+<!-- Decorative ripple effect -->
+<div class="absolute inset-0 rounded-full border border-primary/20 animate-pulse"></div>
+<div class="absolute inset-2 rounded-full border border-primary/20 opacity-50"></div>
+<!-- Icon -->
+<span class="material-symbols-outlined text-6xl text-primary font-bold">
+                        check_circle
+                    </span>
+</div>
+</div>
+<!-- Headline -->
+<h1 class="text-neutral-900 dark:text-white tracking-tight text-[32px] font-bold leading-tight text-center pb-3">
+                Password Updated
+            </h1>
+<!-- Body Text -->
+<p class="text-neutral-500 dark:text-gray-400 text-base font-normal leading-relaxed text-center max-w-xs mx-auto pb-8">
+                Your password has been changed successfully. You can now log in with your new credentials to start sharing your location.
+            </p>
+<!-- Decorative Map Element (Contextual) -->
+<div class="w-full max-w-[200px] h-24 mb-8 opacity-40 grayscale mix-blend-luminosity rounded-lg overflow-hidden relative">
+<div class="absolute inset-0 bg-gradient-to-t from-background-light dark:from-background-dark to-transparent z-10"></div>
+<div class="w-full h-full bg-cover bg-center" data-alt="Abstract map background showing location streets" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAVMwj0S9JhGDKMtI8HqUaIwUxpqL4E9FUea7CEcGDm5xtuk_S1E6_0eN-_VjyHMyNwDGspude-bocChnrfwTqxvvxWbHjaKOZCG7jsURwlEqXqC3Lttd6m5eDqkOgNN6LnIC_8wOPYlq_MO2U-5zLMZFG-AF_7gSypRrvWh9eCrV1p-sXBTf2apj-eNlkOW0f1cFqFsTFlZCHcZ5ABxSU8gD7VuxACDow4lTk0VKeg_ViWB4dBI-wSnypg_mPNCYUnAgnISMh7i3E");'></div>
+</div>
+</div>
+<!-- Sticky Bottom Action Area -->
+<div class="w-full px-6 pb-8 pt-4 bg-background-light dark:bg-background-dark z-20">
+<button class="w-full flex cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] transition-transform active:scale-95 shadow-lg shadow-primary/25 hover:bg-blue-600">
+<span class="truncate">Back to Login</span>
+</button>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Registration</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5326"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col antialiased overflow-x-hidden selection:bg-primary selection:text-white">
+<!-- Top App Bar -->
+<div class="flex items-center px-4 py-3 justify-between bg-transparent sticky top-0 z-10 backdrop-blur-sm">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-white" style="font-size: 24px;">arrow_back_ios_new</span>
+</button>
+<!-- Optional: Progress indicator or steps could go here -->
+<div class="size-10"></div> <!-- Spacer for balance -->
+</div>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col px-6 pb-8 max-w-md mx-auto w-full">
+<!-- Header Section -->
+<div class="mt-2 mb-8 relative">
+<!-- Subtle Decorative Map Element -->
+<div class="absolute -right-10 -top-10 w-32 h-32 opacity-10 dark:opacity-20 pointer-events-none rounded-full overflow-hidden">
+<div class="w-full h-full bg-cover bg-center" data-alt="Abstract map pattern graphic" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAy5SCQ8G2kWilyd1QJSNRA_ckHf7eAdkS55Q0l5u8wSZ_wbeW83h98UEwZQRrcLO6wakY_FSyBSlNiQ_fq-zZzL_NWmU8PlCR2H8kUrcKygXhJs0N_YBmVIitl5neD9gP8sMjbtFNosYLuS-p9JEP1m1kpbjiTMg0iwkmoQYgGzx7mcmwo4n-YauG9j126eP_v2ZmWnUsXmzqFjR-uhNMQfIGlxNIWzXV9vZ2AXsY-sOUbo-JFy6qPFGnbt1VQEyu1vly1XJYYiKU");'></div>
+</div>
+<h1 class="text-slate-900 dark:text-white text-[32px] font-bold leading-tight mb-3 relative z-0">Create Account</h1>
+<p class="text-slate-500 dark:text-[#90a4cb] text-base font-normal leading-normal">
+                Start sharing your location and chatting with friends.
+            </p>
+</div>
+<!-- Form Section -->
+<form class="flex flex-col gap-5" onsubmit="event.preventDefault()">
+<!-- Nickname Field -->
+<div class="space-y-2">
+<label class="text-slate-900 dark:text-white text-sm font-medium leading-normal" for="nickname">Nickname</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 dark:text-[#90a4cb]" style="font-size: 20px;">face</span>
+</div>
+<input class="form-input w-full rounded-xl border-slate-200 dark:border-[#314368] bg-white dark:bg-[#182234] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-[#586c91] h-14 pl-12 pr-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow text-base shadow-sm" id="nickname" placeholder="e.g. TravelerTom" type="text"/>
+</div>
+</div>
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="text-slate-900 dark:text-white text-sm font-medium leading-normal" for="email">Email Address</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 dark:text-[#90a4cb]" style="font-size: 20px;">mail</span>
+</div>
+<input class="form-input w-full rounded-xl border-slate-200 dark:border-[#314368] bg-white dark:bg-[#182234] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-[#586c91] h-14 pl-12 pr-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow text-base shadow-sm" id="email" placeholder="name@example.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<label class="text-slate-900 dark:text-white text-sm font-medium leading-normal" for="password">Password</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 dark:text-[#90a4cb]" style="font-size: 20px;">lock</span>
+</div>
+<input class="form-input w-full rounded-xl border-slate-200 dark:border-[#314368] bg-white dark:bg-[#182234] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-[#586c91] h-14 pl-12 pr-12 focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow text-base shadow-sm" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 dark:text-[#90a4cb] hover:text-slate-600 dark:hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-size: 20px;">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Confirm Password Field -->
+<div class="space-y-2">
+<label class="text-slate-900 dark:text-white text-sm font-medium leading-normal" for="confirm_password">Confirm Password</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 dark:text-[#90a4cb]" style="font-size: 20px;">verified_user</span>
+</div>
+<input class="form-input w-full rounded-xl border-slate-200 dark:border-[#314368] bg-white dark:bg-[#182234] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-[#586c91] h-14 pl-12 pr-12 focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow text-base shadow-sm" id="confirm_password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Spacer -->
+<div class="h-4"></div>
+<!-- Submit Button -->
+<button class="w-full h-14 bg-primary hover:bg-blue-600 active:scale-[0.98] transition-all rounded-xl text-white text-base font-bold shadow-lg shadow-primary/25 flex items-center justify-center gap-2">
+                Sign Up
+                <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+</button>
+<!-- Social/Divider (Optional) -->
+<div class="relative py-2">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-slate-200 dark:border-[#314368]"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="px-2 bg-background-light dark:bg-background-dark text-slate-500 dark:text-[#90a4cb]">Or continue with</span>
+</div>
+</div>
+<div class="flex gap-4 justify-center">
+<button class="flex-1 h-12 rounded-lg bg-white dark:bg-[#182234] border border-slate-200 dark:border-[#314368] flex items-center justify-center hover:bg-slate-50 dark:hover:bg-[#202d42] transition-colors" type="button">
+<img alt="Google" class="w-5 h-5" data-alt="Google logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnmTkZUYnCefKKIxzAowVsOWVLyvrsKYUIpJwzncHMXZC2S3qdKCAYNxpznIkjf7Df87nYRj29Fhe19hAvNzBxK8rp2cMDZ503mfJ4HiKtOkcGZRP1S4DS4rHDBAAMklVMusws77VWa0-OXbZMfy9YBklOXyhAgiwwmIZGcGHmJladaA1Ph4HGW9WhoLYRPQbHm7WJGEMK08uQvo1brW1GE6DfzT3J4s_hgLPQhK1lb_IdiwdNBq4WpnIOoftm3iVcgc0GvoZ1Bg4"/>
+</button>
+<button class="flex-1 h-12 rounded-lg bg-white dark:bg-[#182234] border border-slate-200 dark:border-[#314368] flex items-center justify-center hover:bg-slate-50 dark:hover:bg-[#202d42] transition-colors" type="button">
+<img alt="Apple" class="w-5 h-5 dark:invert" data-alt="Apple logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhjWHq9PgTZPAq4HdggbZNCO3KUervFLPkFGdunAYnrjcE7l7VfFZOUYE0Wt-9ATsdce2cetyqoHNNWTFjcI9zfnhyUBFYYfIGA1N6jxEQQL3lcdEJAnl-XyCEKlEtgBhrvGv4Nph4zT-ZMcC_QSjQuBA4KAn0z2c1-8ybSTwFahoul2MgBEJb5kI9UgOiRk1mXQOD4T9ALaIG4g2BNSCFS9hfXpmfZyh34iV_P1sNEcGejl2rE8UGWI8y2R7_Ut-m0GwmBKul7RY"/>
+</button>
+</div>
+</form>
+<!-- Footer -->
+<div class="mt-auto pt-8 text-center">
+<p class="text-slate-500 dark:text-[#90a4cb] text-sm">
+                Already have an account? 
+                <a class="text-primary font-semibold hover:underline decoration-2 underline-offset-4" href="#">Log In</a>
+</p>
+</div>
+</main>
+</body></html>

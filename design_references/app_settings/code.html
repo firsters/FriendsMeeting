@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>App Settings</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5317"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1C2333", // Slightly lighter for cards
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #222f49; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #256af4; 
+        }
+        
+        /* Toggle Switch Animation */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #256af4;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #256af4;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased selection:bg-primary selection:text-white">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-10">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-3 border-b border-gray-200 dark:border-gray-800/50">
+<button class="flex size-10 items-center justify-center rounded-full text-slate-500 hover:bg-gray-200 dark:text-white dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[24px]">arrow_back_ios_new</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight">Settings</h1>
+<div class="size-10"></div> <!-- Spacer for alignment -->
+</header>
+<!-- Main Content -->
+<main class="flex flex-col gap-6 p-4 md:max-w-xl md:mx-auto w-full">
+<!-- Profile Section -->
+<section class="flex flex-col items-center gap-4 py-4">
+<div class="relative">
+<div class="size-24 rounded-full bg-cover bg-center ring-4 ring-surface-dark shadow-xl" data-alt="User profile avatar showing a smiling person" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuByFhpq1hkEEk4j5Fz2ont7fbzE1WKpf2_pIoyzgKNO7ZbqPbn5BU5K__jUwZVGfm70PB394ABRS01029q3SGX0a5OceAURUlIfRV3STmipsgTIzDQWKSQIFFS0px-8T8SlgWbqmzTB9Ba2CEcU5TWF-vFeJM-9K5Eivb_8K1hvS8cQXislwhRbcQqEXVhXYz6zwMVptkxCgv6meH_TvY_m50HYYCofIm4iiCvALRlY8kOSpaepku5huQ3sXQ-J01TCNoHb2Iryz0g");'>
+</div>
+<button class="absolute bottom-0 right-0 flex size-8 items-center justify-center rounded-full bg-primary text-white shadow-lg border-2 border-background-dark">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+<div class="text-center">
+<h2 class="text-xl font-bold leading-tight">Alex Doe</h2>
+<p class="text-sm text-slate-500 dark:text-slate-400 font-medium">@alexdoe</p>
+</div>
+</section>
+<!-- Settings Group: General -->
+<section>
+<h3 class="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">General</h3>
+<div class="overflow-hidden rounded-xl bg-white dark:bg-surface-dark shadow-sm ring-1 ring-gray-900/5 dark:ring-white/5">
+<!-- Language Item -->
+<div class="flex items-center justify-between gap-4 p-4 active:bg-gray-50 dark:active:bg-white/5 cursor-pointer transition-colors group">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400">
+<span class="material-symbols-outlined text-[20px]">language</span>
+</div>
+<span class="text-sm font-medium">Language</span>
+</div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="text-sm text-slate-500 dark:text-slate-300">English</span>
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</div>
+</div>
+<div class="h-px w-full bg-gray-100 dark:bg-gray-800 ml-16"></div>
+<!-- Sound Effects Item -->
+<div class="flex items-center justify-between gap-4 p-4">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400">
+<span class="material-symbols-outlined text-[20px]">volume_up</span>
+</div>
+<span class="text-sm font-medium">Sound Effects</span>
+</div>
+<!-- Toggle -->
+<label class="relative inline-flex cursor-pointer items-center">
+<input checked="" class="peer sr-only" type="checkbox" value=""/>
+<div class="peer h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-700 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Settings Group: Notifications -->
+<section>
+<h3 class="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Notifications</h3>
+<div class="overflow-hidden rounded-xl bg-white dark:bg-surface-dark shadow-sm ring-1 ring-gray-900/5 dark:ring-white/5">
+<!-- Push Notifications -->
+<div class="flex items-center justify-between gap-4 p-4">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</div>
+<span class="text-sm font-medium">Push Notifications</span>
+</div>
+<label class="relative inline-flex cursor-pointer items-center">
+<input checked="" class="peer sr-only" type="checkbox" value=""/>
+<div class="peer h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-700 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+</label>
+</div>
+<div class="h-px w-full bg-gray-100 dark:bg-gray-800 ml-16"></div>
+<!-- New Message Alerts -->
+<div class="flex items-center justify-between gap-4 p-4">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+</div>
+<span class="text-sm font-medium">New Messages</span>
+</div>
+<label class="relative inline-flex cursor-pointer items-center">
+<input checked="" class="peer sr-only" type="checkbox" value=""/>
+<div class="peer h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-700 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+</label>
+</div>
+<div class="h-px w-full bg-gray-100 dark:bg-gray-800 ml-16"></div>
+<!-- Nearby Friend Alerts -->
+<div class="flex items-center justify-between gap-4 p-4">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400">
+<span class="material-symbols-outlined text-[20px]">near_me</span>
+</div>
+<span class="text-sm font-medium">Nearby Friends</span>
+</div>
+<label class="relative inline-flex cursor-pointer items-center">
+<input class="peer sr-only" type="checkbox" value=""/>
+<div class="peer h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-700 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Settings Group: Privacy & Security -->
+<section>
+<h3 class="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Privacy &amp; Security</h3>
+<div class="overflow-hidden rounded-xl bg-white dark:bg-surface-dark shadow-sm ring-1 ring-gray-900/5 dark:ring-white/5">
+<!-- Who can find me -->
+<div class="flex items-center justify-between gap-4 p-4 active:bg-gray-50 dark:active:bg-white/5 cursor-pointer transition-colors">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400">
+<span class="material-symbols-outlined text-[20px]">person_search</span>
+</div>
+<span class="text-sm font-medium">Who can find me</span>
+</div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="text-sm text-slate-500 dark:text-slate-300">Friends</span>
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</div>
+</div>
+<div class="h-px w-full bg-gray-100 dark:bg-gray-800 ml-16"></div>
+<!-- Show Online Status -->
+<div class="flex items-center justify-between gap-4 p-4">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-teal-100 text-teal-600 dark:bg-teal-500/20 dark:text-teal-400">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</div>
+<span class="text-sm font-medium">Show Online Status</span>
+</div>
+<label class="relative inline-flex cursor-pointer items-center">
+<input checked="" class="peer sr-only" type="checkbox" value=""/>
+<div class="peer h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-700 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+</label>
+</div>
+<div class="h-px w-full bg-gray-100 dark:bg-gray-800 ml-16"></div>
+<!-- Blocked Users -->
+<div class="flex items-center justify-between gap-4 p-4 active:bg-gray-50 dark:active:bg-white/5 cursor-pointer transition-colors">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
+<span class="material-symbols-outlined text-[20px]">block</span>
+</div>
+<span class="text-sm font-medium">Blocked Users</span>
+</div>
+<div class="text-slate-400">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Settings Group: Support -->
+<section>
+<h3 class="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Support</h3>
+<div class="overflow-hidden rounded-xl bg-white dark:bg-surface-dark shadow-sm ring-1 ring-gray-900/5 dark:ring-white/5">
+<!-- Help Center -->
+<div class="flex items-center justify-between gap-4 p-4 active:bg-gray-50 dark:active:bg-white/5 cursor-pointer transition-colors">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-cyan-100 text-cyan-600 dark:bg-cyan-500/20 dark:text-cyan-400">
+<span class="material-symbols-outlined text-[20px]">help_center</span>
+</div>
+<span class="text-sm font-medium">Help Center</span>
+</div>
+<div class="text-slate-400">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</div>
+</div>
+<div class="h-px w-full bg-gray-100 dark:bg-gray-800 ml-16"></div>
+<!-- Version -->
+<div class="flex items-center justify-between gap-4 p-4">
+<div class="flex items-center gap-3">
+<div class="flex size-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700/50 dark:text-slate-400">
+<span class="material-symbols-outlined text-[20px]">info</span>
+</div>
+<span class="text-sm font-medium">App Version</span>
+</div>
+<div class="text-sm font-normal text-slate-500">
+                            v1.0.4
+                        </div>
+</div>
+</div>
+</section>
+<!-- Logout Button -->
+<div class="pt-4">
+<button class="flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 dark:bg-red-900/10 p-4 text-red-600 dark:text-red-400 transition-colors hover:bg-red-100 dark:hover:bg-red-900/20 active:scale-[0.99]">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="text-sm font-bold">Log Out</span>
+</button>
+</div>
+</main>
+</div>
+</body></html>

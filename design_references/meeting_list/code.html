@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Meeting List</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5323"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1b2434", // Slightly lighter than background-dark for cards
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white antialiased overflow-x-hidden">
+<div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto border-x border-gray-200 dark:border-gray-800">
+<!-- Header Section -->
+<header class="sticky top-0 z-10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm px-4 pt-6 pb-2">
+<div class="flex items-center justify-between mb-4">
+<h1 class="text-2xl font-bold tracking-tight">My Meetings</h1>
+<button class="flex items-center justify-center size-10 rounded-full bg-primary text-white hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</button>
+</div>
+<!-- Segmented Control -->
+<div class="flex p-1 bg-gray-200 dark:bg-[#1f293a] rounded-xl mb-2">
+<button class="flex-1 py-1.5 px-3 rounded-lg text-sm font-medium transition-all shadow-sm bg-white dark:bg-surface-dark text-primary dark:text-white">
+                    Upcoming
+                </button>
+<button class="flex-1 py-1.5 px-3 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all">
+                    Active
+                </button>
+<button class="flex-1 py-1.5 px-3 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all">
+                    Past
+                </button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col px-4 space-y-4 pb-24 pt-2">
+<!-- Active Meeting Highlight (Simulating 'Active' tab content or pinned item) -->
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 p-4">
+<div class="absolute top-3 right-3 flex items-center gap-1.5 bg-primary/20 text-primary px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+                    Live Now
+                </div>
+<div class="flex items-start gap-4 mt-1">
+<div class="relative shrink-0">
+<div class="w-16 h-16 rounded-xl bg-gray-200 dark:bg-gray-700 bg-center bg-cover" data-alt="Map thumbnail of a park location" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuATaTZQ9QR0vzcI6I8u9gmuip31oNWfRT-EnUIWdFe3kAZMZOhbc8Mau7YEEtb1B6re2qr9JNgxfASxXWB3jTUN1GnbGSEHhmaMQeyTACsoyXzuE1skO_DLByY83dZUxDB59qYtBj_9kYiq0mkDt8JSAnRN3zXj_ozZJZ-eFnFUSWsqDkpH9fdLVjkGxoO-aGUdK2PtLNVHRTw1rObH4c9kGyMhTFb9IUMK3OVUpvs7fAReW4ZX_axSwtfnDjgkVskiPYBLvu8TNMI");'></div>
+</div>
+<div class="flex-1">
+<h3 class="text-lg font-bold leading-tight mb-1 text-gray-900 dark:text-white">Lunch at Central Park</h3>
+<div class="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm mb-2">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span>Central Park, NYC</span>
+</div>
+<!-- Avatar Group -->
+<div class="flex -space-x-2 overflow-hidden py-1">
+<img alt="User Avatar" class="inline-block h-6 w-6 rounded-full ring-2 ring-white dark:ring-[#1f293a] object-cover" data-alt="Portrait of a young woman smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB21qOy2U1rF7K7uMn5ZrSmXLKteSd0Xr5zHZRKJoSAvpehLz4sSDV4GcFaHOJRC2Vl4iwXJPkHWtwVYPFm1JRym2VzoBeqc9Jj9FOa6UZl3PLSkYW8MdZ-lVXoJc2m7hSgiHSx-pYcIrj__a9SKIavDutDc2FnQYQOJQLSVqg5Nzo-2aJFg6onxlbonea7zFhhplmY4zxOT_ZGv7LmU2M6h-7HkbKoSpe0-AkwoBdsN5JN3fEk5ZKJweF6AwDmkW5oAa8tLxL1zPg"/>
+<img alt="User Avatar" class="inline-block h-6 w-6 rounded-full ring-2 ring-white dark:ring-[#1f293a] object-cover" data-alt="Portrait of a young man looking serious" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBdfgk5iA1axzGquQLnmu0zEi44jxDVjpMarIXEClxwwItvPJXqmkGEhh531hLH8iUZnqQjxmtxSyMCp-wyn6S0hy__3SNlb4sbAcw8fRRdllP1JEpAVkcqdiIs-FeTrTUQK4WE2Ji3UKHcK2KgEW7ji1OlkT5zNUBDYNJirW8IqYAI7weGaiyUNo2qiZgVdl_G8TgP9o3gCknjTkMD98rzdXVQXfzq7PKl0AHsoe0HMOsbljqtuK1ItyfbL3Adt_ohe_6LsThFHk"/>
+<img alt="User Avatar" class="inline-block h-6 w-6 rounded-full ring-2 ring-white dark:ring-[#1f293a] object-cover" data-alt="Portrait of a smiling man with glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQlwk1ixIDCfRIuBhV8DA-pd2gOojUq1W0ttWtc2MQqqV91P1sm3yq9wT4NFTCi1HDuvJWHZOmWIDUOxjgsgh8FPPtaSbuugbCMvJzjHlVS-Uhe2jVdK-wpdhnM21sHBArSU1Ai4Y9ObG4u7w_T8mQkzSfCMwm5YWt1Eq5ff3mHnhOGp4Ru_BV9yvlzPXoToEtRGaBuLkk3U0htoveDTMmIgpVnw23nnN7cHBjiFoO2RgWmgAVKBt4m8YsgNo6iADRImcM_gMlUT8"/>
+<div class="flex h-6 w-6 items-center justify-center rounded-full ring-2 ring-white dark:ring-[#1f293a] bg-gray-100 dark:bg-gray-700 text-[10px] font-medium text-gray-600 dark:text-gray-300">
+                                +2
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Date Divider -->
+<div class="flex items-center gap-4 py-2">
+<h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tomorrow</h3>
+<div class="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
+</div>
+<!-- List Item 1 -->
+<div class="group flex flex-col bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 active:scale-[0.98] transition-transform duration-100 cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Coffee with Design Team</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                            10:00 AM - 11:30 AM
+                        </p>
+</div>
+<span class="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 ring-1 ring-inset ring-blue-700/10 dark:ring-blue-400/20">
+                        Upcoming
+                    </span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined text-[18px] text-gray-400">storefront</span>
+<span>Starbucks Reserve</span>
+</div>
+<div class="flex -space-x-2">
+<img alt="User Avatar" class="inline-block h-7 w-7 rounded-full ring-2 ring-white dark:ring-surface-dark object-cover" data-alt="Portrait of a woman with red hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmGLloKGkP2K9NylVAnnLEkWo-voibu8O2AA4CxNEkWi2LmihLfUFbHEWhDjf9ncHUPCzWuuroyyFEEKWeSwVJklW4o6QsgVvppbBdbTHgnWtJ36QlEYFUpYknjJhlteX4JjO6D1pbFZNtsphfB_ACC7egVfZQAegD93K0nL5hoaBbDAorthnDKjIh6wtNetvTNdsKE8uakP3OlcJATTV2nfGbc0jtF0deH666RfgJ605CTYkOa7IMa0mAYZ-qxyT77X8wgSY9Yf4"/>
+<img alt="User Avatar" class="inline-block h-7 w-7 rounded-full ring-2 ring-white dark:ring-surface-dark object-cover" data-alt="Portrait of a man with curly hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABex1i-4b9vPEvweePfvMr29IddlsLX3uL0NYqb63-qP2UNgY--i5-gIQLUgcShy2eftDgP3a4bhB9RWFBLGQ17ttu4vFZaXYBN71UYRtOsfqoNH3ey-AflOekkGN1SAwoUjWlG9q7arVyCWKdQEtKEqCrOt3_44slrUghnrRjNlefotjGHIke_x4nI1tsOWKrGdl0Gfobh4obYeMcOc9IDcOSgNIzTeZeLohHQ1BoKRlJMYJ5u0VZ8kf4JPymUrQRdkV8SJRPOmY"/>
+</div>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="group flex flex-col bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 active:scale-[0.98] transition-transform duration-100 cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Weekly Sync</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                            02:00 PM - 03:00 PM
+                        </p>
+</div>
+<span class="inline-flex items-center rounded-md bg-purple-50 dark:bg-purple-900/30 px-2 py-1 text-xs font-medium text-purple-700 dark:text-purple-300 ring-1 ring-inset ring-purple-700/10 dark:ring-purple-400/20">
+                        Remote
+                    </span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined text-[18px] text-gray-400">videocam</span>
+<span>Google Meet</span>
+</div>
+<div class="flex -space-x-2">
+<img alt="User Avatar" class="inline-block h-7 w-7 rounded-full ring-2 ring-white dark:ring-surface-dark object-cover" data-alt="Portrait of a man with a beard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw7gMN76tPKP3RS4xJrx-OQnQlI5IjjLnQs_ERQPuote_q68CPpmxFTMZWy6067x3rjpbDsWy6VM7lAfxWSKvVoCzAXDRSd-OtWmGp-efbyS1bUpgjwBgMV4-3L0gmjBek5YChjQK3bwslzul7f08U5av9eMFtLPDeXnstGQt6ECTf2k9LtSm67ce5ZTwzu80vy-ZmVg78p_RnweXVY2eGiLdgRZStnwG4-Iz3qWty5QpAenMhxLTOkkM37RxOYIb_BM3mOc_ecMg"/>
+<div class="flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white dark:ring-surface-dark bg-gray-100 dark:bg-gray-700 text-[10px] font-medium text-gray-600 dark:text-gray-300">
+                            +4
+                        </div>
+</div>
+</div>
+</div>
+<!-- Date Divider -->
+<div class="flex items-center gap-4 py-2 pt-4">
+<h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fri, Oct 24</h3>
+<div class="h-px bg-gray-200 dark:bg-gray-800 flex-1"></div>
+</div>
+<!-- List Item 3 -->
+<div class="group flex flex-col bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 active:scale-[0.98] transition-transform duration-100 cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Friday Night Drinks</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                            08:00 PM
+                        </p>
+</div>
+<span class="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 ring-1 ring-inset ring-blue-700/10 dark:ring-blue-400/20">
+                        Upcoming
+                    </span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined text-[18px] text-gray-400">local_bar</span>
+<span>The Blue Pub</span>
+</div>
+<div class="flex -space-x-2">
+<img alt="User Avatar" class="inline-block h-7 w-7 rounded-full ring-2 ring-white dark:ring-surface-dark object-cover" data-alt="Portrait of a smiling woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU5lRK-lA4fIXNwEfg_X2p7ktNjVTbnXlIYjhEsiDAMi_-oH9pAWoN55upTiMF-j7mij-RVAm-_eOnpvGdYT-sT5dqrM6mWKsUwM0SsiiNNCiseAk8nBYIJJLeyf2FwOBD-TbZAu6Me-o3xWMR4JtkHbxLGmzCLU5zP1qd-kvX9fcO39EBMXfVrYecY7-QhodZr2zlcgHUHcblREfaPaxsr1k2xtrIAnjY480w5mN6S-OdY_4t60b_64hAeMxgKlv-fKFcxh7m0og"/>
+<img alt="User Avatar" class="inline-block h-7 w-7 rounded-full ring-2 ring-white dark:ring-surface-dark object-cover" data-alt="Portrait of a man in profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxSPWhxwLyA1X7JJkKk7Gx3lmQHel6yQGPa1Hy16o8RVXDfeaAbKKUJ5WrdhomDbX7jDEk2ECgFqrsaqaUgSHIzsoDENK9gRDIjeWGUvwfaL3vmniTQ6ejNj8A5dFYIcvY4b8GpIxaUq7aAsdvPV98SOda2pmpj9EUpw_Y8yxN9B93JW8BmfbCE-FCNxwsth-1zfUlSc96ZjU654F2SOUo5Yzfe8jLg8VDfgJ2y5vqC_ZYb6IWZkIcN3NO9QKPlOQoB7g298HRNTU"/>
+<div class="flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-white dark:ring-surface-dark bg-gray-100 dark:bg-gray-700 text-[10px] font-medium text-gray-600 dark:text-gray-300">
+                            +5
+                        </div>
+</div>
+</div>
+</div>
+<!-- List Item 4 -->
+<div class="group flex flex-col bg-white dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 active:scale-[0.98] transition-transform duration-100 cursor-pointer opacity-75 grayscale-[0.3]">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="text-base font-bold text-gray-900 dark:text-white mb-1">Gym Session</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                            06:00 AM
+                        </p>
+</div>
+<span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300">
+                        Past
+                    </span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+<span class="material-symbols-outlined text-[18px] text-gray-400">fitness_center</span>
+<span>Gold's Gym</span>
+</div>
+<div class="flex -space-x-2">
+<img alt="User Avatar" class="inline-block h-7 w-7 rounded-full ring-2 ring-white dark:ring-surface-dark object-cover" data-alt="Portrait of a woman looking sideways" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj_GcZciTa9sXwAdwTtub1soeT-qd1Lq3I-MDsJrg8ZOwNt93Tnh3Nmmr8t1yNbUIXTZFejgPXIQ7gvjoShUmSs1I-ZLruWbx7nB_7JF5Hj1uficIE50ImJ2EazldIRlSnZsATd3dts87igX2o-WZc29g_H9MiGNKoBcu7qeNkglYqGPIuWaixgNtIK0p-GGksZTrlP1g2-FeK_BoLv48azkFDMAqEM0yvHdyDTWOyP881cBbEP88dKAwJX5P54lJX-32RiGPYRXk"/>
+</div>
+</div>
+</div>
+<!-- Empty State Illustration Placeholder (Only visible if needed, commented out for this demo but structure is here) -->
+<!-- 
+            <div class="flex flex-col items-center justify-center py-10 px-4 text-center">
+                <div class="w-24 h-24 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                     <span class="material-symbols-outlined text-4xl text-gray-400">event_busy</span>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">No upcoming plans</h3>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 max-w-xs">Looks like you're free! Why not organize something with friends?</p>
+                <button class="px-6 py-2.5 bg-primary text-white font-medium rounded-lg text-sm hover:bg-primary/90 transition-colors">
+                    Plan a meetup
+                </button>
+            </div> 
+            -->
+</main>
+<!-- Bottom Navigation -->
+<nav class="sticky bottom-0 z-20 w-full bg-white dark:bg-background-dark border-t border-gray-200 dark:border-gray-800 pb-safe pt-2 px-2">
+<div class="flex justify-around items-center h-16">
+<a class="flex flex-col items-center justify-center w-full h-full space-y-1 text-gray-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">map</span>
+<span class="text-[10px] font-medium">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full space-y-1 text-gray-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">chat_bubble</span>
+<span class="text-[10px] font-medium">Chat</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full space-y-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[24px] fill-current">calendar_month</span>
+<span class="text-[10px] font-medium">Meetings</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full space-y-1 text-gray-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Friend List Management</title>
+<!-- Material Symbols -->
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=5316"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#256af4",
+                        "background-light": "#f5f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1a2130", 
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", 
+                        "md": "0.375rem",
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md pt-safe-top">
+<div class="flex items-center p-4 pb-2 justify-between">
+<h2 class="text-2xl font-bold leading-tight tracking-tight flex-1">Friends</h2>
+<div class="flex items-center justify-end gap-3">
+<button class="flex items-center justify-center rounded-full w-10 h-10 bg-surface-light dark:bg-surface-dark text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">qr_code_scanner</span>
+</button>
+<button class="flex items-center justify-center rounded-full w-10 h-10 bg-primary text-white hover:bg-blue-600 transition-colors shadow-lg shadow-primary/30">
+<span class="material-symbols-outlined" style="font-size: 24px;">person_add</span>
+</button>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="px-4 py-2 pb-4">
+<label class="flex flex-col w-full">
+<div class="relative flex w-full items-center rounded-xl bg-surface-light dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all">
+<div class="absolute left-4 text-slate-400 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 20px;">search</span>
+</div>
+<input class="w-full bg-transparent border-none py-3 pl-11 pr-4 text-base font-normal placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-0 text-slate-900 dark:text-white" placeholder="Search by username..." type="text"/>
+</div>
+</label>
+</div>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 flex flex-col pb-24"> <!-- pb-24 for bottom nav spacing if needed -->
+<!-- Pending Requests Section -->
+<div class="px-4 py-2">
+<div class="flex items-center justify-between mb-3 mt-2">
+<h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Requests (2)</h3>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Request Item 1 -->
+<div class="flex items-center gap-3 bg-surface-light dark:bg-surface-dark p-3 rounded-xl border border-slate-100 dark:border-slate-800/50 shadow-sm">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12" data-alt="Portrait of Sarah Jenkins smiling" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC5b_gs98ApiZBWr6ajj38qAH97ABedZwigPspQ28mOSjeNJCzTSRD_1VBCgfDtFZ5cu2hhaFKpPj8sF0BqfwvqmugVWoo9eD4awAk9JvnV399labh2N8hEn0d8TqyK-AL0svHmSI-GdH4pBgXZ_SC81n25rzWmoeCoL57FOE3MNYJdINOXj3ls5GGEV1lW9OR4CBGeBhVqk1gzk1fSQ9kTzD0-_YqGTkQcuD0ZwJO-BFEx6OSgj-Hs331XXiyTHTAFgIlfboFfGzg");'></div>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-surface-light dark:border-surface-dark rounded-full"></span>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white text-sm font-semibold truncate">Sarah Jenkins</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs truncate">Wants to share location</p>
+</div>
+<div class="flex gap-2 shrink-0">
+<button class="flex items-center justify-center rounded-lg h-8 w-8 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-8 px-3 bg-primary text-white text-xs font-semibold hover:bg-blue-600 transition-colors shadow-sm shadow-primary/20">
+                                Accept
+                            </button>
+</div>
+</div>
+<!-- Request Item 2 -->
+<div class="flex items-center gap-3 bg-surface-light dark:bg-surface-dark p-3 rounded-xl border border-slate-100 dark:border-slate-800/50 shadow-sm">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12" data-alt="Portrait of Mike Ross looking professional" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLZxiHTjRKhtLlusDfA-Oqeo2F-f20ENQb9XkErzMC0OK6657Qi3kG-Ev1oOgVxC6LZhHY04zLbmY7ZrtGGkude_CofCMhY1Y2xF2r6IWwkxAKiaz-jwgkQa2DIqI9Mtg5jKXvdc3xxlE2MDcc5F4r0WeoG0zzz9WtN1pmq3X2HeVRJCzmjCkqlUL40MUqCCaocUqBrfnDnSURb2jQuuhxmqnAlKKtHE_f2J1l9_i50qz0y6vrW05pjxufRl1EI9zlhEsT2iq_b64");'></div>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white text-sm font-semibold truncate">Mike Ross</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs truncate">Mutual friend: Harvey S.</p>
+</div>
+<div class="flex gap-2 shrink-0">
+<button class="flex items-center justify-center rounded-lg h-8 w-8 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-8 px-3 bg-primary text-white text-xs font-semibold hover:bg-blue-600 transition-colors shadow-sm shadow-primary/20">
+                                Accept
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Friend List Section -->
+<div class="mt-4">
+<h3 class="px-4 pb-2 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">All Friends (42)</h3>
+<div class="flex flex-col">
+<!-- Friend 1 -->
+<div class="group relative flex items-center gap-4 px-4 py-3 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer border-b border-slate-100 dark:border-slate-800/50 last:border-0">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12 ring-2 ring-transparent group-hover:ring-primary/50 transition-all" data-alt="Portrait of Jessica Pearson" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBk7dpuRISJfdPQlT8toCZVekwTSxCozIEKyxt7jbRhHOjUu4TfMzSJmU1KwVKMZAtlt9woXyG6eckCwsRDLi0QSjEUtluRem1Y06bJb8qQRpV7KIS8rsRyj3oDEMLErkqQ6KfHJiCejNB-MqAUHragvWdbPWO5xRANuuJJH9PiD6iRHIhPEsBdAKaa071AmQBcJsWLZrE7NmHf_rHGFc_MXlYrKABCSajaW5ewK8xFi3EL5jQh1RuHZaUVZjdqDiYf-x7HgRRv1DI");'></div>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-surface-light dark:border-background-dark rounded-full"></span>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white text-base font-semibold truncate">Jessica Pearson</p>
+<div class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<p class="text-xs truncate">Downtown • 2km away</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button class="flex items-center justify-center rounded-full w-9 h-9 bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+</button>
+<button class="flex items-center justify-center rounded-full w-9 h-9 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Friend 2 -->
+<div class="group relative flex items-center gap-4 px-4 py-3 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer border-b border-slate-100 dark:border-slate-800/50 last:border-0">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12 ring-2 ring-transparent group-hover:ring-primary/50 transition-all" data-alt="Portrait of Louis Litt" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA8SJQVXIw6ac_tdgHYMjQLpC3dnv8njyPrdcot-Egm6Vzv4iCftYYvZUlhRNkmip6zJ5Pet6cp-DtIN6VLKMYsBp55lZeNs6ipQnNEsudYzupyYMzFgVtncH5OMskRSue0qDIdhFFF3WcKiklXmTI6i4h_Q4drBzK1xF-4APpxDsU_emAEmoeXhuhU8M0BVGhd1xOrMUUDQ70c2v2ODGqIM0Zf30fWtZ1bIQe2teeOgljNE1lU8EKYjZNe0eUx4O8rUFmq9fCoxDI");'></div>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-400 border-2 border-surface-light dark:border-background-dark rounded-full"></span>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white text-base font-semibold truncate">Louis Litt</p>
+<div class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+<p class="text-xs truncate">Last seen 2h ago</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button class="flex items-center justify-center rounded-full w-9 h-9 bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+</button>
+<button class="flex items-center justify-center rounded-full w-9 h-9 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Friend 3 -->
+<div class="group relative flex items-center gap-4 px-4 py-3 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer border-b border-slate-100 dark:border-slate-800/50 last:border-0">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12 ring-2 ring-transparent group-hover:ring-primary/50 transition-all" data-alt="Portrait of Donna Paulsen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBgnyKBpoAgy3jq-VBMy0yP72LTcoPQotbYOKpE_SakOhrM3gmmgdWl9XcxAW_r_L0NuaNrSw_pREl_8L-Vb4EtEiQpTqn3_l7WQONIZJIGjSqSu3tX3s2Vten4nr7iXxvDLesoVyrrJNtR3DkVZHK0KA6jIaON-9OdaOcruSzh5K-JPw8eyEdxAJZbKQPxd8yxd9weYSr3B6zZWQHhWDmmIV1IH2oXu5wb8m0lcqekZqomHSHDB5HgDEYTOTs8CpBeA5aKO4TNV10");'></div>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-surface-light dark:border-background-dark rounded-full"></span>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white text-base font-semibold truncate">Donna Paulsen</p>
+<div class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<p class="text-xs truncate">Central Park • 500m away</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button class="flex items-center justify-center rounded-full w-9 h-9 bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+</button>
+<button class="flex items-center justify-center rounded-full w-9 h-9 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Friend 4 -->
+<div class="group relative flex items-center gap-4 px-4 py-3 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer border-b border-slate-100 dark:border-slate-800/50 last:border-0">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12 ring-2 ring-transparent group-hover:ring-primary/50 transition-all" data-alt="Portrait of Rachel Zane" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCW7L-iUIw5O-SLa55r4T437ZIixV5o9hlvSPXUDHaYphQ0NcJxG9ztQy9vKWxrd2Ol6rP2iH3P_j0lu_cXeyYKrktQMv0tepFViERJrnKYot5xbyhJwst6Q6DbMVqCYu5npEWbB4CNFk2Hp_k-jE7nxnq7MLS-Qccx56UCHB_JlTBoPnuLitDrFyaa2SJ1t5TiUOu740jjqztR4u517Bj_g8nT9BGdd2zrL9ziNaSYAgLlaSV69-FMwjcVRVFlPI7gJUWkFjTeUWg");'></div>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-amber-500 border-2 border-surface-light dark:border-background-dark rounded-full"></span>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white text-base font-semibold truncate">Rachel Zane</p>
+<div class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[14px]">bedtime</span>
+<p class="text-xs truncate">Idle for 10m</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button class="flex items-center justify-center rounded-full w-9 h-9 bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+</button>
+<button class="flex items-center justify-center rounded-full w-9 h-9 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Friend 5 (Swiped State Simulation) -->
+<div class="relative flex items-center gap-4 bg-red-600 overflow-hidden">
+<!-- Action Background -->
+<div class="absolute right-0 top-0 bottom-0 flex items-center px-6 gap-2 text-white">
+<span class="text-sm font-semibold">Delete</span>
+<span class="material-symbols-outlined" style="font-size: 20px;">delete</span>
+</div>
+<!-- Card Content (Translated slightly left to simulate swipe) -->
+<div class="flex-1 flex items-center gap-4 px-4 py-3 bg-background-light dark:bg-background-dark w-full -translate-x-24 shadow-2xl z-10 border-b border-slate-100 dark:border-slate-800/50">
+<div class="relative shrink-0">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12" data-alt="Portrait of Katrina Bennett" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCkH_awJTEEGvwQd8kSn5We5vrGBddsHQXQ_1ZxwS9bFgVbdYoMLfD9IHWq4TxFhVstmbLQQ7WT20d4G244haPnDpOFeDdZOzV-QI0CC6ArzaCxQrh0ofcMyoBJuOhCFAZW3svCZ2yN5wz3_5-l_t-1gAYmaNvhPZJFatNVE_gdL4H8Fh8VB8-b1337hwfrRw572KOa0bmQkZ9dVx1lLavUsruAy6mte3-y9vUGaaH_mZnLz_LoVjmmOOxvqJ9MhLVbcvOiXUAS4OM");'></div>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-400 border-2 border-surface-light dark:border-background-dark rounded-full"></span>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white text-base font-semibold truncate">Katrina Bennett</p>
+<div class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[14px]">visibility_off</span>
+<p class="text-xs truncate">Ghost Mode</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0 opacity-50">
+<button class="flex items-center justify-center rounded-full w-9 h-9 bg-primary/10 dark:bg-primary/20 text-primary">
+<span class="material-symbols-outlined" style="font-size: 20px;">chat_bubble</span>
+</button>
+<button class="flex items-center justify-center rounded-full w-9 h-9 text-slate-400">
+<span class="material-symbols-outlined" style="font-size: 20px;">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty State Illustration Placeholder (Hidden but structure ready) -->
+<!-- 
+            <div class="flex flex-col items-center justify-center py-20 px-6 text-center">
+                <div class="w-32 h-32 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6">
+                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500" style="font-size: 48px;">group_off</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">No friends yet</h3>
+                <p class="text-slate-500 dark:text-slate-400 max-w-xs mx-auto mb-6">Start by adding friends to see their location and chat with them.</p>
+                <button class="w-full max-w-[200px] bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors">
+                    Add Friend
+                </button>
+            </div>
+            -->
+</div>
+<!-- Bottom Navigation -->
+<div class="fixed bottom-0 w-full max-w-md bg-surface-light/90 dark:bg-[#151c2b]/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 pb-safe-bottom">
+<div class="flex justify-around items-center h-16">
+<button class="flex flex-col items-center justify-center w-full h-full space-y-1 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">map</span>
+<span class="text-[10px] font-medium">Map</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full space-y-1 text-primary">
+<span class="material-symbols-outlined fill-current" style="font-size: 24px; font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-[10px] font-medium">Friends</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full space-y-1 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+<div class="relative">
+<span class="material-symbols-outlined" style="font-size: 24px;">chat</span>
+<span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+</span>
+</div>
+<span class="text-[10px] font-medium">Chats</span>
+</button>
+<button class="flex flex-col items-center justify-center w-full h-full space-y-1 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">settings</span>
+<span class="text-[10px] font-medium">Settings</span>
+</button>
+</div>
+</div>
+</div>
+</body></html>
