@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+// Trigger Vercel Build: 2025-12-27 17:55
 import Welcome from './pages/Welcome';
 import Auth from './pages/Auth';
 import Permissions from './pages/Permissions';
