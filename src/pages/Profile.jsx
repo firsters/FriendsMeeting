@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   ArrowLeft, Edit3, Globe, Volume2, Bell, MessageSquare, 
-  Navigation, Eye, ShieldAlert, BadgeHelp, Info, LogOut, ChevronRight
+  Navigation, Eye, ShieldAlert, BadgeHelp, Info, LogOut, ChevronRight,
+  FileText, ShieldCheck, Code
 } from 'lucide-react';
 
 const Profile = ({ onLogout }) => {
@@ -64,6 +65,13 @@ const Profile = ({ onLogout }) => {
         <SettingsGroup title="Support">
           <SettingsItem icon={<BadgeHelp size={20} />} title="Help Center" />
           <SettingsItem icon={<Info size={20} />} title="App Version" value="v1.0.4" hasArrow={false} />
+        </SettingsGroup>
+
+        {/* Settings Group: Legal */}
+        <SettingsGroup title="Legal">
+          <SettingsItem icon={<FileText size={20} />} title="이용약관" />
+          <SettingsItem icon={<ShieldCheck size={20} />} title="개인정보처리방침" />
+          <SettingsItem icon={<Code size={20} />} title="오픈소스 라이선스" />
         </SettingsGroup>
 
         {/* Logout Button */}
