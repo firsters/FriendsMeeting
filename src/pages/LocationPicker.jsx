@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Search, Mic, Plus, Minus, Navigation, MapPin, MyLocation, Store, Trees, Utensils, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Search, Mic, Plus, Minus, Navigation, MapPin, LocateFixed, Store, Trees, Utensils, ChevronRight } from 'lucide-react';
 
 const LocationPicker = ({ onConfirm, onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -130,7 +130,7 @@ const LocationPicker = ({ onConfirm, onBack }) => {
         {/* Recenter FAB */}
         <div className="absolute bottom-8 right-4 z-10">
           <button className="flex size-14 items-center justify-center rounded-full bg-slate-800 text-primary-400 shadow-2xl shadow-black/60 hover:bg-slate-700 transition-all border border-slate-700/50 active:scale-90">
-            <MyLocation size={24} />
+            <LocateFixed size={24} />
           </button>
         </div>
       </div>
