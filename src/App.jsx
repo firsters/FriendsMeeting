@@ -88,7 +88,7 @@ function App() {
   };
 
   return (
-    <div className="h-screen w-full flex justify-center bg-black overflow-hidden font-sans antialiased">
+    <div className="h-[100dvh] w-full flex justify-center bg-black overflow-hidden font-sans antialiased">
       <div className="relative w-full max-w-md h-full bg-background-dark shadow-2xl flex flex-col border-x border-white/5">
         {renderScreen()}
       </div>

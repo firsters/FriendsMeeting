@@ -40,8 +40,8 @@ const Welcome = ({ onNavigate, deferredPrompt, onInstallSuccess }) => {
         )}
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-start px-8 pt-4 pb-8 relative z-10">
-        <div className="w-full relative aspect-[4/5] max-h-[400px] mb-6 rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-white/10 shrink-0">
+      <div className="flex-1 flex flex-col items-center justify-start px-8 pt-2 pb-4 relative z-10">
+        <div className="w-full relative aspect-[4/5] max-h-[360px] mb-2 rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-white/10 shrink-0">
           <div 
             className="absolute inset-0 bg-cover bg-center" 
             style={{backgroundImage: 'url("/assets/images/welcome.png")'}}
@@ -70,18 +70,18 @@ const Welcome = ({ onNavigate, deferredPrompt, onInstallSuccess }) => {
           </div>
         </div>
 
-        <div className="text-center space-y-3 max-w-[320px]">
-          <h1 className="text-[30px] font-extrabold tracking-tight text-white leading-tight font-display">
+        <div className="text-center space-y-2 max-w-[320px]">
+          <h1 className="text-[28px] font-extrabold tracking-tight text-white leading-tight font-display">
             {t('welcome_title_stay_close')} <br/>
             {t('welcome_title_wherever')}
           </h1>
-          <p className="text-sm text-gray-400 font-medium leading-relaxed">
+          <p className="text-xs text-gray-400 font-medium leading-relaxed">
             {t('welcome_desc')}
           </p>
         </div>
       </div>
 
-      <div className="w-full px-8 pb-10 pt-2 z-10 flex flex-col gap-4">
+      <div className="w-full px-8 pb-16 pt-0 z-10 flex flex-col gap-4">
         <button 
           onClick={() => onNavigate(ScreenType.SIGNUP)}
           className="w-full flex items-center justify-center gap-2 h-16 rounded-2xl bg-primary hover:bg-blue-600 active:scale-[0.98] transition-all text-white font-bold text-lg shadow-xl shadow-primary/30"

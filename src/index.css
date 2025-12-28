@@ -30,7 +30,7 @@
 
 @layer base {
   :root {
-    --app-height: 100vh;
+    --app-height: 100dvh;
     --primary: #256af4;
     --background-dark: #101622;
   }
