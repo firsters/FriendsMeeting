@@ -1,14 +1,17 @@
 import React from 'react';
 import { ScreenType } from '../constants/ScreenType';
+import { useTranslation } from '../context/LanguageContext';
 
 const Permissions = ({ onNavigate }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
       <div className="p-4 flex items-center justify-center relative">
         <button onClick={() => onNavigate(ScreenType.LOGIN)} className="absolute left-4 p-2 text-white/50 hover:text-white transition-colors">
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
-        <span className="font-bold text-white">Permissions</span>
+        <span className="font-bold text-white">{t('perm_title')}</span>
       </div>
 
       <div className="flex-1 flex flex-col items-center px-6 pt-10">
@@ -31,8 +34,8 @@ const Permissions = ({ onNavigate }) => {
           </div>
         </div>
 
-        <h2 className="text-3xl font-extrabold text-white text-center mb-4 leading-tight font-display">Let's get you connected</h2>
-        <p className="text-gray-400 text-center font-medium leading-relaxed mb-10">To get the most out of the map, we need access to a few things. We respect your privacy and only use this data to connect you with friends.</p>
+        <h2 className="text-3xl font-extrabold text-white text-center mb-4 leading-tight font-display">{t('perm_subtitle')}</h2>
+        <p className="text-gray-400 text-center font-medium leading-relaxed mb-10">{t('perm_desc')}</p>
 
         <div className="w-full space-y-4">
           <div className="p-5 bg-card-dark rounded-3xl flex gap-4 border border-white/5">
@@ -40,11 +43,11 @@ const Permissions = ({ onNavigate }) => {
               <span className="material-symbols-outlined text-primary text-2xl">location_on</span>
             </div>
             <div className="flex-1">
-              <h3 className="text-white font-bold mb-1">Location Services</h3>
-              <p className="text-xs text-gray-500 leading-relaxed mb-3">Required to share your real-time position with friends and get alerts when they arrive.</p>
+              <h3 className="text-white font-bold mb-1">{t('perm_location_title')}</h3>
+              <p className="text-xs text-gray-500 leading-relaxed mb-3">{t('perm_location_desc')}</p>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">Always Allow</span>
-                <button className="px-5 py-1.5 bg-primary rounded-full text-white text-xs font-bold shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-95">Enable</button>
+                <span className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">{t('perm_location_badge')}</span>
+                <button className="px-5 py-1.5 bg-primary rounded-full text-white text-xs font-bold shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-95">{t('perm_location_btn')}</button>
               </div>
             </div>
           </div>
@@ -54,10 +57,10 @@ const Permissions = ({ onNavigate }) => {
               <span className="material-symbols-outlined text-purple-500 text-2xl">notifications</span>
             </div>
             <div className="flex-1">
-              <h3 className="text-white font-bold mb-1">Notifications</h3>
-              <p className="text-xs text-gray-500 leading-relaxed">Get notified when friends message you or are nearby. Never miss a meetup.</p>
+              <h3 className="text-white font-bold mb-1">{t('perm_notif_title')}</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">{t('perm_notif_desc')}</p>
               <div className="flex justify-end mt-2">
-                <button className="px-5 py-1.5 bg-gray-800 rounded-full text-white text-xs font-bold hover:bg-gray-700 transition-all active:scale-95">Allow</button>
+                <button className="px-5 py-1.5 bg-gray-800 rounded-full text-white text-xs font-bold hover:bg-gray-700 transition-all active:scale-95">{t('perm_notif_btn')}</button>
               </div>
             </div>
           </div>
@@ -69,9 +72,9 @@ const Permissions = ({ onNavigate }) => {
           onClick={() => onNavigate(ScreenType.MAP)}
           className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-xl shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
         >
-          Continue
+          {t('perm_btn_continue')}
         </button>
-        <p className="mt-4 text-[10px] text-gray-600 font-bold text-center uppercase tracking-widest">You can change settings at any time</p>
+        <p className="mt-4 text-[10px] text-gray-600 font-bold text-center uppercase tracking-widest">{t('perm_disclaimer')}</p>
       </div>
     </div>
   );
