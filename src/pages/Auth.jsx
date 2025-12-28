@@ -14,6 +14,17 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  React.useEffect(() => {
+    let timer;
+    if (resendCooldown > 0) {
+      timer = setInterval(() => {
+        setResendCooldown(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
   
   // State for form fields
   const [signupData, setSignupData] = useState({
@@ -94,14 +105,21 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
 
   const handleResendEmail = async () => {
     setError('');
+    if (resendCooldown > 0) return;
+
     if (auth.currentUser) {
       setLoading(true);
       try {
         await sendEmailVerification(auth.currentUser);
         alert(t('verify_email_sent_to') + auth.currentUser.email);
+        setResendCooldown(60); // 60 seconds cooldown
       } catch (err) {
         console.error("Resend error:", err);
-        setError(err.message);
+        if (err.code === 'auth/too-many-requests') {
+          setError(t('auth_error_too_many_requests') || "Too many requests. Please wait a moment before trying again.");
+        } else {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }
@@ -259,10 +277,10 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
           <p className="mt-8 text-gray-500 font-medium">
             {t('verify_email_no_receive')} <button 
               onClick={handleResendEmail} 
-              disabled={loading}
-              className={`text-primary font-bold hover:underline transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={loading || resendCooldown > 0}
+              className={`text-primary font-bold hover:underline transition-all ${loading || resendCooldown > 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              {loading ? '...' : t('verify_email_resend')}
+              {loading ? '...' : (resendCooldown > 0 ? `${resendCooldown}s` : t('verify_email_resend'))}
             </button>
           </p>
           

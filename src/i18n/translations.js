@@ -41,6 +41,7 @@ export const translations = {
     auth_or_continue_with: "또는 다음 계정으로 계속하기",
     auth_error_required: "모든 필드를 입력해주세요",
     auth_error_password_mismatch: "비밀번호가 일치하지 않습니다",
+    auth_error_too_many_requests: "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.",
     
     // Forgot Password
     forgot_title: "비밀번호 찾기",
@@ -59,7 +60,7 @@ export const translations = {
     verify_email_title: "이메일 전송 완료!",
     verify_email_sent_to: "인증 링크를 다음 주소로 보냈습니다: ",
     verify_email_check_inbox: "받은 편지함을 확인하고 계정을 인증해 주세요.",
-    verify_email_verified_btn: "인증 완료 (시뮬레이션)",
+    verify_email_verified_btn: "인증 완료",
     verify_email_no_receive: "이메일을 받지 못하셨나요? ",
     verify_email_resend: "링크 재전송",
     verify_email_back_to_signup: "회원가입으로 돌아가기",
@@ -285,6 +286,7 @@ export const translations = {
     auth_or_continue_with: "Or continue with",
     auth_error_required: "Please fill in all fields",
     auth_error_password_mismatch: "Passwords do not match",
+    auth_error_too_many_requests: "Too many requests. Please wait a moment before trying again.",
 
     // Forgot Password
     forgot_title: "Forgot Password",
