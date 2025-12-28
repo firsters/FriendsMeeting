@@ -1,131 +1,169 @@
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-
-// Fix for default marker icon missing in Leaflet + Webpack/Vite
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    iconAnchor: [12, 41]
-});
-
-L.Marker.prototype.options.icon = DefaultIcon;
-
-// Component to recenter map when coordinates change
-const ChangeView = ({ center, zoom }) => {
-  const map = useMap();
-  map.setView(center, zoom);
-  return null;
-};
-
-const createFriendIcon = (imageUrl, status) => {
-    const borderColor = status === 'nearby' ? '#4285F4' : '#F97316'; // Blue or Orange
-    
-    return L.divIcon({
-        className: 'custom-icon',
-        html: `
-            <div class="relative group cursor-pointer transition-transform hover:scale-110" style="width: 56px; height: 56px;">
-               <div class="w-14 h-14 rounded-full border-4 p-0.5 bg-background-dark shadow-2xl" style="border-color: ${borderColor}; background-color: #1a1a1a;">
-                 <img src="${imageUrl}" class="w-full h-full rounded-full object-cover" alt="Friend" />
-               </div>
-               ${status === 'driving' ? `
-                 <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-orange-500 rounded-full border-2 border-background-dark flex items-center justify-center text-white shadow-lg">
-                   <span class="material-symbols-outlined text-[14px]">directions_car</span>
-                 </div>
-               ` : ''}
-                ${status === 'nearby' ? `
-                 <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-background-dark flex items-center justify-center text-[10px] font-bold text-white shadow-lg">
-                   9m
-                 </div>
-               ` : ''}
-            </div>
-        `,
-        iconSize: [56, 56],
-        iconAnchor: [28, 56], // Bottom center
-        popupAnchor: [0, -60]
-    });
-};
+import React, { useEffect, useState, useCallback } from 'react';
+import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 
 const MapComponent = ({ friends, onFriendClick, userLocation }) => {
-    const [position, setPosition] = useState([37.5665, 126.9780]); // Default: Seoul City Hall
+    const [center, setCenter] = useState({ lat: 37.5665, lng: 126.9780 });
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-    // Sync userLocation prop with internal state
+    // Dark Mode Map Style
+    const mapId = "DEMO_MAP_ID"; // In production, use a real Map ID from Google Cloud Console for advanced markers
+    const darkMapStyle = [
+        { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+        {
+          featureType: "administrative.locality",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "poi",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "geometry",
+          stylers: [{ color: "#263c3f" }],
+        },
+        {
+          featureType: "poi.park",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#6b9a76" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry",
+          stylers: [{ color: "#38414e" }],
+        },
+        {
+          featureType: "road",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#212a37" }],
+        },
+        {
+          featureType: "road",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#9ca5b3" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry",
+          stylers: [{ color: "#746855" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "geometry.stroke",
+          stylers: [{ color: "#1f2835" }],
+        },
+        {
+          featureType: "road.highway",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#f3d19c" }],
+        },
+        {
+          featureType: "transit",
+          elementType: "geometry",
+          stylers: [{ color: "#2f3948" }],
+        },
+        {
+          featureType: "transit.station",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#d59563" }],
+        },
+        {
+          featureType: "water",
+          elementType: "geometry",
+          stylers: [{ color: "#17263c" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.fill",
+          stylers: [{ color: "#515c6d" }],
+        },
+        {
+          featureType: "water",
+          elementType: "labels.text.stroke",
+          stylers: [{ color: "#17263c" }],
+        },
+    ];
+
+    // Update center when userLocation changes
     useEffect(() => {
         if (userLocation) {
-            setPosition(userLocation);
+            setCenter({ lat: userLocation[0], lng: userLocation[1] });
         }
     }, [userLocation]);
 
-    // Internal geolocation as fallback if userLocation prop not provided yet
+    // Fallback geolocation
     useEffect(() => {
         if (!userLocation && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
-                    setPosition([pos.coords.latitude, pos.coords.longitude]);
+                    setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
                 },
-                (err) => {
-                   console.error("Geolocation error:", err);
-                }
+                (err) => console.error(err)
             );
         }
     }, [userLocation]);
 
     return (
-        <MapContainer 
-            center={position} 
-            zoom={15} 
-            style={{ height: '100%', width: '100%', background: '#f0f0f0' }}
-            zoomControl={false}
-        >
-            <ChangeView center={position} zoom={15} />
-            
-            {/* Dark Mode Map Tiles - CartoDB Dark Matter */}
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            />
-
-            {/* Current User Marker */}
-             <Marker 
-                position={position}
-                icon={L.divIcon({
-                    className: 'my-location-pulse',
-                    html: `
-                        <div class="relative flex items-center justify-center w-12 h-12">
-                          <div class="absolute inset-0 bg-blue-500/30 rounded-full animate-ping"></div>
-                          <div class="w-8 h-8 bg-blue-500 rounded-full border-4 border-white shadow-lg relative z-10 flex items-center justify-center">
-                             <div class="w-2 h-2 bg-white rounded-full"></div>
-                          </div>
+        <APIProvider apiKey={apiKey}>
+            <Map
+                defaultCenter={center}
+                center={center}
+                defaultZoom={15}
+                zoom={15}
+                mapId={mapId} 
+                gestureHandling={'greedy'}
+                disableDefaultUI={true}
+                styles={darkMapStyle}
+                className="w-full h-full"
+            >
+                {/* User Location Marker */}
+                <AdvancedMarker position={center}>
+                     <div className="relative flex items-center justify-center w-12 h-12">
+                        <div className="absolute inset-0 bg-blue-500/30 rounded-full animate-ping"></div>
+                        <div className="w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-lg relative z-10 flex items-center justify-center">
+                            <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
                         </div>
-                    `,
-                    iconSize: [48, 48],
-                    iconAnchor: [24, 24]
-                })}
-            />
+                    </div>
+                </AdvancedMarker>
 
-            {/* Friend Markers */}
-            {friends.map(friend => (
-                <Marker
-                    key={friend.id}
-                    position={[
-                         // Mocking relative positions based on current user or static
-                         // For simplicity, using hardcoded slight offsets from Seoul default for demo
-                         // In real app, friend.x/y would be converted to lat/lng or provided as lat/lng
-                         37.5665 + (friend.id * 0.002), 
-                         126.9780 + (friend.id * 0.002) 
-                    ]}
-                    icon={createFriendIcon(friend.image, friend.status, friend.distance)}
-                    eventHandlers={{
-                        click: () => onFriendClick(friend),
-                    }}
-                >
-                </Marker>
-            ))}
-        </MapContainer>
+                {/* Friend Markers */}
+                {friends.map((friend) => {
+                    // Calculate mock lat/lng based on center if exact coords not provided
+                    // For demo, we are just adding small offsets to the center
+                    // in a real app, friend object would have lat/lng
+                    const friendPos = { 
+                        lat: center.lat + (friend.y - 50) * 0.0001, 
+                        lng: center.lng + (friend.x - 50) * 0.0001 
+                    };
+
+                    return (
+                        <AdvancedMarker 
+                            key={friend.id} 
+                            position={friendPos}
+                            onClick={() => onFriendClick(friend)}
+                        >
+                            <div className="relative group cursor-pointer transition-transform hover:scale-110">
+                                <div 
+                                    className="w-10 h-10 rounded-full border-2 p-0.5 bg-[#1a1a1a] shadow-xl" 
+                                    style={{ borderColor: friend.status === 'nearby' ? '#4285F4' : '#F97316' }}
+                                >
+                                    <img src={friend.image} className="w-full h-full rounded-full object-cover" alt={friend.name} />
+                                </div>
+                                {friend.status === 'driving' && (
+                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-500 rounded-full border border-[#1a1a1a] flex items-center justify-center text-white shadow-lg">
+                                        <span className="material-symbols-outlined text-[10px]">directions_car</span>
+                                    </div>
+                                )}
+                            </div>
+                        </AdvancedMarker>
+                    );
+                })}
+            </Map>
+        </APIProvider>
     );
 };
 
