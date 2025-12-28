@@ -8,7 +8,7 @@ const Permissions = ({ onNavigate }) => {
   return (
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
       <div className="p-4 flex items-center justify-center relative">
-        <button onClick={() => onNavigate(ScreenType.LOGIN)} className="absolute left-4 p-2 text-white/50 hover:text-white transition-colors">
+        <button onClick={() => onNavigate(ScreenType.SIGNUP)} className="absolute left-4 p-2 text-white/50 hover:text-white transition-colors">
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
         <span className="font-bold text-white">{t('perm_title')}</span>

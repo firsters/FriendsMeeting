@@ -39,6 +39,8 @@ export const translations = {
     auth_no_account: "계정이 없으신가요?",
     auth_has_account: "이미 계정이 있으신가요?",
     auth_or_continue_with: "또는 다음 계정으로 계속하기",
+    auth_error_required: "모든 필드를 입력해주세요",
+    auth_error_password_mismatch: "비밀번호가 일치하지 않습니다",
     
     // Forgot Password
     forgot_title: "비밀번호 찾기",
@@ -228,6 +230,8 @@ export const translations = {
     auth_no_account: "Don't have an account?",
     auth_has_account: "Already have an account?",
     auth_or_continue_with: "Or continue with",
+    auth_error_required: "Please fill in all fields",
+    auth_error_password_mismatch: "Passwords do not match",
 
     // Forgot Password
     forgot_title: "Forgot Password",

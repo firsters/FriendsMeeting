@@ -5,6 +5,27 @@ import { useTranslation } from '../context/LanguageContext';
 const Auth = ({ currentScreen, onNavigate, onLogin }) => {
   const { t } = useTranslation();
   const [showPass, setShowPass] = useState(false);
+  
+  // State for form fields
+  const [signupData, setSignupData] = useState({
+    nickname: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const handleSignup = () => {
+    const { nickname, email, password, confirmPassword } = signupData;
+    if (!nickname || !email || !password || !confirmPassword) {
+      alert(t('auth_error_required') || 'Please fill in all fields');
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert(t('auth_error_password_mismatch') || 'Passwords do not match');
+      return;
+    }
+    onLogin();
+  };
 
   const renderHeader = (title, desc, backTo) => (
     <header className="px-6 pt-10 pb-8">
@@ -18,7 +39,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
     </header>
   );
 
-  const renderInput = (label, icon, placeholder, type = 'text', showToggle = false) => (
+  const renderInput = (label, icon, placeholder, type = 'text', showToggle = false, value, onChange) => (
     <div className="space-y-2 group">
       <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{label}</label>
       <div className="relative flex items-center">
@@ -29,6 +50,8 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
           className="w-full h-14 bg-card-dark border border-white/5 rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-base outline-none"
           type={showToggle && showPass ? 'text' : type}
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
         />
         {showToggle && (
           <button 
@@ -75,27 +98,33 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
     </div>
   );
 
-  const SignupScreen = () => (
-    <div className="flex flex-col h-full animate-fade-in-up">
-      {renderHeader(t('auth_join_network'), t('auth_join_desc'), ScreenType.LOGIN)}
-      <div className="flex-1 px-6 space-y-5">
-        {renderInput(t('auth_nickname'), "person", t('auth_nickname_placeholder'))}
-        {renderInput(t('auth_email'), "mail", t('auth_email_placeholder'))}
-        {renderInput(t('auth_password'), "lock", "••••••••", "password", true)}
-        {renderInput(t('confirm'), "verified_user", "••••••••", "password")}
-        
-        <div className="pt-4">
-          <button 
-            onClick={onLogin}
-            className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-          >
-            {t('auth_signup')}
-            <span className="material-symbols-outlined">arrow_forward</span>
-          </button>
+  const SignupScreen = () => {
+    const updateField = (field, value) => {
+      setSignupData(prev => ({ ...prev, [field]: value }));
+    };
+
+    return (
+      <div className="flex flex-col h-full animate-fade-in-up">
+        {renderHeader(t('auth_join_network'), t('auth_join_desc'), ScreenType.ONBOARDING)}
+        <div className="flex-1 px-6 space-y-5">
+          {renderInput(t('auth_nickname'), "person", t('auth_nickname_placeholder'), 'text', false, signupData.nickname, (e) => updateField('nickname', e.target.value))}
+          {renderInput(t('auth_email'), "mail", t('auth_email_placeholder'), 'email', false, signupData.email, (e) => updateField('email', e.target.value))}
+          {renderInput(t('auth_password'), "lock", "••••••••", "password", true, signupData.password, (e) => updateField('password', e.target.value))}
+          {renderInput(t('confirm'), "verified_user", "••••••••", "password", false, signupData.confirmPassword, (e) => updateField('confirmPassword', e.target.value))}
+          
+          <div className="pt-4">
+            <button 
+              onClick={handleSignup}
+              className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              {t('auth_signup')}
+              <span className="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const ForgotPasswordScreen = () => (
     <div className="flex flex-col h-full animate-fade-in-up text-center">
