@@ -11,7 +11,7 @@ const MapUpdater = ({ center }) => {
     return null;
 };
 
-const MapComponent = ({ friends, onFriendClick, userLocation }) => {
+const MapComponent = ({ friends, onFriendClick, userLocation, searchLocation }) => {
     // Initial center state only for defaultCenter
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
@@ -107,6 +107,13 @@ const MapComponent = ({ friends, onFriendClick, userLocation }) => {
         }
     }, [userLocation]);
 
+    // Update currentCenter when searchLocation changes
+    useEffect(() => {
+        if (searchLocation) {
+            setCurrentCenter({ lat: searchLocation.lat, lng: searchLocation.lng });
+        }
+    }, [searchLocation]);
+
     // Fallback geolocation
     useEffect(() => {
         if (!userLocation && navigator.geolocation) {
@@ -144,6 +151,16 @@ const MapComponent = ({ friends, onFriendClick, userLocation }) => {
                         </div>
                     </div>
                 </AdvancedMarker>
+
+                {/* Search Location Marker */}
+                {searchLocation && (
+                    <AdvancedMarker position={{ lat: searchLocation.lat, lng: searchLocation.lng }}>
+                        <div className="relative flex items-center justify-center -translate-y-1/2">
+                           <div className="absolute bottom-0 w-3 h-1.5 bg-black/50 blur-sm rounded-full"></div>
+                           <span className="material-symbols-outlined text-4xl text-red-500 drop-shadow-lg">location_on</span>
+                        </div>
+                    </AdvancedMarker>
+                )}
 
                 {/* Friend Markers */}
                 {friends.map((friend) => {

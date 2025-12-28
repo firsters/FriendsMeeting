@@ -10,6 +10,47 @@ const CombinedView = ({ onNavigate }) => {
   const [userLocation, setUserLocation] = useState(null);
   const [locationName, setLocationName] = useState(t('map_sample_location') || "Locating...");
 
+  // Search State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchLocation, setSearchLocation] = useState(null);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (searchQuery.length > 2) {
+        setIsSearching(true);
+        try {
+          const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`, {
+             headers: {
+                 'User-Agent': 'FriendsMeetingApp/1.0'
+             }
+          });
+          const data = await response.json();
+          setSearchResults(data || []);
+        } catch (error) {
+          console.error("Search error:", error);
+          setSearchResults([]);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    }, 1000);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
+  const handleSelectLocation = (result) => {
+    const lat = parseFloat(result.lat);
+    const lng = parseFloat(result.lon);
+    const displayName = result.display_name.split(',')[0];
+    setSearchLocation({ lat, lng, name: displayName });
+    setSearchQuery(displayName);
+    setSearchResults([]);
+  };
+
   // Mock data for the home screen
   const friends = [
     { id: 1, name: 'Sarah', x: 30, y: 35, distance: '500m', image: 'https://picsum.photos/seed/friend1/100/100', status: 'nearby' },
@@ -75,6 +116,7 @@ const CombinedView = ({ onNavigate }) => {
             friends={friends} 
             onFriendClick={setSelectedFriend} 
             userLocation={userLocation}
+            searchLocation={searchLocation}
           />
       </div>
 
@@ -99,12 +141,38 @@ const CombinedView = ({ onNavigate }) => {
         <div className="mt-4 relative group pointer-events-auto">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-600 group-focus-within:text-primary transition-colors text-xl">search</span>
           <input 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full h-14 bg-card-dark/80 backdrop-blur-xl border border-white/5 rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 outline-none transition-all shadow-xl" 
             placeholder={t('map_search_placeholder')} 
           />
+          {isSearching && (
+             <div className="absolute right-12 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+          )}
           <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition-colors">
             <span className="material-symbols-outlined text-xl">mic</span>
           </button>
+
+          {/* Search Results Dropdown */}
+          {searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 animate-fade-in-up">
+              {searchResults.map((result, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleSelectLocation(result)}
+                  className="px-4 py-3 hover:bg-white/10 cursor-pointer flex items-center gap-3 border-b border-white/5 last:border-none transition-colors"
+                >
+                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-gray-400 text-sm">location_on</span>
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="text-sm font-bold text-white truncate">{result.display_name.split(',')[0]}</p>
+                    <p className="text-xs text-gray-500 truncate">{result.display_name}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </header>
 
