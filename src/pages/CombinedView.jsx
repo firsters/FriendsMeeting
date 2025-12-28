@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
+import MapComponent from '../components/MapComponent';
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
@@ -23,13 +24,17 @@ const CombinedView = ({ onNavigate }) => {
 
   return (
     <div className="flex flex-col h-full bg-background-dark overflow-hidden relative font-sans">
-      {/* Immersive Map Background */}
-      <div className="absolute inset-0 bg-cover bg-center grayscale opacity-40 mix-blend-luminosity" style={{backgroundImage: 'url("https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200")'}}></div>
-      <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-background-dark/80"></div>
+      {/* Real Interactive Map Layer */}
+      <div className="absolute inset-0 z-0">
+          <MapComponent 
+            friends={friends} 
+            onFriendClick={setSelectedFriend} 
+          />
+      </div>
 
-      {/* Top Header & Search */}
-      <header className="relative z-30 px-4 pt-10 pb-4">
-        <div className="flex items-center gap-3 bg-card-dark/90 backdrop-blur-xl p-3 pr-4 rounded-3xl border border-white/5 shadow-2xl">
+      {/* Top Header & Search - z-10 to stay above map */}
+      <header className="relative z-10 px-4 pt-10 pb-4 pointer-events-none">
+        <div className="flex items-center gap-3 bg-card-dark/90 backdrop-blur-xl p-3 pr-4 rounded-3xl border border-white/5 shadow-2xl pointer-events-auto">
            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white shadow-lg overflow-hidden border border-white/10">
              <img src="https://picsum.photos/seed/me/100/100" className="w-full h-full object-cover" alt="Me" />
            </div>
@@ -45,7 +50,7 @@ const CombinedView = ({ onNavigate }) => {
            </button>
         </div>
 
-        <div className="mt-4 relative group">
+        <div className="mt-4 relative group pointer-events-auto">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-600 group-focus-within:text-primary transition-colors text-xl">search</span>
           <input 
             className="w-full h-14 bg-card-dark/80 backdrop-blur-xl border border-white/5 rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 outline-none transition-all shadow-xl" 
@@ -57,52 +62,25 @@ const CombinedView = ({ onNavigate }) => {
         </div>
       </header>
 
-      {/* Map Content (Friends Pins) */}
-      <main className="flex-1 relative z-10" onClick={() => setSelectedFriend(null)}>
-         {friends.map(friend => (
-           <div 
-             key={friend.id} 
-             className="absolute" 
-             style={{ left: `${friend.x}%`, top: `${friend.y}%` }}
-             onClick={(e) => {
-               e.stopPropagation();
-               setSelectedFriend(friend);
-             }}
-           >
-             <div className={`relative group cursor-pointer transition-transform ${selectedFriend?.id === friend.id ? 'scale-125 z-20' : 'hover:scale-110'}`}>
-               <div className={`w-14 h-14 rounded-full border-4 p-0.5 bg-background-dark shadow-2xl ${friend.status === 'nearby' ? 'border-primary' : 'border-orange-500'}`}>
-                 <img src={friend.image} className="w-full h-full rounded-full object-cover" alt={friend.name} />
-               </div>
-               {friend.status === 'driving' && (
-                 <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-orange-500 rounded-full border-2 border-background-dark flex items-center justify-center text-white shadow-lg">
-                   <span className="material-symbols-outlined text-[14px]">directions_car</span>
+      {/* Friend Tooltip Overlay */}
+      {selectedFriend && (
+         <div 
+            className="absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-[120px] bg-card-dark/95 backdrop-blur px-4 py-3 rounded-2xl border border-white/10 shadow-2xl animate-fade-in-up"
+            onClick={() => setSelectedFriend(null)}
+         >
+             <div className="flex items-center gap-3">
+                 <img src={selectedFriend.image} className="w-10 h-10 rounded-full object-cover border border-white/10" alt={selectedFriend.name} />
+                 <div>
+                     <p className="text-sm font-bold text-white leading-none mb-1">{selectedFriend.name}</p>
+                     <p className="text-[10px] text-primary font-bold uppercase tracking-wider">{selectedFriend.status} • {selectedFriend.distance}</p>
                  </div>
-               )}
-               {friend.status === 'nearby' && (
-                 <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-background-dark flex items-center justify-center text-[10px] font-bold text-white shadow-lg">
-                   {friend.distance}
-                 </div>
-               )}
-               
-               {/* Friend Tooltip */}
-               <div className={`absolute -top-12 left-1/2 -translate-x-1/2 bg-card-dark/95 backdrop-blur px-3 py-1.5 rounded-xl border border-white/10 shadow-xl transition-all ${selectedFriend?.id === friend.id ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'}`}>
-                 <p className="text-xs font-bold text-white">{friend.name} <span className="text-gray-400 font-normal">{friend.status}</span></p>
-                 <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-card-dark border-r border-b border-white/10 rotate-45"></div>
-               </div>
+                 <button className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary hover:bg-primary/30 ml-2">
+                     <span className="material-symbols-outlined text-lg">chat</span>
+                 </button>
              </div>
-           </div>
-         ))}
-
-         {/* Current User Pulse */}
-         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping"></div>
-              <div className="w-10 h-10 bg-primary rounded-full border-4 border-white flex items-center justify-center shadow-[0_0_20px_rgba(37,106,244,0.6)] relative z-10">
-                 <span className="material-symbols-outlined text-white text-lg font-bold">my_location</span>
-              </div>
-            </div>
+             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-card-dark border-r border-b border-white/10 rotate-45"></div>
          </div>
-      </main>
+      )}
 
       {/* Quick Actions & Controls */}
       <div className="absolute right-4 bottom-28 flex flex-col gap-3 z-30 transition-transform duration-500" style={{ transform: isExpanded ? 'translateY(-200%)' : 'none' }}>
