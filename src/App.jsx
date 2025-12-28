@@ -62,6 +62,9 @@ function App() {
       case ScreenType.PERMISSIONS:
         return <Permissions onNavigate={navigate} />;
 
+      case ScreenType.VERIFY_EMAIL:
+        return <Auth currentScreen={currentScreen} onNavigate={navigate} onLogin={handleLogin} />;
+
       case ScreenType.MAP:
         return <CombinedView onNavigate={navigate} />;
 
@@ -89,7 +92,7 @@ function App() {
 
   return (
     <div className="h-[100dvh] w-full flex justify-center bg-black overflow-hidden font-sans antialiased">
-      <div className="relative w-full max-w-md h-full bg-background-dark shadow-2xl flex flex-col border-x border-white/5">
+      <div className="relative w-full h-full bg-background-dark shadow-2xl flex flex-col">
         {renderScreen()}
       </div>
     </div>

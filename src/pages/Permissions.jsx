@@ -14,8 +14,8 @@ const Permissions = ({ onNavigate }) => {
         <span className="font-bold text-white">{t('perm_title')}</span>
       </div>
 
-      <div className="flex-1 flex flex-col items-center px-6 pt-10">
-        <div className="w-full h-56 rounded-3xl overflow-hidden mb-10 relative border border-white/5 shadow-2xl">
+      <div className="flex-1 flex flex-col items-center px-6 pt-10 overflow-y-auto pb-32 scrollbar-hide">
+        <div className="w-full h-56 rounded-3xl overflow-hidden mb-10 relative border border-white/5 shadow-2xl shrink-0">
           <div 
             className="absolute inset-0 bg-cover bg-center grayscale opacity-30"
             style={{backgroundImage: 'url("https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=800")'}}

@@ -24,7 +24,8 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       alert(t('auth_error_password_mismatch') || 'Passwords do not match');
       return;
     }
-    onLogin();
+    // Proceed to email verification
+    onNavigate(ScreenType.VERIFY_EMAIL);
   };
 
   const renderHeader = (title, desc, backTo) => (
@@ -77,7 +78,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       return (
         <div className="flex flex-col h-full animate-fade-in-up">
           {renderHeader(t('welcome_title'), t('auth_locate_desc'), ScreenType.ONBOARDING)}
-          <div className="flex-1 px-6 space-y-6">
+          <div className="flex-1 px-6 space-y-6 overflow-y-auto pb-10">
             {renderInput(t('auth_email'), "person", t('auth_email_placeholder'))}
             <div className="space-y-2">
               {renderInput(t('auth_password'), "lock", "••••••••", "password", true)}
@@ -108,7 +109,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       return (
         <div className="flex flex-col h-full animate-fade-in-up">
           {renderHeader(t('auth_join_network'), t('auth_join_desc'), ScreenType.ONBOARDING)}
-          <div className="flex-1 px-6 space-y-5">
+          <div className="flex-1 px-6 space-y-5 overflow-y-auto pb-10">
             {renderInput(t('auth_nickname'), "person", t('auth_nickname_placeholder'), 'text', false, signupData.nickname, (e) => updateSignupField('nickname', e.target.value))}
             {renderInput(t('auth_email'), "mail", t('auth_email_placeholder'), 'email', false, signupData.email, (e) => updateSignupField('email', e.target.value))}
             {renderInput(t('auth_password'), "lock", "••••••••", "password", true, signupData.password, (e) => updateSignupField('password', e.target.value))}
@@ -127,10 +128,39 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
         </div>
       );
 
+    case ScreenType.VERIFY_EMAIL:
+      return (
+        <div className="flex flex-col h-full animate-fade-in-up items-center justify-center text-center px-10">
+          <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mb-10 shadow-2xl">
+            <span className="material-symbols-outlined text-primary text-6xl">outgoing_mail</span>
+          </div>
+          <h1 className="text-4xl font-extrabold text-white mb-4">Email Sent!</h1>
+          <p className="text-gray-400 font-medium mb-10 leading-relaxed">
+            We've sent a verification link to <span className="text-white font-bold">{signupData.email || 'your email'}</span>.<br/>Please check your inbox and verify your account.
+          </p>
+          
+          <button 
+            onClick={() => onNavigate(ScreenType.PERMISSIONS)}
+            className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
+          >
+            Verified (Simulate)
+          </button>
+
+          <p className="mt-8 text-gray-500 font-medium">
+            Didn't receive email? <button className="text-primary font-bold hover:underline transition-all">Resend Link</button>
+          </p>
+          
+          <button onClick={() => onNavigate(ScreenType.SIGNUP)} className="mt-8 text-gray-500 font-bold flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors">
+            <span className="material-symbols-outlined text-sm">arrow_back</span>
+            Back to Signup
+          </button>
+        </div>
+      );
+
     case ScreenType.FORGOT_PASSWORD: 
       return (
         <div className="flex flex-col h-full animate-fade-in-up text-center">
-          <div className="pt-20 px-6">
+          <div className="pt-20 px-6 overflow-y-auto pb-10">
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-10">
               <span className="material-symbols-outlined text-primary text-5xl">lock_reset</span>
             </div>
@@ -182,7 +212,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       return (
         <div className="flex flex-col h-full animate-fade-in-up">
           {renderHeader(t('forgot_title'), t('forgot_desc'))}
-          <div className="px-6 space-y-8">
+          <div className="px-6 space-y-8 overflow-y-auto pb-10">
             <div className="space-y-4">
               {renderInput(t('forgot_new_password'), "lock", "Enter at least 8 characters", "password", true)}
               <div className="px-1 pt-1 space-y-2">
@@ -228,7 +258,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       return (
         <div className="flex flex-col h-full animate-fade-in-up">
           {renderHeader(t('welcome_title'), t('auth_locate_desc'), ScreenType.ONBOARDING)}
-          <div className="flex-1 px-6 space-y-6">
+          <div className="flex-1 px-6 space-y-6 overflow-y-auto pb-10">
             {renderInput(t('auth_email'), "person", t('auth_email_placeholder'))}
             <div className="space-y-2">
               {renderInput(t('auth_password'), "lock", "••••••••", "password", true)}

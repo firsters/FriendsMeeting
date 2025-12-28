@@ -174,7 +174,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
         </div>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 max-w-md mx-auto z-50">
+      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 z-50">
         <button onClick={() => onNavigate(ScreenType.MAP)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
           <span className="material-symbols-outlined">map</span>
           <span className="text-[9px] font-bold uppercase tracking-widest">Map</span>
