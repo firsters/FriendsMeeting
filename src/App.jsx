@@ -36,10 +36,10 @@ function App() {
           }
         } else {
           setIsLoggedIn(false);
-          // Only auto-redirect if we are NOT on the welcome screen
-          // This way, a refresh on welcome keeps us on welcome.
-          // But once they click 'Get Started', they will land here IF they have an unverified session.
-          if (currentScreen !== ScreenType.ONBOARDING) {
+          // Only auto-redirect to verify screen if they are trying to go somewhere else (like MAP)
+          // and NOT explicitly staying on Auth pages or Welcome screen.
+          const isAuthScreen = [ScreenType.ONBOARDING, ScreenType.SIGNUP, ScreenType.LOGIN].includes(currentScreen);
+          if (!isAuthScreen) {
             setCurrentScreen(ScreenType.VERIFY_EMAIL);
           }
         }

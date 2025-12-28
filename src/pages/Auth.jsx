@@ -6,7 +6,8 @@ import {
   createUserWithEmailAndPassword, 
   sendEmailVerification, 
   updateProfile,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut
 } from 'firebase/auth';
 
 const Auth = ({ currentScreen, onNavigate, onLogin }) => {
@@ -284,7 +285,13 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
             </button>
           </p>
           
-          <button onClick={() => onNavigate(ScreenType.SIGNUP)} className="mt-8 text-gray-500 font-bold flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors">
+          <button 
+            onClick={async () => {
+              await signOut(auth);
+              onNavigate(ScreenType.SIGNUP);
+            }} 
+            className="mt-8 text-gray-500 font-bold flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors"
+          >
             <span className="material-symbols-outlined text-sm">arrow_back</span>
             {t('verify_email_back_to_signup')}
           </button>
