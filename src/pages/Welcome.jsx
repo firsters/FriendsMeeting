@@ -2,24 +2,46 @@ import React from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 
-const Welcome = ({ onNavigate }) => {
+const Welcome = ({ onNavigate, deferredPrompt, onInstallSuccess }) => {
   const { t } = useTranslation();
 
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      onInstallSuccess();
+    }
+  };
+
   return (
-    <div className="relative flex flex-col h-full overflow-hidden bg-background-dark transition-all duration-500">
+    <div className="relative flex flex-col min-h-full overflow-y-auto overflow-x-hidden bg-background-dark transition-all duration-500 scrollbar-hide">
+      {/* Glossy background elements */}
+      <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-[-5%] left-[-10%] w-72 h-72 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-primary/10 to-transparent pointer-events-none"></div>
       
-      <div className="flex items-center justify-center pt-10 pb-6 z-10">
+      <div className="flex items-center justify-between px-6 pt-6 pb-2 z-10">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary text-white shadow-lg shadow-primary/20">
-            <span className="material-symbols-outlined text-[24px]">location_on</span>
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary text-white shadow-lg shadow-primary/20">
+            <span className="material-symbols-outlined text-[20px]">location_on</span>
           </div>
-          <span className="text-2xl font-bold tracking-tight text-white font-display">{t('welcome_title')}</span>
+          <span className="text-xl font-bold tracking-tight text-white font-display">{t('welcome_title')}</span>
         </div>
+
+        {deferredPrompt && (
+          <button 
+            onClick={handleInstallClick}
+            className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 rounded-full border border-emerald-500/20 transition-all active:scale-95"
+          >
+            <span className="material-symbols-outlined text-sm">download</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">APP 설치</span>
+          </button>
+        )}
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-8 relative z-10">
-        <div className="w-full relative aspect-[4/5] max-h-[420px] mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-white/10">
+      <div className="flex-1 flex flex-col items-center justify-start px-8 pt-4 pb-8 relative z-10">
+        <div className="w-full relative aspect-[4/5] max-h-[400px] mb-6 rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-white/10 shrink-0">
           <div 
             className="absolute inset-0 bg-cover bg-center" 
             style={{backgroundImage: 'url("/assets/images/welcome.png")'}}
@@ -48,19 +70,18 @@ const Welcome = ({ onNavigate }) => {
           </div>
         </div>
 
-
-        <div className="text-center space-y-4 max-w-[320px]">
-          <h1 className="text-[34px] font-extrabold tracking-tight text-white leading-tight font-display">
+        <div className="text-center space-y-3 max-w-[320px]">
+          <h1 className="text-[30px] font-extrabold tracking-tight text-white leading-tight font-display">
             {t('welcome_title_stay_close')} <br/>
             {t('welcome_title_wherever')}
           </h1>
-          <p className="text-base text-gray-400 font-medium leading-relaxed">
+          <p className="text-sm text-gray-400 font-medium leading-relaxed">
             {t('welcome_desc')}
           </p>
         </div>
       </div>
 
-      <div className="w-full px-8 pb-12 pt-4 z-10 flex flex-col gap-5">
+      <div className="w-full px-8 pb-10 pt-2 z-10 flex flex-col gap-4">
         <button 
           onClick={() => onNavigate(ScreenType.SIGNUP)}
           className="w-full flex items-center justify-center gap-2 h-16 rounded-2xl bg-primary hover:bg-blue-600 active:scale-[0.98] transition-all text-white font-bold text-lg shadow-xl shadow-primary/30"
