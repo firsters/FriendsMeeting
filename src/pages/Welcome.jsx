@@ -22,27 +22,27 @@ const Welcome = ({ onNavigate }) => {
         <div className="w-full relative aspect-[4/5] max-h-[420px] mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl ring-1 ring-white/10">
           <div 
             className="absolute inset-0 bg-cover bg-center" 
-            style={{backgroundImage: 'url("https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=800")'}}
+            style={{backgroundImage: 'url("/assets/images/welcome.png")'}}
           ></div>
           <div className="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent"></div>
           
           <div className="absolute top-6 right-6">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-lg">
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-              <span className="text-xs font-semibold text-white">{t('online')} now</span>
+              <span className="text-xs font-semibold text-white">{t('online_now')}</span>
             </div>
           </div>
 
           <div className="absolute bottom-8 left-6 right-6">
             <div className="flex items-center gap-3 p-4 bg-background-dark/70 backdrop-blur-lg rounded-2xl border border-white/10 shadow-xl opacity-95">
               <img 
-                src="https://picsum.photos/seed/alex/100/100" 
+                src="https://picsum.photos/seed/korean_alex/100/100" 
                 className="w-10 h-10 rounded-full border-2 border-primary" 
-                alt="Alex"
+                alt="Profile"
               />
               <div className="flex-1">
                 <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-0.5">{t('onboarding_new_message')}</p>
-                <p className="text-sm font-medium text-white">"Hey! I'm at the cafe 📍"</p>
+                <p className="text-sm font-medium text-white">"{t('welcome_sample_msg')}"</p>
               </div>
             </div>
           </div>
