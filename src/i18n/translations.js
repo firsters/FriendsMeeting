@@ -26,7 +26,7 @@ export const translations = {
     // Auth
     auth_locate_connect: "위치 공유 및 연결",
     auth_locate_desc: "도시 어디서든 친구들을 찾아보세요",
-    auth_join_network: "네트워크 가입",
+    auth_join_network: "'야! 어디야?' 가입",
     auth_join_desc: "당신의 여정을 공유해보세요",
     auth_nickname: "닉네임",
     auth_nickname_placeholder: "예: 길동이",
