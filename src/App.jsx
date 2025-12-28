@@ -36,7 +36,10 @@ function App() {
           }
         } else {
           setIsLoggedIn(false);
-          setCurrentScreen(ScreenType.VERIFY_EMAIL);
+          // Only direct to verify screen if they already left the onboarding phase
+          if (currentScreen !== ScreenType.ONBOARDING) {
+            setCurrentScreen(ScreenType.VERIFY_EMAIL);
+          }
         }
       } else {
         setIsLoggedIn(false);
