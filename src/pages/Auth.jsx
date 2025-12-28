@@ -89,7 +89,13 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       const user = userCredential.user;
 
       if (!user.emailVerified) {
-        setError(t('auth_error_not_verified'));
+        try {
+          await sendEmailVerification(user);
+          setError(t('auth_error_not_verified_resent'));
+        } catch (resendErr) {
+          console.error("Auto-resend error:", resendErr);
+          setError(t('auth_error_not_verified'));
+        }
         onNavigate(ScreenType.VERIFY_EMAIL);
         return;
       }
