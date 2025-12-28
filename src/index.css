@@ -1,62 +1,100 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --app-height: 100vh;
-  --primary: #256af4;
-  --background-dark: #101622;
+@theme {
+  --color-primary: #256af4;
+  --color-background-light: #f5f6f8;
+  --color-background-dark: #101622;
+  --color-surface-dark: #1e293b;
+  --color-surface-highlight-dark: #222f49;
+  --color-card-dark: #182234;
+  --color-card-light: #ffffff;
+  --color-input-light: #eef0f4;
+  --color-input-dark: #222f49;
+
+  --font-display: "Plus Jakarta Sans", "Inter", "Noto Sans KR", "sans-serif";
+  --font-body: "Inter", "Noto Sans KR", "sans-serif";
+  --font-sans: "Inter", "Noto Sans KR", "sans-serif";
+
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 }
 
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: var(--background-dark);
-  color: white;
-  font-family: "Inter", "Noto Sans KR", sans-serif;
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  :root {
+    --app-height: 100vh;
+    --primary: #256af4;
+    --background-dark: #101622;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-dark);
+    color: white;
+    font-family: "Inter", "Noto Sans KR", sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
-.font-display {
-  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
-}
+@layer components {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
 
-/* Glassmorphism utility for Dark Mode */
-.glass {
-  background: rgba(24, 34, 52, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
+  .font-display {
+    font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+  }
 
-/* Scrollbar Utility */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+  /* Glassmorphism utility for Dark Mode */
+  .glass {
+    background: rgba(24, 34, 52, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
 
-/* Custom Chat Bubble Radii (Adapted for new design) */
-.chat-bubble-left {
-  border-radius: 20px 20px 20px 4px;
-}
+  /* Scrollbar Utility */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-.chat-bubble-right {
-  border-radius: 20px 20px 4px 20px;
-}
+  /* Custom Chat Bubble Radii (Adapted for new design) */
+  .chat-bubble-left {
+    border-radius: 20px 20px 20px 4px;
+  }
 
-/* Mobile Safe Area helper */
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
-}
+  .chat-bubble-right {
+    border-radius: 20px 20px 4px 20px;
+  }
 
-.pt-safe {
-  padding-top: env(safe-area-inset-top);
+  /* Mobile Safe Area helper */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
 }
