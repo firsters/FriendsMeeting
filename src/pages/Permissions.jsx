@@ -1,34 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 
 const Permissions = ({ onNavigate }) => {
   const { t } = useTranslation();
+  const [modal, setModal] = useState({ show: false, message: '' });
+
+  const showAlert = (message) => {
+    setModal({ show: true, message });
+  };
 
   const requestLocation = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          alert(t('confirm') || "Location access granted!");
+          showAlert(t('confirm') || "Location access granted!");
         },
         (error) => {
           console.error("Location error:", error);
-          alert("Please enable location services in your browser settings.");
+          showAlert("Please enable location services in your browser settings.");
         }
       );
     } else {
-      alert("Geolocation is not supported by your browser");
+      showAlert("Geolocation is not supported by your browser");
     }
   };
 
   const requestNotification = async () => {
     if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
+      showAlert("This browser does not support desktop notification");
     } else {
       try {
         const permission = await Notification.requestPermission();
         if (permission === "granted") {
-          alert(t('confirm') || "Notification access granted!");
+          showAlert(t('confirm') || "Notification access granted!");
         }
       } catch (err) {
         console.error("Notification permission error:", err);
@@ -37,7 +42,25 @@ const Permissions = ({ onNavigate }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
+    <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans relative">
+      {/* Custom Modal */}
+      {modal.show && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-xs bg-card-dark border border-white/10 rounded-[32px] p-8 shadow-2xl animate-scale-in flex flex-col items-center text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+              <span className="material-symbols-outlined text-primary text-3xl">info</span>
+            </div>
+            <p className="text-white font-bold text-lg mb-8 leading-relaxed whitespace-pre-wrap">{modal.message}</p>
+            <button 
+              onClick={() => setModal({ show: false, message: '' })}
+              className="w-full py-4 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl transition-all active:scale-95 shadow-lg shadow-primary/20"
+            >
+              {t('confirm') || "Confirm"}
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="p-4 flex items-center justify-center relative">
         <button onClick={() => onNavigate(ScreenType.SIGNUP)} className="absolute left-4 p-2 text-white/50 hover:text-white transition-colors">
           <span className="material-symbols-outlined">arrow_back</span>
