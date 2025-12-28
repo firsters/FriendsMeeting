@@ -134,25 +134,25 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
           <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mb-10 shadow-2xl">
             <span className="material-symbols-outlined text-primary text-6xl">outgoing_mail</span>
           </div>
-          <h1 className="text-4xl font-extrabold text-white mb-4">Email Sent!</h1>
+          <h1 className="text-4xl font-extrabold text-white mb-4">{t('verify_email_title')}</h1>
           <p className="text-gray-400 font-medium mb-10 leading-relaxed">
-            We've sent a verification link to <span className="text-white font-bold">{signupData.email || 'your email'}</span>.<br/>Please check your inbox and verify your account.
+            {t('verify_email_sent_to')} <span className="text-white font-bold">{signupData.email || 'your email'}</span>.<br/>{t('verify_email_check_inbox')}
           </p>
           
           <button 
-            onClick={() => onNavigate(ScreenType.PERMISSIONS)}
+            onClick={onLogin}
             className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
           >
-            Verified (Simulate)
+            {t('verify_email_verified_btn')}
           </button>
 
           <p className="mt-8 text-gray-500 font-medium">
-            Didn't receive email? <button className="text-primary font-bold hover:underline transition-all">Resend Link</button>
+            {t('verify_email_no_receive')} <button className="text-primary font-bold hover:underline transition-all">{t('verify_email_resend')}</button>
           </p>
           
           <button onClick={() => onNavigate(ScreenType.SIGNUP)} className="mt-8 text-gray-500 font-bold flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors">
             <span className="material-symbols-outlined text-sm">arrow_back</span>
-            Back to Signup
+            {t('verify_email_back_to_signup')}
           </button>
         </div>
       );
@@ -214,7 +214,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
           {renderHeader(t('forgot_title'), t('forgot_desc'))}
           <div className="px-6 space-y-8 overflow-y-auto pb-10">
             <div className="space-y-4">
-              {renderInput(t('forgot_new_password'), "lock", "Enter at least 8 characters", "password", true)}
+              {renderInput(t('forgot_new_password'), "lock", t('forgot_new_password_placeholder'), "password", true)}
               <div className="px-1 pt-1 space-y-2">
                 <div className="flex gap-1.5 h-1.5 w-full">
                   <div className="h-full flex-1 rounded-full bg-yellow-500"></div>
@@ -225,7 +225,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
                 <p className="text-xs font-bold text-yellow-500">Medium strength</p>
               </div>
             </div>
-            {renderInput(t('confirm'), "lock_reset", "Re-enter your password", "password")}
+            {renderInput(t('confirm'), "lock_reset", t('forgot_confirm_password_placeholder'), "password")}
             <button 
               onClick={() => onNavigate(ScreenType.PASSWORD_UPDATED)}
               className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
@@ -243,7 +243,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
             <span className="material-symbols-outlined text-green-500 text-6xl">check_circle</span>
           </div>
           <h1 className="text-4xl font-extrabold text-white mb-4">{t('forgot_reset_success')}</h1>
-          <p className="text-gray-400 font-medium mb-10 leading-relaxed">{t('forgot_reset_success')}</p>
+          <p className="text-gray-400 font-medium mb-10 leading-relaxed">{t('forgot_reset_success_desc')}</p>
           
           <button 
             onClick={() => onNavigate(ScreenType.LOGIN)}

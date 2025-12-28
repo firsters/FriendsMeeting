@@ -51,6 +51,18 @@ export const translations = {
     forgot_new_password: "새 비밀번호",
     forgot_reset_success: "성공!",
     forgot_back_to_login: "로그인으로 돌아가기",
+    forgot_new_password_placeholder: "최소 8자 이상 입력하세요",
+    forgot_confirm_password_placeholder: "비밀번호를 다시 입력하세요",
+    forgot_reset_success_desc: "비밀번호가 성공적으로 재설정되었습니다.",
+    
+    // Email Verification
+    verify_email_title: "이메일 전송 완료!",
+    verify_email_sent_to: "인증 링크를 다음 주소로 보냈습니다: ",
+    verify_email_check_inbox: "받은 편지함을 확인하고 계정을 인증해 주세요.",
+    verify_email_verified_btn: "인증 완료 (시뮬레이션)",
+    verify_email_no_receive: "이메일을 받지 못하셨나요? ",
+    verify_email_resend: "링크 재전송",
+    verify_email_back_to_signup: "회원가입으로 돌아가기",
     
     // Permissions
     perm_title: "권한 설정",
@@ -128,6 +140,7 @@ export const translations = {
     meeting_enter_code: "참여 코드 입력",
     meeting_code_desc: "방장이 공유해준 참여 코드를 입력하여 모임에 참여하세요.",
     meeting_code: "모임 코드",
+    cancel: "취소",
     
     // Location Picker
     loc_picker_title: "모임 위치 설정",
@@ -188,7 +201,47 @@ export const translations = {
     settings_terms: "이용약관",
     settings_privacy_policy: "개인정보처리방침",
     settings_license: "오픈소스 라이선스",
-    settings_logout: "로그아웃"
+    settings_logout: "로그아웃",
+    forgot_new_password_placeholder: "최소 8자 이상 입력하세요",
+    forgot_confirm_password_placeholder: "비밀번호를 다시 입력하세요",
+    forgot_reset_success_desc: "비밀번호가 성공적으로 재설정되었습니다.",
+    
+    // Email Verification
+    verify_email_title: "이메일 전송 완료!",
+    verify_email_sent_to: "인증 링크를 다음 주소로 보냈습니다: ",
+    verify_email_check_inbox: "받은 편지함을 확인하고 계정을 인증해 주세요.",
+    verify_email_verified_btn: "인증 완료 (시뮬레이션)",
+    verify_email_no_receive: "이메일을 받지 못하셨나요? ",
+    verify_email_resend: "링크 재전송",
+    verify_email_back_to_signup: "회원가입으로 돌아가기",
+    
+    // Map View
+    map_finding_friends: "친구 찾는 중...",
+    map_search_placeholder: "장소 또는 친구 검색",
+    map_is_nearby: "님이 근처에 있습니다",
+    map_recent_chats: "최근 채팅",
+    map_new_messages: "개의 새 메시지",
+    map_sample_location: "서울시 강남구",
+    
+    // Profile Additional
+    settings_edit_profile: "프로필 수정",
+    settings_language_value: "한국어",
+    settings_who_find_value: "친구만",
+    
+    // Friend Screens Additional
+    friends_nearby_distance: "m 근처",
+    friends_location_sample: "대한민국 서울",
+    
+    // Meeting Screens Additional
+    meeting_my_meetings: "내 모임",
+    meeting_status_active: "진행 중",
+    meeting_live_now: "현재 진행 중",
+    meeting_started_ago: "전 시작됨",
+    meeting_tomorrow: "내일",
+    meeting_point: "모임 장소",
+    meeting_who_is_here: "참여 중인 인원",
+    meeting_location_active: "위치 공유 중",
+    meeting_leave_quietly: "조용히 나가기"
   },
   en: {
     // Common
@@ -379,6 +432,46 @@ export const translations = {
     settings_terms: "Terms of Service",
     settings_privacy_policy: "Privacy Policy",
     settings_license: "Open Source Licenses",
-    settings_logout: "Log Out"
+    settings_logout: "Log Out",
+    forgot_new_password_placeholder: "Enter at least 8 characters",
+    forgot_confirm_password_placeholder: "Re-enter your password",
+    forgot_reset_success_desc: "Your password has been reset successfully.",
+    
+    // Email Verification
+    verify_email_title: "Email Sent!",
+    verify_email_sent_to: "We've sent a verification link to ",
+    verify_email_check_inbox: "Please check your inbox and verify your account.",
+    verify_email_verified_btn: "Verified (Simulate)",
+    verify_email_no_receive: "Didn't receive email? ",
+    verify_email_resend: "Resend Link",
+    verify_email_back_to_signup: "Back to Signup",
+    
+    // Map View
+    map_finding_friends: "Finding Friends...",
+    map_search_placeholder: "Search place or friends",
+    map_is_nearby: "is nearby",
+    map_recent_chats: "Recent Chats",
+    map_new_messages: " New Messages",
+    map_sample_location: "Seoul, Korea",
+    
+    // Profile Additional
+    settings_edit_profile: "Edit Profile",
+    settings_language_value: "English",
+    settings_who_find_value: "Friends",
+    
+    // Friend Screens Additional
+    friends_nearby_distance: "away",
+    friends_location_sample: "Seoul, Korea",
+    
+    // Meeting Screens Additional
+    meeting_my_meetings: "My Meetings",
+    meeting_status_active: "Active",
+    meeting_live_now: "Live Now",
+    meeting_started_ago: "Started ago",
+    meeting_tomorrow: "Tomorrow",
+    meeting_point: "Meeting Point",
+    meeting_who_is_here: "Who's Here",
+    meeting_location_active: "Location Active",
+    meeting_leave_quietly: "Leave Quietly"
   }
 };

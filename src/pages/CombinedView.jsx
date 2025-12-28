@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
+import { useTranslation } from '../context/LanguageContext';
 
 const CombinedView = ({ onNavigate }) => {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -19,9 +21,9 @@ const CombinedView = ({ onNavigate }) => {
            <div className="flex-1">
              <div className="flex items-center gap-1.5">
                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Finding Friends...</p>
+               <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">{t('map_finding_friends')}</p>
              </div>
-             <p className="text-white font-extrabold text-sm truncate">Downtown, Manhattan NY</p>
+             <p className="text-white font-extrabold text-sm truncate">{t('map_sample_location')}</p>
            </div>
            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors shadow-inner">
              <span className="material-symbols-outlined text-xl">notifications</span>
@@ -32,7 +34,7 @@ const CombinedView = ({ onNavigate }) => {
           <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-600 group-focus-within:text-primary transition-colors text-xl">search</span>
           <input 
             className="w-full h-14 bg-card-dark/80 backdrop-blur-xl border border-white/5 rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 outline-none transition-all shadow-xl" 
-            placeholder="Search place or friends" 
+            placeholder={t('map_search_placeholder')} 
           />
           <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition-colors">
             <span className="material-symbols-outlined text-xl">mic</span>
@@ -49,7 +51,7 @@ const CombinedView = ({ onNavigate }) => {
              </div>
              <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-background-dark flex items-center justify-center text-[10px] font-bold text-white shadow-lg">9m</div>
              <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-card-dark/95 backdrop-blur px-3 py-1.5 rounded-xl border border-white/10 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-               <p className="text-[10px] font-bold text-white">Sarah is nearby</p>
+               <p className="text-[10px] font-bold text-white">Sarah {t('map_is_nearby')}</p>
              </div>
            </div>
          </div>
@@ -96,7 +98,7 @@ const CombinedView = ({ onNavigate }) => {
                 <img src="https://picsum.photos/seed/a/100/100" className="w-6 h-6 rounded-full border-2 border-background-dark" alt="User" />
                 <img src="https://picsum.photos/seed/b/100/100" className="w-6 h-6 rounded-full border-2 border-background-dark" alt="User" />
               </div>
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">3 New Messages</p>
+              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">3 {t('map_new_messages')}</p>
             </div>
           )}
         </div>
@@ -104,7 +106,7 @@ const CombinedView = ({ onNavigate }) => {
         {isExpanded && (
           <div className="px-6 pb-24 h-full flex flex-col animate-fade-in-up">
             <div className="flex items-center justify-between mb-8">
-               <h2 className="text-2xl font-extrabold text-white tracking-tight">Recent Chats</h2>
+               <h2 className="text-2xl font-extrabold text-white tracking-tight">{t('map_recent_chats')}</h2>
                <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-primary"><span className="material-symbols-outlined">edit_square</span></button>
             </div>
             <div className="space-y-6 overflow-y-auto scrollbar-hide flex-1">
@@ -131,19 +133,19 @@ const CombinedView = ({ onNavigate }) => {
         <nav className="absolute bottom-0 left-0 right-0 h-20 bg-background-dark border-t border-white/5 flex items-center justify-around px-4">
            <button className="flex flex-col items-center gap-1 text-primary">
              <span className="material-symbols-outlined">map</span>
-             <span className="text-[9px] font-bold uppercase tracking-widest">Map</span>
+             <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_map')}</span>
            </button>
            <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
              <span className="material-symbols-outlined">group</span>
-             <span className="text-[9px] font-bold uppercase tracking-widest">Friends</span>
+             <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends')}</span>
            </button>
            <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
              <span className="material-symbols-outlined">calendar_month</span>
-             <span className="text-[9px] font-bold uppercase tracking-widest">Meet</span>
+             <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings')}</span>
            </button>
            <button onClick={() => onNavigate(ScreenType.SETTINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
              <span className="material-symbols-outlined">person</span>
-             <span className="text-[9px] font-bold uppercase tracking-widest">Profile</span>
+             <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_profile')}</span>
            </button>
         </nav>
       </div>
