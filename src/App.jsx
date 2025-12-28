@@ -7,6 +7,8 @@ import CombinedView from './pages/CombinedView';
 import MeetingScreens from './pages/MeetingScreens';
 import FriendScreens from './pages/FriendScreens';
 import Profile from './pages/Profile';
+import { auth } from './firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import './index.css';
 
 function App() {
@@ -23,10 +25,29 @@ function App() {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
+    // Firebase Auth listener
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        if (user.emailVerified) {
+          setIsLoggedIn(true);
+          // Only navigate if we're on a restricted screen
+          if ([ScreenType.ONBOARDING, ScreenType.LOGIN, ScreenType.SIGNUP, ScreenType.VERIFY_EMAIL].includes(currentScreen)) {
+            setCurrentScreen(ScreenType.MAP);
+          }
+        } else {
+          setIsLoggedIn(false);
+          setCurrentScreen(ScreenType.VERIFY_EMAIL);
+        }
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      unsubscribe();
     };
-  }, []);
+  }, [currentScreen]); // Adding currentScreen as dependency to handle navigation correctly if needed
 
   const navigate = (screen) => {
     setCurrentScreen(screen);
@@ -37,7 +58,8 @@ function App() {
     navigate(ScreenType.PERMISSIONS);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut(auth);
     setIsLoggedIn(false);
     navigate(ScreenType.LOGIN);
   };

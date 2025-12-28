@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
+import { auth } from '../firebase';
+import { 
+  createUserWithEmailAndPassword, 
+  sendEmailVerification, 
+  updateProfile,
+  signInWithEmailAndPassword
+} from 'firebase/auth';
 
 const Auth = ({ currentScreen, onNavigate, onLogin }) => {
   const { t } = useTranslation();
   const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   
   // State for form fields
   const [signupData, setSignupData] = useState({
@@ -13,19 +21,110 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
     password: '',
     confirmPassword: ''
   });
+  const [loginData, setLoginData] = useState({
+    email: '',
+    password: ''
+  });
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     const { nickname, email, password, confirmPassword } = signupData;
+    setError('');
+    
     if (!nickname || !email || !password || !confirmPassword) {
-      alert(t('auth_error_required') || 'Please fill in all fields');
+      setError(t('auth_error_required') || 'Please fill in all fields');
       return;
     }
     if (password !== confirmPassword) {
-      alert(t('auth_error_password_mismatch') || 'Passwords do not match');
+      setError(t('auth_error_password_mismatch') || 'Passwords do not match');
       return;
     }
-    // Proceed to email verification
-    onNavigate(ScreenType.VERIFY_EMAIL);
+
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Update nickname
+      await updateProfile(user, {
+        displayName: nickname
+      });
+
+      // Send verification email
+      await sendEmailVerification(user);
+
+      onNavigate(ScreenType.VERIFY_EMAIL);
+    } catch (err) {
+      console.error("Signup error:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLoginSubmit = async () => {
+    const { email, password } = loginData;
+    setError('');
+    
+    if (!email || !password) {
+      setError(t('auth_error_required') || 'Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (!user.emailVerified) {
+        setError("Please verify your email first.");
+        // Optional: show resend email button or automatically send one
+        // await sendEmailVerification(user); 
+        // return; 
+      }
+
+      onLogin(); // Proceed to app
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendEmail = async () => {
+    setError('');
+    if (auth.currentUser) {
+      setLoading(true);
+      try {
+        await sendEmailVerification(auth.currentUser);
+        alert(t('verify_email_sent_to') + auth.currentUser.email);
+      } catch (err) {
+        console.error("Resend error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setError("No user found. Please try signing up again.");
+    }
+  };
+
+  const handleCheckVerification = async () => {
+    if (auth.currentUser) {
+      setLoading(true);
+      try {
+        await auth.currentUser.reload();
+        if (auth.currentUser.emailVerified) {
+          onLogin();
+        } else {
+          setError("Email not verified yet. Please check your inbox.");
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const renderHeader = (title, desc, backTo) => (
@@ -73,15 +172,20 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
     setSignupData(prev => ({ ...prev, [field]: value }));
   };
 
+  const updateLoginField = (field, value) => {
+    setLoginData(prev => ({ ...prev, [field]: value }));
+  };
+
   switch (currentScreen) {
     case ScreenType.LOGIN: 
       return (
         <div className="flex flex-col h-full animate-fade-in-up">
           {renderHeader(t('welcome_title'), t('auth_locate_desc'), ScreenType.ONBOARDING)}
           <div className="flex-1 px-6 space-y-6 overflow-y-auto pb-10">
-            {renderInput(t('auth_email'), "person", t('auth_email_placeholder'))}
+            {error && <p className="text-red-500 text-sm font-bold text-center bg-red-500/10 p-3 rounded-xl">{error}</p>}
+            {renderInput(t('auth_email'), "person", t('auth_email_placeholder'), 'email', false, loginData.email, (e) => updateLoginField('email', e.target.value))}
             <div className="space-y-2">
-              {renderInput(t('auth_password'), "lock", "••••••••", "password", true)}
+              {renderInput(t('auth_password'), "lock", "••••••••", "password", true, loginData.password, (e) => updateLoginField('password', e.target.value))}
               <div className="flex justify-end px-1">
                 <button onClick={() => onNavigate(ScreenType.FORGOT_PASSWORD)} className="text-sm font-bold text-primary hover:text-blue-400 transition-colors">
                   {t('auth_forgot_password')}
@@ -89,11 +193,12 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
               </div>
             </div>
             <button 
-              onClick={onLogin}
-              className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+              onClick={handleLoginSubmit}
+              disabled={loading}
+              className={`w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${loading ? 'opacity-50' : ''}`}
             >
-              {t('auth_login')}
-              <span className="material-symbols-outlined">login</span>
+              {loading ? 'Logging in...' : t('auth_login')}
+              {!loading && <span className="material-symbols-outlined">login</span>}
             </button>
             <div className="flex items-center justify-center gap-2 pt-4">
               <span className="text-gray-500 font-medium">{t('auth_no_account')}</span>
@@ -110,6 +215,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
         <div className="flex flex-col h-full animate-fade-in-up">
           {renderHeader(t('auth_join_network'), t('auth_join_desc'), ScreenType.ONBOARDING)}
           <div className="flex-1 px-6 space-y-5 overflow-y-auto pb-10">
+            {error && <p className="text-red-500 text-sm font-bold text-center bg-red-500/10 p-3 rounded-xl">{error}</p>}
             {renderInput(t('auth_nickname'), "person", t('auth_nickname_placeholder'), 'text', false, signupData.nickname, (e) => updateSignupField('nickname', e.target.value))}
             {renderInput(t('auth_email'), "mail", t('auth_email_placeholder'), 'email', false, signupData.email, (e) => updateSignupField('email', e.target.value))}
             {renderInput(t('auth_password'), "lock", "••••••••", "password", true, signupData.password, (e) => updateSignupField('password', e.target.value))}
@@ -118,10 +224,11 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
             <div className="pt-4">
               <button 
                 onClick={handleSignup}
-                className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                disabled={loading}
+                className={`w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                {t('auth_signup')}
-                <span className="material-symbols-outlined">arrow_forward</span>
+                {loading ? 'Processing...' : t('auth_signup')}
+                {!loading && <span className="material-symbols-outlined">arrow_forward</span>}
               </button>
             </div>
           </div>
@@ -134,20 +241,28 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
           <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mb-10 shadow-2xl">
             <span className="material-symbols-outlined text-primary text-6xl">outgoing_mail</span>
           </div>
+          {error && <p className="text-red-500 text-sm font-bold text-center bg-red-500/10 p-3 rounded-xl mb-6">{error}</p>}
           <h1 className="text-4xl font-extrabold text-white mb-4">{t('verify_email_title')}</h1>
           <p className="text-gray-400 font-medium mb-10 leading-relaxed">
             {t('verify_email_sent_to')} <span className="text-white font-bold">{signupData.email || 'your email'}</span>.<br/>{t('verify_email_check_inbox')}
           </p>
           
           <button 
-            onClick={onLogin}
-            className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
+            onClick={handleCheckVerification}
+            disabled={loading}
+            className={`w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] ${loading ? 'opacity-50' : ''}`}
           >
-            {t('verify_email_verified_btn')}
+            {loading ? 'Checking...' : t('verify_email_verified_btn')}
           </button>
 
           <p className="mt-8 text-gray-500 font-medium">
-            {t('verify_email_no_receive')} <button className="text-primary font-bold hover:underline transition-all">{t('verify_email_resend')}</button>
+            {t('verify_email_no_receive')} <button 
+              onClick={handleResendEmail} 
+              disabled={loading}
+              className={`text-primary font-bold hover:underline transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {loading ? '...' : t('verify_email_resend')}
+            </button>
           </p>
           
           <button onClick={() => onNavigate(ScreenType.SIGNUP)} className="mt-8 text-gray-500 font-bold flex items-center justify-center gap-2 mx-auto hover:text-white transition-colors">
