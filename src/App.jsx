@@ -36,7 +36,9 @@ function App() {
           }
         } else {
           setIsLoggedIn(false);
-          // Only direct to verify screen if they already left the onboarding phase
+          // Only auto-redirect if we are NOT on the welcome screen
+          // This way, a refresh on welcome keeps us on welcome.
+          // But once they click 'Get Started', they will land here IF they have an unverified session.
           if (currentScreen !== ScreenType.ONBOARDING) {
             setCurrentScreen(ScreenType.VERIFY_EMAIL);
           }

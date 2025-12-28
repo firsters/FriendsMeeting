@@ -263,7 +263,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
           {error && <p className="text-red-500 text-sm font-bold text-center bg-red-500/10 p-3 rounded-xl mb-6">{error}</p>}
           <h1 className="text-4xl font-extrabold text-white mb-4">{t('verify_email_title')}</h1>
           <p className="text-gray-400 font-medium mb-10 leading-relaxed">
-            {t('verify_email_sent_to')} <span className="text-white font-bold">{signupData.email || 'your email'}</span>.<br/>{t('verify_email_check_inbox')}
+            {t('verify_email_sent_to')} <span className="text-white font-bold">{signupData.email || (auth.currentUser?.email) || 'your email'}</span>.<br/>{t('verify_email_check_inbox')}
           </p>
           
           <button 
