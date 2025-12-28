@@ -45,7 +45,11 @@ function App() {
   const renderScreen = () => {
     switch (currentScreen) {
       case ScreenType.ONBOARDING:
-        return <Welcome onNavigate={navigate} />;
+        return <Welcome 
+                 onNavigate={navigate} 
+                 deferredPrompt={deferredPrompt} 
+                 onInstallSuccess={() => setDeferredPrompt(null)} 
+               />;
       
       case ScreenType.LOGIN:
       case ScreenType.SIGNUP:
