@@ -29,7 +29,7 @@ const Welcome = ({ onNavigate }) => {
           <div className="absolute top-6 right-6">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-lg">
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-              <span className="text-xs font-semibold text-white">Online now</span>
+              <span className="text-xs font-semibold text-white">{t('online')} now</span>
             </div>
           </div>
 
@@ -41,7 +41,7 @@ const Welcome = ({ onNavigate }) => {
                 alt="Alex"
               />
               <div className="flex-1">
-                <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-0.5">{t('onboarding_new_message') || "New Message"}</p>
+                <p className="text-[10px] uppercase font-bold text-primary tracking-widest mb-0.5">{t('onboarding_new_message')}</p>
                 <p className="text-sm font-medium text-white">"Hey! I'm at the cafe 📍"</p>
               </div>
             </div>
@@ -56,11 +56,11 @@ const Welcome = ({ onNavigate }) => {
 
         <div className="text-center space-y-4 max-w-[320px]">
           <h1 className="text-[34px] font-extrabold tracking-tight text-white leading-tight font-display">
-            {t('welcome_title_stay_close') || "Stay Close,"} <br/>
-            {t('welcome_title_wherever') || "Wherever You Are"}
+            {t('welcome_title_stay_close')} <br/>
+            {t('welcome_title_wherever')}
           </h1>
           <p className="text-base text-gray-400 font-medium leading-relaxed">
-            {t('welcome_desc') || "Share your real-time location with friends and coordinate meetups instantly."}
+            {t('welcome_desc')}
           </p>
         </div>
       </div>
@@ -70,16 +70,16 @@ const Welcome = ({ onNavigate }) => {
           onClick={() => onNavigate(ScreenType.SIGNUP)}
           className="w-full flex items-center justify-center gap-2 h-16 rounded-2xl bg-primary hover:bg-blue-600 active:scale-[0.98] transition-all text-white font-bold text-lg shadow-xl shadow-primary/30"
         >
-          <span>{t('onboarding_get_started') || "Get Started"}</span>
+          <span>{t('onboarding_get_started')}</span>
           <span className="material-symbols-outlined">arrow_forward</span>
         </button>
         <div className="flex justify-center items-center gap-2 text-sm font-medium">
-          <span className="text-gray-500">{t('auth_has_account') || "Already have an account?"}</span>
+          <span className="text-gray-500">{t('auth_has_account')}</span>
           <button 
             onClick={() => onNavigate(ScreenType.LOGIN)}
             className="text-primary font-bold hover:underline"
           >
-            {t('auth_login_link') || "Log in"}
+            {t('welcome_login_link')}
           </button>
         </div>
       </div>

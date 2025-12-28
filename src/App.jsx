@@ -10,8 +10,8 @@ import Profile from './pages/Profile';
 import './index.css';
 
 function App() {
-  // Directly start on the LOGIN screen as requested
-  const [currentScreen, setCurrentScreen] = useState(ScreenType.LOGIN);
+  // Start on the Welcome screen (onboarding) as requested
+  const [currentScreen, setCurrentScreen] = useState(ScreenType.ONBOARDING);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 

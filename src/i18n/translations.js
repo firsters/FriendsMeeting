@@ -12,9 +12,10 @@ export const translations = {
     
     // Welcome
     welcome_title: "프렌즈미팅",
-    welcome_subtitle_1: "어디에 있든,",
-    welcome_subtitle_2: "가깝게",
-    welcome_subtitle_3: "연결되세요",
+    welcome_title_stay_close: "어디에 있든,",
+    welcome_title_wherever: "가깝게 연결되세요",
+    onboarding_new_message: "새 메시지",
+    onboarding_get_started: "시작하기",
     welcome_desc: "실시간 위치 공유와 통합 채팅으로 친구들과의 모임을 더 쉽고 빠르게 계획하세요.",
     welcome_start: "시작하기",
     welcome_login_prompt: "이미 계정이 있으신가요?",
@@ -200,9 +201,10 @@ export const translations = {
 
     // Welcome
     welcome_title: "FriendsMeeting",
-    welcome_subtitle_1: "Stay Close,",
-    welcome_subtitle_2: "Wherever",
-    welcome_subtitle_3: "You Are",
+    welcome_title_stay_close: "Stay Close,",
+    welcome_title_wherever: "Wherever You Are",
+    onboarding_new_message: "New Message",
+    onboarding_get_started: "Get Started",
     welcome_desc: "Share real-time location and coordinate meetups instantly with integrated chat.",
     welcome_start: "Get Started",
     welcome_login_prompt: "Already have an account?",
