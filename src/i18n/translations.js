@@ -11,7 +11,7 @@ export const translations = {
     ignore: "거절",
     
     // Welcome
-    welcome_title: "프렌즈미팅",
+    welcome_title: "야! 어디야?",
     welcome_title_stay_close: "어디에 있든,",
     welcome_title_wherever: "가깝게 연결되세요",
     onboarding_new_message: "새 메시지",
@@ -200,7 +200,7 @@ export const translations = {
     ignore: "Ignore",
 
     // Welcome
-    welcome_title: "FriendsMeeting",
+    welcome_title: "야! 어디야?",
     welcome_title_stay_close: "Stay Close,",
     welcome_title_wherever: "Wherever You Are",
     onboarding_new_message: "New Message",

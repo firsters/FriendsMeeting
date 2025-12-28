@@ -14,7 +14,7 @@ const Welcome = ({ onNavigate }) => {
           <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary text-white shadow-lg shadow-primary/20">
             <span className="material-symbols-outlined text-[24px]">location_on</span>
           </div>
-          <span className="text-2xl font-bold tracking-tight text-white font-display">LocateMate</span>
+          <span className="text-2xl font-bold tracking-tight text-white font-display">{t('welcome_title')}</span>
         </div>
       </div>
 
