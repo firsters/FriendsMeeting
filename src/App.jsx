@@ -48,14 +48,36 @@ function App() {
       }
     });
 
+    // Browser history sync (Back button)
+    const handlePopState = (event) => {
+      if (event.state && event.state.screen) {
+        setCurrentScreen(event.state.screen);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    // Initial history state
+    if (!window.history.state) {
+      window.history.replaceState({ screen: currentScreen }, '');
+    }
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('popstate', handlePopState);
       unsubscribe();
     };
-  }, [currentScreen]); // Adding currentScreen as dependency to handle navigation correctly if needed
+  }, [currentScreen]);
 
-  const navigate = (screen) => {
-    setCurrentScreen(screen);
+  const navigate = (screen, replace = false) => {
+    if (screen !== currentScreen) {
+      if (replace) {
+        window.history.replaceState({ screen }, '');
+      } else {
+        window.history.pushState({ screen }, '');
+      }
+      setCurrentScreen(screen);
+    }
   };
 
   const handleLogin = () => {

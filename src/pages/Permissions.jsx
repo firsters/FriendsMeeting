@@ -5,6 +5,37 @@ import { useTranslation } from '../context/LanguageContext';
 const Permissions = ({ onNavigate }) => {
   const { t } = useTranslation();
 
+  const requestLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          alert(t('confirm') || "Location access granted!");
+        },
+        (error) => {
+          console.error("Location error:", error);
+          alert("Please enable location services in your browser settings.");
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser");
+    }
+  };
+
+  const requestNotification = async () => {
+    if (!("Notification" in window)) {
+      alert("This browser does not support desktop notification");
+    } else {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          alert(t('confirm') || "Notification access granted!");
+        }
+      } catch (err) {
+        console.error("Notification permission error:", err);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
       <div className="p-4 flex items-center justify-center relative">
@@ -47,7 +78,12 @@ const Permissions = ({ onNavigate }) => {
               <p className="text-xs text-gray-500 leading-relaxed mb-3">{t('perm_location_desc')}</p>
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">{t('perm_location_badge')}</span>
-                <button className="px-5 py-1.5 bg-primary rounded-full text-white text-xs font-bold shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-95">{t('perm_location_btn')}</button>
+                <button 
+                  onClick={requestLocation}
+                  className="px-5 py-1.5 bg-primary rounded-full text-white text-xs font-bold shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-95"
+                >
+                  {t('perm_location_btn')}
+                </button>
               </div>
             </div>
           </div>
@@ -60,7 +96,12 @@ const Permissions = ({ onNavigate }) => {
               <h3 className="text-white font-bold mb-1">{t('perm_notif_title')}</h3>
               <p className="text-xs text-gray-500 leading-relaxed">{t('perm_notif_desc')}</p>
               <div className="flex justify-end mt-2">
-                <button className="px-5 py-1.5 bg-gray-800 rounded-full text-white text-xs font-bold hover:bg-gray-700 transition-all active:scale-95">{t('perm_notif_btn')}</button>
+                <button 
+                  onClick={requestNotification}
+                  className="px-5 py-1.5 bg-gray-800 rounded-full text-white text-xs font-bold hover:bg-gray-700 transition-all active:scale-95"
+                >
+                  {t('perm_notif_btn')}
+                </button>
               </div>
             </div>
           </div>
@@ -69,7 +110,7 @@ const Permissions = ({ onNavigate }) => {
 
       <div className="p-6 pb-12 pt-4 bg-background-dark border-t border-white/5">
         <button 
-          onClick={() => onNavigate(ScreenType.MAP)}
+          onClick={() => onNavigate(ScreenType.MAP, true)}
           className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-xl shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
         >
           {t('perm_btn_continue')}

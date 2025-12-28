@@ -274,6 +274,12 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
                 {!loading && <span className="material-symbols-outlined">arrow_forward</span>}
               </button>
             </div>
+            <div className="flex items-center justify-center gap-2 pt-4">
+              <span className="text-gray-500 font-medium">{t('auth_has_account')}</span>
+              <button onClick={() => onNavigate(ScreenType.LOGIN)} className="text-primary font-bold hover:underline transition-all">
+                {t('auth_login')}
+              </button>
+            </div>
           </div>
         </div>
       );
