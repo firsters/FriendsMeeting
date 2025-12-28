@@ -50,22 +50,29 @@ const createFriendIcon = (imageUrl, status) => {
     });
 };
 
-const MapComponent = ({ friends, onFriendClick }) => {
+const MapComponent = ({ friends, onFriendClick, userLocation }) => {
     const [position, setPosition] = useState([37.5665, 126.9780]); // Default: Seoul City Hall
 
+    // Sync userLocation prop with internal state
     useEffect(() => {
-        if (navigator.geolocation) {
+        if (userLocation) {
+            setPosition(userLocation);
+        }
+    }, [userLocation]);
+
+    // Internal geolocation as fallback if userLocation prop not provided yet
+    useEffect(() => {
+        if (!userLocation && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
                     setPosition([pos.coords.latitude, pos.coords.longitude]);
                 },
                 (err) => {
                    console.error("Geolocation error:", err);
-                   // Fallback or alert if needed
                 }
             );
         }
-    }, []);
+    }, [userLocation]);
 
     return (
         <MapContainer 

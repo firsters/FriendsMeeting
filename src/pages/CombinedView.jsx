@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import MapComponent from '../components/MapComponent';
@@ -7,6 +7,8 @@ const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationName, setLocationName] = useState(t('map_sample_location') || "Locating...");
 
   // Mock data for the home screen
   const friends = [
@@ -22,6 +24,49 @@ const CombinedView = ({ onNavigate }) => {
     participants: 4
   };
 
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation([latitude, longitude]);
+
+          // Reverse Geocoding using Nominatim (OpenStreetMap)
+          try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14&addressdetails=1`, {
+                headers: {
+                    'User-Agent': 'FriendsMeetingApp/1.0' // Good practice for OSM API
+                }
+            });
+            const data = await response.json();
+            
+            if (data && data.address) {
+                // Construct a shorter, readable address
+                const city = data.address.city || data.address.town || data.address.village || "";
+                const district = data.address.borough || data.address.suburb || data.address.neighbourhood || "";
+                const road = data.address.road || "";
+                
+                // Prioritize district/road for local context, fallback to city
+                const displayAddress = [district, road].filter(Boolean).join(', ') || city || "Unknown Location";
+                setLocationName(displayAddress);
+            } else {
+                setLocationName("Detailed location unavailable");
+            }
+          } catch (error) {
+            console.error("Geocoding error:", error);
+            setLocationName("Location unavailable");
+          }
+        },
+        (error) => {
+          console.error("Location permission denied:", error);
+          setLocationName("Location permission denied");
+        }
+      );
+    } else {
+        setLocationName("Geolocation not supported");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col h-full bg-background-dark overflow-hidden relative font-sans">
       {/* Real Interactive Map Layer */}
@@ -29,6 +74,7 @@ const CombinedView = ({ onNavigate }) => {
           <MapComponent 
             friends={friends} 
             onFriendClick={setSelectedFriend} 
+            userLocation={userLocation}
           />
       </div>
 
@@ -43,7 +89,7 @@ const CombinedView = ({ onNavigate }) => {
                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Live Status</p>
              </div>
-             <p className="text-white font-extrabold text-sm truncate">{t('map_sample_location')}</p>
+             <p className="text-white font-extrabold text-sm truncate">{locationName}</p>
            </div>
            <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors shadow-inner">
              <span className="material-symbols-outlined text-xl">notifications</span>
