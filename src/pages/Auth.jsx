@@ -89,10 +89,9 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       const user = userCredential.user;
 
       if (!user.emailVerified) {
-        setError("Please verify your email first.");
-        // Optional: show resend email button or automatically send one
-        // await sendEmailVerification(user); 
-        // return; 
+        setError(t('auth_error_not_verified'));
+        onNavigate(ScreenType.VERIFY_EMAIL);
+        return;
       }
 
       onLogin(); // Proceed to app
