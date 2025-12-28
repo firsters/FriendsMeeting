@@ -48,11 +48,6 @@ const Welcome = ({ onNavigate }) => {
           </div>
         </div>
 
-        <div className="flex gap-2 mb-8">
-          <div className="w-8 h-2 rounded-full bg-primary"></div>
-          <div className="w-2 h-2 rounded-full bg-gray-700"></div>
-          <div className="w-2 h-2 rounded-full bg-gray-700"></div>
-        </div>
 
         <div className="text-center space-y-4 max-w-[320px]">
           <h1 className="text-[34px] font-extrabold tracking-tight text-white leading-tight font-display">
