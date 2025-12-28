@@ -44,6 +44,7 @@ export const translations = {
     auth_error_too_many_requests: "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.",
     auth_error_not_verified: "이메일 인증이 완료되지 않았습니다. 메일을 확인해 주세요.",
     auth_error_not_verified_resent: "인증되지 않은 계정입니다. 인증 메일을 다시 보냈으니 메일함을 확인해 주세요.",
+    auth_error_email_already_in_use: "이미 사용 중인 이메일입니다. 로그인해 주세요.",
     
     // Forgot Password
     forgot_title: "비밀번호 찾기",
@@ -291,6 +292,7 @@ export const translations = {
     auth_error_too_many_requests: "Too many requests. Please wait a moment before trying again.",
     auth_error_not_verified: "Email is not verified. Please check your inbox.",
     auth_error_not_verified_resent: "Email not verified. A new verification link has been sent to your inbox.",
+    auth_error_email_already_in_use: "This email is already in use. Please login instead.",
 
     // Forgot Password
     forgot_title: "Forgot Password",

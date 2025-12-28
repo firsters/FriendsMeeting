@@ -68,7 +68,25 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       onNavigate(ScreenType.VERIFY_EMAIL);
     } catch (err) {
       console.error("Signup error:", err);
-      setError(err.message);
+      if (err.code === 'auth/email-already-in-use') {
+        // If email already exists, try to sign in and resend verification if unverified
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          if (!user.emailVerified) {
+            await sendEmailVerification(user);
+            setError(t('auth_error_not_verified_resent'));
+            onNavigate(ScreenType.VERIFY_EMAIL);
+          } else {
+             setError(t('auth_error_email_already_in_use') || "This email is already in use. Please login.");
+          }
+        } catch (loginErr) {
+          // If sign in fails (e.g. wrong password), show original signup error
+          setError(err.message);
+        }
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
