@@ -36,11 +36,58 @@ const GeocodingHandler = ({ location, onAddressResolved }) => {
     return null;
 };
 
-const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved }) => {
+const PlacesHandler = ({ searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected }) => {
+    const placesLib = useMapsLibrary('places');
+    const geocodingLib = useMapsLibrary('geocoding');
+    const [autocompleteService, setAutocompleteService] = useState(null);
+    const [geocoder, setGeocoder] = useState(null);
+
+    useEffect(() => {
+        if (!placesLib || !geocodingLib) return;
+        setAutocompleteService(new placesLib.AutocompleteService());
+        setGeocoder(new geocodingLib.Geocoder());
+    }, [placesLib, geocodingLib]);
+
+    // Handle Search Query
+    useEffect(() => {
+        if (!autocompleteService || !searchQuery || searchQuery.length < 2) return;
+
+        const request = { input: searchQuery };
+        autocompleteService.getPlacePredictions(request, (results, status) => {
+             if (status === placesLib.PlacesServiceStatus.OK && results) {
+                 onSearchResults(results);
+             } else {
+                 onSearchResults([]);
+             }
+        });
+    }, [autocompleteService, searchQuery, placesLib]);
+
+    // Handle Place Selection
+    useEffect(() => {
+        if (!geocoder || !selectedPlaceId) return;
+
+        geocoder.geocode({ placeId: selectedPlaceId }, (results, status) => {
+            if (status === 'OK' && results[0]) {
+                const location = {
+                    lat: results[0].geometry.location.lat(),
+                    lng: results[0].geometry.location.lng()
+                };
+                onPlaceSelected(location);
+            } else {
+                console.error("Geocode failed: " + status);
+            }
+        });
+    }, [geocoder, selectedPlaceId]);
+
+    return null;
+};
+
+const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected }) => {
     // Initial center state only for defaultCenter
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    const [mapInstance, setMapInstance] = useState(null);
 
     // Dark Mode Map Style
     const mapId = "DEMO_MAP_ID"; // In production, use a real Map ID from Google Cloud Console for advanced markers
@@ -132,6 +179,12 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved 
         }
     }, [userLocation]);
 
+    // Handle place selection update from PlacesHandler
+    const handlePlaceSelected = (location) => {
+        setCurrentCenter(location);
+        if (onPlaceSelected) onPlaceSelected(location); // Optional: Propagate back up if needed
+    };
+
     // Fallback geolocation
     useEffect(() => {
         if (!userLocation && navigator.geolocation) {
@@ -162,6 +215,12 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved 
             >
                 <MapUpdater center={currentCenter} />
                 <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
+                <PlacesHandler 
+                    searchQuery={searchQuery} 
+                    onSearchResults={onSearchResults} 
+                    selectedPlaceId={selectedPlaceId}
+                    onPlaceSelected={handlePlaceSelected} 
+                />
 
                 {/* User Location Marker */}
                 <AdvancedMarker position={currentCenter}>

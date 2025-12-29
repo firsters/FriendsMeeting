@@ -41,6 +41,27 @@ const CombinedView = ({ onNavigate }) => {
     }
   }, []);
 
+  // Search State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedPlaceId, setSelectedPlaceId] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Debounced search trigger handled by passing query to MapComponent which uses PlacesHandler
+  // But we need to update local state to react.
+  const handleSearchInput = (e) => {
+    setSearchQuery(e.target.value);
+    if (e.target.value.length === 0) {
+        setSearchResults([]);
+    }
+  };
+
+  const handleSelectLocation = (placeId, description) => {
+      setSelectedPlaceId(placeId);
+      setSearchQuery(description); // Update input to show full name
+      setSearchResults([]); // Hide dropdown
+  };
+
   return (
     <div className="flex flex-col h-full bg-background-dark overflow-hidden relative font-sans">
       {/* Real Interactive Map Layer */}
@@ -50,6 +71,9 @@ const CombinedView = ({ onNavigate }) => {
             onFriendClick={setSelectedFriend} 
             userLocation={userLocation}
             onAddressResolved={setLocationName}
+            searchQuery={searchQuery}
+            onSearchResults={setSearchResults}
+            selectedPlaceId={selectedPlaceId}
           />
       </div>
 
@@ -74,12 +98,35 @@ const CombinedView = ({ onNavigate }) => {
         <div className="mt-4 relative group pointer-events-auto">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-600 group-focus-within:text-primary transition-colors text-xl">search</span>
           <input 
+            value={searchQuery}
+            onChange={handleSearchInput}
             className="w-full h-14 bg-card-dark/80 backdrop-blur-xl border border-white/5 rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 outline-none transition-all shadow-xl" 
             placeholder={t('map_search_placeholder')} 
           />
           <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition-colors">
             <span className="material-symbols-outlined text-xl">mic</span>
           </button>
+
+          {/* Search Results Dropdown */}
+          {searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 animate-fade-in-up">
+              {searchResults.map((result) => (
+                <div
+                  key={result.place_id}
+                  onClick={() => handleSelectLocation(result.place_id, result.description)}
+                  className="px-4 py-3 hover:bg-white/10 cursor-pointer flex items-center gap-3 border-b border-white/5 last:border-none transition-colors"
+                >
+                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-gray-400 text-sm">location_on</span>
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="text-sm font-bold text-white truncate">{result.structured_formatting?.main_text || result.description}</p>
+                    <p className="text-xs text-gray-500 truncate">{result.structured_formatting?.secondary_text || ""}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </header>
 
