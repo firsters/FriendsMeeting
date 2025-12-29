@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { APIProvider, Map, AdvancedMarker, useMap } from '@vis.gl/react-google-maps';
+import { APIProvider, Map, AdvancedMarker, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 
 const MapUpdater = ({ center }) => {
     const map = useMap();
@@ -11,7 +11,32 @@ const MapUpdater = ({ center }) => {
     return null;
 };
 
-const MapComponent = ({ friends, onFriendClick, userLocation }) => {
+const GeocodingHandler = ({ location, onAddressResolved }) => {
+    const geocodingLib = useMapsLibrary('geocoding');
+    const [geocoder, setGeocoder] = useState(null);
+
+    useEffect(() => {
+        if (!geocodingLib) return;
+        setGeocoder(new geocodingLib.Geocoder());
+    }, [geocodingLib]);
+
+    useEffect(() => {
+        if (!geocoder || !location || !onAddressResolved) return;
+
+        geocoder.geocode({ location }, (results, status) => {
+            if (status === 'OK' && results[0]) {
+                onAddressResolved(results[0].formatted_address);
+            } else {
+                console.error("Geocode failed due to: " + status);
+                onAddressResolved("Detailed location unavailable");
+            }
+        });
+    }, [geocoder, location, onAddressResolved]);
+
+    return null;
+};
+
+const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved }) => {
     // Initial center state only for defaultCenter
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
@@ -116,6 +141,8 @@ const MapComponent = ({ friends, onFriendClick, userLocation }) => {
                     // Only set initial center if it hasn't been set by userLocation yet
                     setInitialCenter(newPos); 
                     setCurrentCenter(newPos);
+                    // If no parent location provided, maybe we want to resolve address here too?
+                    // But for now, relying on parent passing userLocation
                 },
                 (err) => console.error(err)
             );
@@ -134,6 +161,7 @@ const MapComponent = ({ friends, onFriendClick, userLocation }) => {
                 className="w-full h-full"
             >
                 <MapUpdater center={currentCenter} />
+                <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
 
                 {/* User Location Marker */}
                 <AdvancedMarker position={currentCenter}>

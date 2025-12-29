@@ -27,35 +27,9 @@ const CombinedView = ({ onNavigate }) => {
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
+        (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
-
-          // Reverse Geocoding using Nominatim (OpenStreetMap)
-          try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14&addressdetails=1`, {
-                headers: {
-                    'User-Agent': 'FriendsMeetingApp/1.0' // Good practice for OSM API
-                }
-            });
-            const data = await response.json();
-            
-            if (data && data.address) {
-                // Construct a shorter, readable address
-                const city = data.address.city || data.address.town || data.address.village || "";
-                const district = data.address.borough || data.address.suburb || data.address.neighbourhood || "";
-                const road = data.address.road || "";
-                
-                // Prioritize district/road for local context, fallback to city
-                const displayAddress = [district, road].filter(Boolean).join(', ') || city || "Unknown Location";
-                setLocationName(displayAddress);
-            } else {
-                setLocationName("Detailed location unavailable");
-            }
-          } catch (error) {
-            console.error("Geocoding error:", error);
-            setLocationName("Location unavailable");
-          }
         },
         (error) => {
           console.error("Location permission denied:", error);
@@ -75,6 +49,7 @@ const CombinedView = ({ onNavigate }) => {
             friends={friends} 
             onFriendClick={setSelectedFriend} 
             userLocation={userLocation}
+            onAddressResolved={setLocationName}
           />
       </div>
 
