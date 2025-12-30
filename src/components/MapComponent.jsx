@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { APIProvider, Map, AdvancedMarker, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 
-const MapUpdater = ({ center, shouldPan = true }) => {
+const MapUpdater = ({ center, shouldPan = true, centerTrigger = 0 }) => {
     const map = useMap();
     useEffect(() => {
         if (map && center && shouldPan) {
             map.panTo(center);
         }
-    }, [map, center, shouldPan]);
+    }, [map, center, shouldPan, centerTrigger]);
     return null;
 };
 
@@ -92,7 +92,7 @@ const PlacesHandler = ({ searchQuery, onSearchResults, selectedPlaceId, onPlaceS
     return null;
 };
 
-const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected, onMapLoad }) => {
+const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected, centerTrigger = 0 }) => {
     // Initial center state only for defaultCenter
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
@@ -237,9 +237,9 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
                     disableDefaultUI={true}
                     styles={darkMapStyle}
                     className="w-full h-full"
+                    onLoad={(ev) => handleMapLoad(ev.detail.map)}
                 >
-                    <MapInstanceShaper onMapLoad={handleMapLoad} />
-                    <MapUpdater center={currentCenter} shouldPan={hasCenteredInitially} />
+                    <MapUpdater center={currentCenter} shouldPan={hasCenteredInitially} centerTrigger={centerTrigger} />
                     <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
                     <PlacesHandler 
                         searchQuery={searchQuery} 

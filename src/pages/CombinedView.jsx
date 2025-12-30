@@ -9,7 +9,7 @@ const CombinedView = ({ onNavigate }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [locationName, setLocationName] = useState(t('map_sample_location') || "Locating...");
-  const [mapInstance, setMapInstance] = useState(null);
+  const [centerTrigger, setCenterTrigger] = useState(0);
 
   // Mock data for the home screen
   const friends = [
@@ -64,12 +64,13 @@ const CombinedView = ({ onNavigate }) => {
   };
 
   const handleCenterOnMe = () => {
-    if (userLocation && mapInstance) {
-      mapInstance.panTo({ lat: userLocation[0], lng: userLocation[1] });
-    } else if (navigator.geolocation && mapInstance) {
+    setCenterTrigger(prev => prev + 1);
+    
+    // Also refresh the location state
+    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          mapInstance.panTo({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          setUserLocation([pos.coords.latitude, pos.coords.longitude]);
         },
         (error) => console.error(error)
       );
@@ -88,7 +89,7 @@ const CombinedView = ({ onNavigate }) => {
             searchQuery={searchQuery}
             onSearchResults={setSearchResults}
             selectedPlaceId={selectedPlaceId}
-            onMapLoad={setMapInstance}
+            centerTrigger={centerTrigger}
           />
       </div>
 
