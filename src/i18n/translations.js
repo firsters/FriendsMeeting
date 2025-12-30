@@ -235,6 +235,12 @@ export const translations = {
     // Friend Screens Additional
     friends_nearby_distance: "m 근처",
     friends_location_sample: "대한민국 서울",
+    invite_title: "친구 그룹 초대",
+    invite_text: "친구야! 내 그룹에 들어와서 같이 놀자!",
+    group_join_title: "모임 참가",
+    group_join_desc: "초대받은 코드를 입력하여 모임에 참여하세요.",
+    group_join_existing_user: "기존 가입자라면 로그인 한 후에 모임 참가 기능을 이용하세요",
+    meeting_code: "모임 코드",
     
     // Meeting Screens Additional
     meeting_my_meetings: "내 모임",
@@ -470,6 +476,12 @@ export const translations = {
     // Friend Screens Additional
     friends_nearby_distance: "away",
     friends_location_sample: "Seoul, Korea",
+    invite_title: "Join my Friend Group",
+    invite_text: "Hey! Join my group on FriendsMeeting!",
+    group_join_title: "Join Meeting",
+    group_join_desc: "Enter the code you received to join the meeting.",
+    group_join_existing_user: "Existing users should log in to join meetings.",
+    meeting_code: "Meeting Code",
     
     // Meeting Screens Additional
     meeting_my_meetings: "My Meetings",
