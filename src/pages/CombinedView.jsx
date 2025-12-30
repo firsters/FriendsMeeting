@@ -167,7 +167,7 @@ const CombinedView = ({ onNavigate }) => {
       )}
 
       {/* Quick Actions & Controls */}
-      <div className="absolute right-4 bottom-28 flex flex-col gap-3 z-30 transition-transform duration-500" style={{ transform: isExpanded ? 'translateY(-200%)' : 'none' }}>
+      <div className="absolute right-4 bottom-28 flex flex-col gap-3 z-50 transition-transform duration-500" style={{ transform: isExpanded ? 'translateY(-220%)' : 'none' }}>
         <button 
           onClick={handleCenterOnMe}
           className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-slate-900 border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.4)] hover:bg-slate-100 transition-all active:scale-90"
