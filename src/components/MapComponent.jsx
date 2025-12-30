@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { APIProvider, Map, AdvancedMarker, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 
-const MapUpdater = ({ center }) => {
+const MapUpdater = ({ center, shouldPan = true }) => {
     const map = useMap();
     useEffect(() => {
-        if (map && center) {
+        if (map && center && shouldPan) {
             map.panTo(center);
         }
-    }, [map, center]);
+    }, [map, center, shouldPan]);
     return null;
 };
 
@@ -86,8 +86,10 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
     // Initial center state only for defaultCenter
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
+    const [hasCenteredInitially, setHasCenteredInitially] = useState(false);
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
     const [mapInstance, setMapInstance] = useState(null);
+    const map = useMap();
 
     // Dark Mode Map Style
     const mapId = "DEMO_MAP_ID"; // In production, use a real Map ID from Google Cloud Console for advanced markers
@@ -175,9 +177,16 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
     // Update currentCenter when userLocation changes
     useEffect(() => {
         if (userLocation) {
-            setCurrentCenter({ lat: userLocation[0], lng: userLocation[1] });
+            const newCenter = { lat: userLocation[0], lng: userLocation[1] };
+            setCurrentCenter(newCenter);
+            
+            // Auto-center only once when the first valid location is received
+            if (!hasCenteredInitially && map) {
+                map.setCenter(newCenter);
+                setHasCenteredInitially(true);
+            }
         }
-    }, [userLocation]);
+    }, [userLocation, map, hasCenteredInitially]);
 
     // Handle place selection update from PlacesHandler
     const handlePlaceSelected = (location) => {
@@ -194,13 +203,29 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
                     // Only set initial center if it hasn't been set by userLocation yet
                     setInitialCenter(newPos); 
                     setCurrentCenter(newPos);
-                    // If no parent location provided, maybe we want to resolve address here too?
-                    // But for now, relying on parent passing userLocation
+                    
+                    if (!hasCenteredInitially && map) {
+                        map.setCenter(newPos);
+                        setHasCenteredInitially(true);
+                    }
                 },
                 (err) => console.error(err)
             );
         }
-    }, [userLocation]);
+    }, [userLocation, map, hasCenteredInitially]);
+
+    const handleCenterOnMe = () => {
+        if (userLocation && map) {
+            map.panTo({ lat: userLocation[0], lng: userLocation[1] });
+        } else if (navigator.geolocation && map) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    map.panTo({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+                },
+                (err) => console.error(err)
+            );
+        }
+    };
 
     return (
         <APIProvider apiKey={apiKey}>
@@ -212,8 +237,9 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
                 disableDefaultUI={true}
                 styles={darkMapStyle}
                 className="w-full h-full"
+                onLoad={(ev) => setMapInstance(ev.detail.map)}
             >
-                <MapUpdater center={currentCenter} />
+                <MapUpdater center={currentCenter} shouldPan={hasCenteredInitially} />
                 <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
                 <PlacesHandler 
                     searchQuery={searchQuery} 
@@ -265,6 +291,16 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
                         </AdvancedMarker>
                     );
                 })}
+
+                {/* My Location FAB */}
+                <div className="absolute right-4 top-40 z-30 pointer-events-auto">
+                    <button 
+                        onClick={handleCenterOnMe}
+                        className="w-12 h-12 bg-card-dark/95 backdrop-blur-xl rounded-2xl flex items-center justify-center text-primary border border-white/10 shadow-2xl hover:bg-white/10 transition-all active:scale-90"
+                    >
+                        <span className="material-symbols-outlined">my_location</span>
+                    </button>
+                </div>
             </Map>
         </APIProvider>
     );
