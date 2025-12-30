@@ -11,6 +11,16 @@ const MapUpdater = ({ center, shouldPan = true }) => {
     return null;
 };
 
+const MapInstanceShaper = ({ onMapLoad }) => {
+    const map = useMap();
+    useEffect(() => {
+        if (map && onMapLoad) {
+            onMapLoad(map);
+        }
+    }, [map, onMapLoad]);
+    return null;
+};
+
 const GeocodingHandler = ({ location, onAddressResolved }) => {
     const geocodingLib = useMapsLibrary('geocoding');
     const [geocoder, setGeocoder] = useState(null);
@@ -227,8 +237,8 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
                     disableDefaultUI={true}
                     styles={darkMapStyle}
                     className="w-full h-full"
-                    onLoad={(ev) => handleMapLoad(ev.detail.map)}
                 >
+                    <MapInstanceShaper onMapLoad={handleMapLoad} />
                     <MapUpdater center={currentCenter} shouldPan={hasCenteredInitially} />
                     <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
                     <PlacesHandler 
