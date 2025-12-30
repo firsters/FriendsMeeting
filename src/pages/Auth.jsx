@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
+import { useModal } from '../context/ModalContext';
 import { auth } from '../firebase';
 import { 
   createUserWithEmailAndPassword, 
@@ -14,6 +15,7 @@ import { doc, setDoc } from 'firebase/firestore';
 
 const Auth = ({ currentScreen, onNavigate, onLogin }) => {
   const { t } = useTranslation();
+  const { showAlert } = useModal();
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -151,7 +153,7 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       setLoading(true);
       try {
         await sendEmailVerification(auth.currentUser);
-        alert(t('verify_email_sent_to') + auth.currentUser.email);
+        showAlert(t('verify_email_sent_to') + auth.currentUser.email);
         setResendCooldown(60); // 60 seconds cooldown
       } catch (err) {
         console.error("Resend error:", err);

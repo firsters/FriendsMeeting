@@ -82,6 +82,11 @@ export const translations = {
     perm_btn_continue: "계속하기",
     perm_disclaimer: "설정은 언제든지 변경할 수 있습니다.",
     perm_privacy_note: "회원님의 데이터는 앱 외부로 절대 공유되지 않습니다.",
+    perm_location_rationale: "야! 어디야?에서 사용자님의 위치 확인을 요청합니다. 친구들과의 실시간 위치 공유를 위해 필요하며, 동의 시에만 작동합니다.",
+    perm_notif_rationale: "알림 권한을 허용하여 친구들의 메시지와 약속 소식을 놓치지 마세요.",
+    modal_info_title: "안내",
+    modal_alert_title: "알림",
+    modal_confirm_title: "확인 요청",
     
     // Navigation
     nav_map: "지도",
@@ -326,6 +331,11 @@ export const translations = {
     perm_btn_continue: "Continue",
     perm_disclaimer: "You can change settings at any time",
     perm_privacy_note: "Your data is never shared outside this app.",
+    perm_location_rationale: "FriendsMeeting requests access to your location for real-time sharing with friends. It only works when you explicitly agree.",
+    perm_notif_rationale: "Allow notifications to stay updated with friend messages and meeting news.",
+    modal_info_title: "Notice",
+    modal_alert_title: "Alert",
+    modal_confirm_title: "Confirm",
 
     // Navigation
     nav_map: "Map",
