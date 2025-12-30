@@ -9,6 +9,8 @@ import {
   signInWithEmailAndPassword,
   signOut
 } from 'firebase/auth';
+import { db } from '../firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 const Auth = ({ currentScreen, onNavigate, onLogin }) => {
   const { t } = useTranslation();
@@ -61,6 +63,20 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       await updateProfile(user, {
         displayName: nickname
       });
+
+      // Generate Group Code
+      const groupCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      try {
+        await setDoc(doc(db, "users", user.uid), {
+          groupCode: groupCode,
+          email: email,
+          nickname: nickname,
+          createdAt: new Date()
+        });
+      } catch (firestoreErr) {
+        console.error("Error saving user profile:", firestoreErr);
+        // Fallback or ignore if firestore is not set up, but we try our best.
+      }
 
       // Send verification email
       await sendEmailVerification(user);

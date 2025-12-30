@@ -13,6 +13,23 @@ export const FriendsProvider = ({ children }) => {
     { id: '4', nickname: 'Casey', x: 120, y: 150, avatar: 'C', color: 'accent-blue' }, // Off-screen
     { id: '5', nickname: 'Riley', x: -20, y: 80, avatar: 'R', color: 'accent-pink' }, // Off-screen
   ]);
+  const [guestMeetings, setGuestMeetings] = useState([]);
+
+  // Function to join a guest meeting
+  const joinGuestMeeting = (guestNickname, groupCode) => {
+    const newMeeting = {
+      id: `guest-${Date.now()}`,
+      title: `${groupCode} ` + (navigator.language.startsWith('ko') ? '주최 모임' : "'s Group Meeting"),
+      hostCode: groupCode,
+      startTime: new Date(),
+      status: 'active',
+      participants: [
+        { id: 'host', name: 'Host (' + groupCode + ')', role: 'host', avatar: 'host' },
+        { id: 'guest', name: guestNickname, role: 'guest', avatar: 'guest' } // You
+      ]
+    };
+    setGuestMeetings(prev => [newMeeting, ...prev]);
+  };
 
   // Simulate real-time movement and status updates
   useEffect(() => {
@@ -41,7 +58,7 @@ export const FriendsProvider = ({ children }) => {
   }, []);
 
   return (
-    <FriendsContext.Provider value={{ friends, userLocation, setUserLocation }}>
+    <FriendsContext.Provider value={{ friends, userLocation, setUserLocation, guestMeetings, joinGuestMeeting }}>
       {children}
     </FriendsContext.Provider>
   );

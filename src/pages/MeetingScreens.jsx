@@ -1,8 +1,10 @@
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
+import { useFriends } from '../context/FriendsContext';
 
 const MeetingScreens = ({ currentScreen, onNavigate }) => {
   const { t } = useTranslation();
+  const { guestMeetings } = useFriends();
 
   const renderBottomNav = () => (
     <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 z-50">
@@ -45,6 +47,38 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
       </header>
 
       <main className="flex-1 px-6 space-y-6 overflow-y-auto scrollbar-hide pb-24">
+        {/* Render Guest Meetings */}
+        {guestMeetings.map(meeting => (
+          <div key={meeting.id} className="relative p-5 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 overflow-hidden group cursor-pointer active:scale-[0.98] transition-all" onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}>
+            <div className="absolute top-4 right-4 bg-primary px-3 py-1 rounded-full flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
+              <span className="text-[8px] font-bold text-white uppercase tracking-widest">{t('meeting_status_live')}</span>
+            </div>
+            <div className="flex gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0 shadow-lg">
+                <span className="material-symbols-outlined text-white text-2xl">diversity_3</span>
+              </div>
+              <div className="flex-1 pt-1">
+                <h3 className="text-lg font-bold text-white mb-0.5">{meeting.title}</h3>
+                <div className="flex items-center gap-1 text-gray-400 text-xs font-medium">
+                  <span className="material-symbols-outlined text-sm">location_on</span>
+                  Map View Enabled
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex -space-x-2">
+                {meeting.participants.map((p, i) => (
+                  <div key={i} className="w-7 h-7 rounded-full bg-gray-600 flex items-center justify-center border-2 border-background-dark text-[10px] text-white font-bold" title={p.name}>
+                    {p.name.charAt(0)}
+                  </div>
+                ))}
+              </div>
+              <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{t('alert_just_now')}</span>
+            </div>
+          </div>
+        ))}
+
         <div className="relative p-5 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 overflow-hidden group cursor-pointer active:scale-[0.98] transition-all" onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}>
            <div className="absolute top-4 right-4 bg-primary px-3 py-1 rounded-full flex items-center gap-1.5">
              <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>

@@ -6,6 +6,7 @@ import Permissions from './pages/Permissions';
 import CombinedView from './pages/CombinedView';
 import MeetingScreens from './pages/MeetingScreens';
 import FriendScreens from './pages/FriendScreens';
+import GroupJoin from './pages/GroupJoin';
 import Profile from './pages/Profile';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -16,8 +17,19 @@ function App() {
   const [currentScreen, setCurrentScreen] = useState(ScreenType.ONBOARDING);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [joinCode, setJoinCode] = useState(null);
 
   useEffect(() => {
+    // Check for group_code in URL
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('group_code');
+    if (code) {
+      setJoinCode(code);
+      setCurrentScreen(ScreenType.GROUP_JOIN);
+      // Clean up URL without reload
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -125,6 +137,9 @@ function App() {
       case ScreenType.FRIENDS:
       case ScreenType.FRIEND_REQUESTS:
         return <FriendScreens currentScreen={currentScreen} onNavigate={navigate} />;
+
+      case ScreenType.GROUP_JOIN:
+        return <GroupJoin onNavigate={navigate} groupCode={joinCode} />;
 
       case ScreenType.SETTINGS:
         return <Profile 

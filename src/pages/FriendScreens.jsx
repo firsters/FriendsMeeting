@@ -1,8 +1,46 @@
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
+import { auth, db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
+
+  const handleShareInvite = async () => {
+    if (!auth.currentUser) return;
+
+    try {
+      let groupCode = '';
+      // Try to fetch from Firestore first
+      const docRef = doc(db, "users", auth.currentUser.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        groupCode = docSnap.data().groupCode;
+      } else {
+        // Fallback if not found (e.g. old user or firestore error)
+        // In a real app we might generate one on the fly, but for now let's use a dummy or partial ID
+        groupCode = auth.currentUser.uid.substring(0, 6).toUpperCase();
+      }
+
+      const link = `${window.location.origin}/?group_code=${groupCode}`;
+      const shareData = {
+        title: t('invite_title') || 'Join my Friend Group!',
+        text: t('invite_text') || 'Join my group on FriendsMeeting!',
+        url: link
+      };
+
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback for desktop: copy to clipboard
+        await navigator.clipboard.writeText(link);
+        alert('Link copied to clipboard: ' + link);
+      }
+    } catch (err) {
+      console.error("Error sharing:", err);
+    }
+  };
 
   const renderBottomNav = () => (
     <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 z-50">
@@ -34,7 +72,10 @@ const FriendScreens = ({ onNavigate }) => {
             <button className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white hover:bg-white/10 transition-colors">
               <span className="material-symbols-outlined">qr_code_scanner</span>
             </button>
-            <button className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all">
+            <button
+              onClick={handleShareInvite}
+              className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
+            >
               <span className="material-symbols-outlined">person_add</span>
             </button>
           </div>
