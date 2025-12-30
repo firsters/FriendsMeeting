@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
-import { useFriends } from '../context/FriendsContext';
+import { signInAsGuest, joinMeetingByCode } from '../utils/meetingService';
 
 const GroupJoin = ({ onNavigate, groupCode }) => {
   const { t } = useTranslation();
-  const { joinGuestMeeting } = useFriends();
   const [nickname, setNickname] = useState('');
   const [code, setCode] = useState(groupCode || '');
   const [loading, setLoading] = useState(false);
@@ -14,14 +13,25 @@ const GroupJoin = ({ onNavigate, groupCode }) => {
     if (!nickname || !code) return;
     setLoading(true);
 
-    // Simulate join delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    joinGuestMeeting(nickname, code);
-    setLoading(false);
-
-    // Redirect to meeting list or map
-    onNavigate(ScreenType.MEETINGS);
+    try {
+        // 1. Sign in anonymously with the nickname
+        const user = await signInAsGuest(nickname);
+        
+        // 2. Join the actual meeting in Firestore
+        const userProfile = {
+            nickname: nickname,
+            avatar: nickname.charAt(0)
+        };
+        await joinMeetingByCode(code, user.uid, userProfile);
+        
+        setLoading(false);
+        // Redirect to meeting list or map
+        onNavigate(ScreenType.MEETINGS);
+    } catch (err) {
+        console.error("Guest join failed:", err);
+        alert(err.message || "Failed to join as guest");
+        setLoading(false);
+    }
   };
 
   return (

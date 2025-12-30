@@ -1,4 +1,5 @@
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
+import { signInAnonymously, updateProfile } from 'firebase/auth';
 import { 
   collection, 
   addDoc, 
@@ -20,6 +21,15 @@ const generateGroupCode = () => {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return code;
+};
+
+export const signInAsGuest = async (nickname) => {
+  const userCredential = await signInAnonymously(auth);
+  const user = userCredential.user;
+  await updateProfile(user, {
+    displayName: nickname
+  });
+  return user;
 };
 
 export const createMeeting = async (meetingData, userId, userProfile) => {

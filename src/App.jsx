@@ -40,7 +40,7 @@ function App() {
     // Firebase Auth listener
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        if (user.emailVerified) {
+        if (user.isAnonymous || user.emailVerified) {
           setIsLoggedIn(true);
           // Only navigate if we're on a restricted screen
           if ([ScreenType.ONBOARDING, ScreenType.LOGIN, ScreenType.SIGNUP, ScreenType.VERIFY_EMAIL].includes(currentScreen)) {
