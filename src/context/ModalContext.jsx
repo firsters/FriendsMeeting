@@ -32,7 +32,7 @@ export const ModalProvider = ({ children }) => {
     });
   }, [t]);
 
-  const showConfirm = useCallback((message, onConfirm, onCancel, title = t('modal_confirm_title')) => {
+  const showConfirm = useCallback((message, onConfirm, onCancel, title = t('modal_confirm_title'), confirmLabel = '', cancelLabel = '') => {
     setModal({
       show: true,
       title,
@@ -40,8 +40,8 @@ export const ModalProvider = ({ children }) => {
       type: 'confirm',
       onConfirm,
       onCancel,
-      confirmText: t('confirm') || 'Confirm',
-      cancelText: t('cancel') || 'Cancel'
+      confirmText: confirmLabel || t('confirm') || 'Confirm',
+      cancelText: cancelLabel || t('cancel') || 'Cancel'
     });
   }, [t]);
 

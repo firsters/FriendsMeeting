@@ -1,37 +1,79 @@
+import { useState, useEffect } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import { useModal } from '../context/ModalContext';
 
 const Permissions = ({ onNavigate }) => {
   const { t } = useTranslation();
-  const { showInfo } = useModal();
+  const { showConfirm } = useModal();
+  const [locationStatus, setLocationStatus] = useState('prompt');
+  const [notifStatus, setNotifStatus] = useState('prompt');
 
+  useEffect(() => {
+    checkPermissions();
+  }, []);
+
+  const checkPermissions = async () => {
+    if ("permissions" in navigator) {
+      try {
+        const loc = await navigator.permissions.query({ name: 'geolocation' });
+        setLocationStatus(loc.state);
+        loc.onchange = () => setLocationStatus(loc.state);
+
+        const notif = await navigator.permissions.query({ name: 'notifications' });
+        setNotifStatus(notif.state);
+        notif.onchange = () => setNotifStatus(notif.state);
+      } catch (err) {
+        console.error("Permission check error:", err);
+      }
+    } else {
+      // Fallback
+      if (Notification.permission) {
+        setNotifStatus(Notification.permission);
+      }
+    }
+  };
 
   const requestLocation = () => {
-    showInfo(t('perm_location_rationale'), () => {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            // Success
-          },
-          (error) => {
-            console.error("Location error:", error);
-          }
-        );
-      }
-    });
+    if (locationStatus === 'granted') return;
+    
+    showConfirm(
+      t('perm_location_rationale'), 
+      () => {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            () => setLocationStatus('granted'),
+            () => setLocationStatus('denied')
+          );
+        }
+      },
+      null, // No-op on "Later"
+      t('modal_info_title'),
+      t('modal_permission_allow'),
+      t('modal_permission_later')
+    );
   };
 
   const requestNotification = async () => {
-    showInfo(t('perm_notif_rationale'), async () => {
-      if ("Notification" in window) {
-        try {
-          await Notification.requestPermission();
-        } catch (err) {
-          console.error("Notification permission error:", err);
+    if (notifStatus === 'granted') return;
+
+    showConfirm(
+      t('perm_notif_rationale'), 
+      async () => {
+        if ("Notification" in window) {
+          try {
+            const result = await Notification.requestPermission();
+            setNotifStatus(result);
+          } catch (err) {
+            console.error("Notification permission error:", err);
+          }
         }
-      }
-    });
+      },
+      null, // No-op on "Later"
+      t('modal_info_title'),
+      t('modal_permission_allow'),
+      t('modal_permission_later')
+    );
   };
 
   return (
@@ -79,9 +121,15 @@ const Permissions = ({ onNavigate }) => {
                 <span className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">{t('perm_location_badge')}</span>
                 <button 
                   onClick={requestLocation}
-                  className="px-5 py-1.5 bg-primary rounded-full text-white text-xs font-bold shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-95"
+                  disabled={locationStatus === 'granted'}
+                  className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 ${
+                    locationStatus === 'granted' 
+                    ? 'bg-green-500/20 text-green-500' 
+                    : 'bg-primary text-white shadow-lg shadow-primary/20 hover:bg-blue-600'
+                  }`}
                 >
-                  {t('perm_location_btn')}
+                  {locationStatus === 'granted' && <span className="material-symbols-outlined text-sm">check</span>}
+                  {locationStatus === 'granted' ? t('perm_granted') : t('perm_location_btn')}
                 </button>
               </div>
             </div>
@@ -97,9 +145,15 @@ const Permissions = ({ onNavigate }) => {
               <div className="flex justify-end mt-2">
                 <button 
                   onClick={requestNotification}
-                  className="px-5 py-1.5 bg-gray-800 rounded-full text-white text-xs font-bold hover:bg-gray-700 transition-all active:scale-95"
+                  disabled={notifStatus === 'granted'}
+                  className={`px-5 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 ${
+                    notifStatus === 'granted' 
+                    ? 'bg-green-500/20 text-green-500' 
+                    : 'bg-gray-800 text-white hover:bg-gray-700'
+                  }`}
                 >
-                  {t('perm_notif_btn')}
+                  {notifStatus === 'granted' && <span className="material-symbols-outlined text-sm">check</span>}
+                  {notifStatus === 'granted' ? t('perm_granted') : t('perm_notif_btn')}
                 </button>
               </div>
             </div>
