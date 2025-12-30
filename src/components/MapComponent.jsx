@@ -3,11 +3,20 @@ import { APIProvider, Map, AdvancedMarker, useMap, useMapsLibrary } from '@vis.g
 
 const MapUpdater = ({ center, shouldPan = true, centerTrigger = 0 }) => {
     const map = useMap();
+    const [lastTrigger, setLastTrigger] = useState(0);
+
     useEffect(() => {
-        if (map && center && shouldPan) {
+        if (!map || !center) return;
+
+        // Force pan if trigger changed, regardless of shouldPan
+        // shouldPan is typically for auto-tracking, while trigger is for manual click
+        if (centerTrigger > lastTrigger) {
+            map.panTo(center);
+            setLastTrigger(centerTrigger);
+        } else if (shouldPan) {
             map.panTo(center);
         }
-    }, [map, center, shouldPan, centerTrigger]);
+    }, [map, center, shouldPan, centerTrigger, lastTrigger]);
     return null;
 };
 

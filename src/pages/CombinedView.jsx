@@ -72,7 +72,8 @@ const CombinedView = ({ onNavigate }) => {
         (pos) => {
           setUserLocation([pos.coords.latitude, pos.coords.longitude]);
         },
-        (error) => console.error(error)
+        (error) => console.error(error),
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     }
   };
