@@ -10,6 +10,7 @@ const CombinedView = ({ onNavigate }) => {
   const [userLocation, setUserLocation] = useState(null);
   const [locationName, setLocationName] = useState(t('map_sample_location') || "Locating...");
   const [centerTrigger, setCenterTrigger] = useState(0);
+  const [mapType, setMapType] = useState('roadmap'); // 'roadmap' or 'hybrid'
 
   // Mock data for the home screen
   const friends = [
@@ -78,6 +79,10 @@ const CombinedView = ({ onNavigate }) => {
     }
   };
 
+  const handleToggleMapType = () => {
+    setMapType(prev => prev === 'roadmap' ? 'hybrid' : 'roadmap');
+  };
+
   return (
     <div className="flex flex-col h-full bg-background-dark overflow-hidden relative font-sans">
       {/* Real Interactive Map Layer */}
@@ -91,6 +96,7 @@ const CombinedView = ({ onNavigate }) => {
             onSearchResults={setSearchResults}
             selectedPlaceId={selectedPlaceId}
             centerTrigger={centerTrigger}
+            mapType={mapType}
           />
       </div>
 
@@ -175,7 +181,14 @@ const CombinedView = ({ onNavigate }) => {
         >
           <span className="material-symbols-outlined text-3xl font-bold">my_location</span>
         </button>
-        <button className="w-14 h-14 bg-card-dark/90 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/5 shadow-2xl hover:bg-white/10 transition-colors">
+        <button 
+          onClick={handleToggleMapType}
+          className={`w-14 h-14 backdrop-blur-xl rounded-2xl flex items-center justify-center border shadow-2xl transition-all active:scale-95 ${
+            mapType === 'hybrid' 
+            ? 'bg-primary text-white border-primary/20' 
+            : 'bg-card-dark/90 text-white border-white/5 hover:bg-white/10'
+          }`}
+        >
           <span className="material-symbols-outlined">layers</span>
         </button>
         <button 

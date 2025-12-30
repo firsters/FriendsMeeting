@@ -101,7 +101,7 @@ const PlacesHandler = ({ searchQuery, onSearchResults, selectedPlaceId, onPlaceS
     return null;
 };
 
-const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected, centerTrigger = 0 }) => {
+const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected, centerTrigger = 0, mapType = 'roadmap' }) => {
     // Initial center state only for defaultCenter
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
@@ -243,8 +243,9 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
                     defaultZoom={15}
                     mapId={mapId} 
                     gestureHandling={'greedy'}
+                    mapTypeId={mapType}
                     disableDefaultUI={true}
-                    styles={darkMapStyle}
+                    styles={mapType === 'roadmap' ? darkMapStyle : []}
                     className="w-full h-full"
                     onLoad={(ev) => handleMapLoad(ev.detail.map)}
                 >
