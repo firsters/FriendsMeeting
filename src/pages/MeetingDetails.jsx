@@ -1,28 +1,41 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, MapPin, Calendar, Clock, UserMinus, Shield, LogOut, Trash2, MoreHorizontal, UserPlus, ShieldCheck, BellRing, ChevronRight, MessageSquarePlus } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Clock, UserMinus, Shield, LogOut, Trash2, MoreHorizontal, UserPlus, ShieldCheck, BellRing, ChevronRight, MessageSquarePlus, X } from 'lucide-react';
 import { Button } from '../components/UI';
 import LocationPicker from './LocationPicker';
 import { useTranslation } from '../context/LanguageContext';
+import { subscribeToMeetingDetails } from '../utils/meetingService';
 
 const MeetingDetails = ({ meeting, onBack, isHost = false }) => {
   const { t } = useTranslation();
-  const [showLocationPicker, setShowLocationPicker] = useState(false);
   const [showNotificationTemplate, setShowNotificationTemplate] = useState(false);
-  const [currentMeeting, setCurrentMeeting] = useState({
-    ...meeting,
-    location: meeting.location || {
-      name: "Joe's Pizza, Downtown",
-      address: "123 Pasta Lane, NY"
-    }
-  });
+  const [showJoinToast, setShowJoinToast] = useState(false);
+  const [lastJoinedFriend, setLastJoinedFriend] = useState('');
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [currentMeeting, setCurrentMeeting] = useState(meeting);
+  const [participants, setParticipants] = useState(meeting.participants || []);
+  const [prevParticipantCount, setPrevParticipantCount] = useState(meeting.participants?.length || 0);
 
-  const participants = [
-    { id: '1', nickname: 'Sarah Chen', avatar: 'S', role: 'host', status: 'Location shared', online: true },
-    { id: '2', nickname: 'Mike Ross', avatar: 'M', role: 'member', status: 'Arrived', online: true },
-    { id: '3', nickname: 'Harvey Specter', avatar: 'H', role: 'member', status: '2 min away • Driving', online: true, warning: true },
-    { id: '4', nickname: 'Donna Paulsen', avatar: 'D', role: 'member', status: '15 min away', online: false },
-  ];
+  React.useEffect(() => {
+    if (!meeting.id) return;
+
+    const unsubscribe = subscribeToMeetingDetails(meeting.id, (data) => {
+        setCurrentMeeting(data);
+        const newParticipants = data.participants || [];
+        setParticipants(newParticipants);
+        
+        // Logical check for "new friend added" feedback
+        if (data.participants && newParticipants.length > prevParticipantCount && prevParticipantCount > 0) {
+            const latest = newParticipants[newParticipants.length - 1];
+            setLastJoinedFriend(latest.nickname);
+            setShowJoinToast(true);
+            setTimeout(() => setShowJoinToast(false), 5000);
+        }
+        setPrevParticipantCount(newParticipants.length);
+    });
+
+    return () => unsubscribe();
+  }, [meeting.id, prevParticipantCount]);
 
   const handleLocationUpdate = (newLocation) => {
     setCurrentMeeting({ ...currentMeeting, location: newLocation });
@@ -220,6 +233,27 @@ const MeetingDetails = ({ meeting, onBack, isHost = false }) => {
               onBack={() => setShowNotificationTemplate(false)}
             />
           </div>
+        )}
+        {showJoinToast && (
+          <motion.div 
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-32 left-6 right-6 z-[100] bg-primary-600 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-white/20"
+          >
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+              <UserPlus size={20} />
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-black uppercase tracking-widest text-white/70">{t('meeting_new_participant')}</p>
+              <p className="text-sm font-bold text-white">
+                <span className="text-yellow-400">{lastJoinedFriend}</span> {t('meeting_joined_msg')}
+              </p>
+            </div>
+            <button onClick={() => setShowJoinToast(false)} className="p-1 hover:bg-white/10 rounded-lg">
+              <X size={18} />
+            </button>
+          </motion.div>
         )}
       </AnimatePresence>
     </motion.div>

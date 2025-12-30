@@ -5,17 +5,27 @@ import { Button } from '../components/UI';
 import MeetingDetails from './MeetingDetails';
 import MeetingOverlay from '../components/MeetingOverlay';
 import { useTranslation } from '../context/LanguageContext';
+import { auth } from '../firebase';
+import { subscribeToMeetings } from '../utils/meetingService';
 
 const MeetingList = () => {
   const { t } = useTranslation();
   const [selectedMeeting, setSelectedMeeting] = useState(null);
   const [overlayType, setOverlayType] = useState(null); // 'create' | 'join'
+  const [meetings, setMeetings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const meetings = [
-    { id: '1', name: 'Friday Night Coffee', date: 'Dec 29', time: '17:00', icon: '☕️', status: 'upcoming', friends: 3 },
-    { id: '2', name: 'Weekend Hike', date: 'Jan 02', time: '09:30', icon: '⛰️', status: 'upcoming', friends: 5 },
-    { id: '3', name: 'Pizza Party', date: 'Dec 24', time: '19:00', icon: '🍕', status: 'past', friends: 8 },
-  ];
+  React.useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const unsubscribe = subscribeToMeetings(user.uid, (data) => {
+        setMeetings(data);
+        setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div className="flex flex-col h-full bg-slate-900 overflow-hidden relative">
@@ -35,23 +45,42 @@ const MeetingList = () => {
         </div>
 
         <div className="space-y-6 pb-20">
-          <div>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-4">{t('meeting_upcoming')}</span>
-            <div className="space-y-4">
-              {meetings.filter(m => m.status === 'upcoming').map(meeting => (
-                <MeetingCard key={meeting.id} meeting={meeting} t={t} onClick={() => setSelectedMeeting(meeting)} />
-              ))}
-            </div>
-          </div>
+          {loading ? (
+             <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <div className="w-10 h-10 border-4 border-primary-500/30 border-t-primary-500 rounded-full animate-spin"></div>
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Loading Meetings...</p>
+             </div>
+          ) : meetings.length === 0 ? (
+             <div className="text-center py-20 bg-slate-800/20 rounded-[2.5rem] border border-white/5 mx-4">
+                <Calendar size={48} className="text-slate-700 mx-auto mb-4 opacity-50" />
+                <p className="text-slate-400 font-bold mb-1">No meetings yet</p>
+                <p className="text-slate-600 text-[10px] font-bold uppercase tracking-widest">Create or join one to get started!</p>
+             </div>
+          ) : (
+            <>
+              {meetings.some(m => m.status !== 'past') && (
+                <div>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-4">{t('meeting_upcoming')}</span>
+                  <div className="space-y-4">
+                    {meetings.filter(m => m.status !== 'past').map(meeting => (
+                      <MeetingCard key={meeting.id} meeting={meeting} t={t} onClick={() => setSelectedMeeting(meeting)} />
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          <div>
-             <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-4">{t('meeting_past')}</span>
-             <div className="space-y-4">
-              {meetings.filter(m => m.status === 'past').map(meeting => (
-                <MeetingCard key={meeting.id} meeting={meeting} t={t} onClick={() => setSelectedMeeting(meeting)} />
-              ))}
-            </div>
-          </div>
+              {meetings.some(m => m.status === 'past') && (
+                <div className="mt-8">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-4">{t('meeting_past')}</span>
+                  <div className="space-y-4">
+                    {meetings.filter(m => m.status === 'past').map(meeting => (
+                      <MeetingCard key={meeting.id} meeting={meeting} t={t} onClick={() => setSelectedMeeting(meeting)} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 
@@ -60,7 +89,7 @@ const MeetingList = () => {
           <MeetingDetails 
             meeting={selectedMeeting} 
             onBack={() => setSelectedMeeting(null)} 
-            isHost={selectedMeeting.id === '1'}
+            isHost={selectedMeeting.hostId === auth.currentUser?.uid}
           />
         )}
         {overlayType && (
@@ -85,7 +114,7 @@ const MeetingCard = ({ meeting, onClick, t }) => (
     <div className="flex items-start justify-between mb-4">
       <div className="flex gap-4">
         <div className="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-white/5">
-          {meeting.icon}
+          {meeting.icon || '📍'}
         </div>
         <div>
           <h3 className="text-lg font-bold text-white group-hover:text-primary-400 transition-colors uppercase tracking-tight">{meeting.name}</h3>
@@ -101,21 +130,25 @@ const MeetingCard = ({ meeting, onClick, t }) => (
     <div className="flex items-center justify-between pt-4 border-t border-white/5">
       <div className="flex items-center gap-2">
         <div className="flex -space-x-2">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className={`w-6 h-6 rounded-full border-2 border-slate-900 bg-primary-900 flex items-center justify-center text-[8px] font-bold text-white`}>
-              {['A', 'J', 'S'][i]}
+          {meeting.participants?.slice(0, 3).map((p, i) => (
+            <div key={i} className={`w-6 h-6 rounded-full border-2 border-slate-900 bg-primary-900 flex items-center justify-center text-[8px] font-bold text-white overflow-hidden`}>
+               {p.avatar && p.avatar.length > 2 ? (
+                   <img src={p.avatar} className="w-full h-full object-cover" />
+               ) : (
+                   p.avatar || p.nickname?.charAt(0) || '?'
+               )}
             </div>
           ))}
-          {meeting.friends > 3 && (
+          {meeting.participants?.length > 3 && (
             <div className="w-6 h-6 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[8px] font-bold text-slate-400">
-              +{meeting.friends - 3}
+              +{meeting.participants.length - 3}
             </div>
           )}
         </div>
-        <span className="text-[10px] text-slate-500 font-semibold">{meeting.friends}{t('meeting_participants')}</span>
+        <span className="text-[10px] text-slate-500 font-semibold">{meeting.participants?.length || 0}{t('meeting_participants')}</span>
       </div>
-      <div className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest ${meeting.status === 'upcoming' ? 'bg-primary-500/20 text-primary-400' : 'bg-slate-800 text-slate-500'}`}>
-        {meeting.status === 'upcoming' ? t('meeting_status_upcoming') : t('meeting_status_past')}
+      <div className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest ${meeting.status !== 'past' ? 'bg-primary-500/20 text-primary-400' : 'bg-slate-800 text-slate-500'}`}>
+        {meeting.status !== 'past' ? t('meeting_status_upcoming') : t('meeting_status_past')}
       </div>
     </div>
   </motion.div>

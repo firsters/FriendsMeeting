@@ -129,6 +129,8 @@ export const translations = {
     meeting_custom_msg: "추가 메시지 입력 (선택 사항)",
     meeting_msg_placeholder: "예: '나 이미 도착했어!'",
     meeting_broadcast: "알림 방송하기",
+    meeting_new_participant: "새로운 참여자",
+    meeting_joined_msg: "님이 모임에 참여했습니다!",
     
     // Meeting Overlay
     meeting_new: "새 모임 만들기",
@@ -371,6 +373,8 @@ export const translations = {
     meeting_custom_msg: "Custom Message (Optional)",
     meeting_msg_placeholder: "e.g. 'I've arrived!'",
     meeting_broadcast: "Broadcast Alert",
+    meeting_new_participant: "New Participant",
+    meeting_joined_msg: "has joined the meeting!",
 
     // Meeting Overlay
     meeting_new: "New Meeting",

@@ -4,6 +4,8 @@ import { X, Calendar, Clock, MapPin, Users, Hash, ChevronRight, Plus, CheckCircl
 import { Input, Button } from '../components/UI';
 import LocationPicker from '../pages/LocationPicker';
 import { useTranslation } from '../context/LanguageContext';
+import { auth } from '../firebase';
+import { createMeeting, joinMeetingByCode } from '../utils/meetingService';
 
 const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
   const { t } = useTranslation();
@@ -17,10 +19,39 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
     location: null, // Stores { name, address, etc. }
   });
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (type === 'create') onCreate(formData);
-    else onJoin(formData.code);
+    setError('');
+    const user = auth.currentUser;
+    if (!user) {
+        setError('User not authenticated');
+        return;
+    }
+
+    const userProfile = {
+        nickname: user.displayName || 'Anonymous',
+        avatar: user.displayName?.charAt(0) || '?'
+    };
+
+    setLoading(true);
+    try {
+        if (type === 'create') {
+            const meeting = await createMeeting(formData, user.uid, userProfile);
+            onCreate(meeting);
+        } else {
+            const meeting = await joinMeetingByCode(formData.code, user.uid, userProfile);
+            onJoin(meeting);
+        }
+        onClose();
+    } catch (err) {
+        console.error("Meeting operation failed:", err);
+        setError(err.message || 'Operation failed');
+    } finally {
+        setLoading(false);
+    }
   };
 
   const handleLocationConfirm = (location) => {
@@ -186,15 +217,23 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
         </main>
 
         <footer className="fixed bottom-0 left-0 right-0 p-6 bg-slate-900/95 backdrop-blur-2xl border-t border-white/5 z-[110]">
-          <div className="max-w-md mx-auto">
+          <div className="max-w-md mx-auto space-y-4">
+            {error && <p className="text-red-500 text-[10px] font-bold text-center bg-red-500/10 p-2 rounded-xl">{error}</p>}
             <motion.button 
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleSubmit}
-              className="w-full bg-primary-600 hover:bg-primary-500 text-white font-extrabold text-sm tracking-widest uppercase h-16 rounded-[1.5rem] shadow-2xl shadow-primary-900/40 flex items-center justify-center gap-3 transition-all"
+              disabled={loading}
+              className={`w-full bg-primary-600 hover:bg-primary-500 text-white font-extrabold text-sm tracking-widest uppercase h-16 rounded-[1.5rem] shadow-2xl shadow-primary-900/40 flex items-center justify-center gap-3 transition-all ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              <CheckCircle size={20} />
-              {type === 'create' ? t('meeting_create') : t('meeting_join')}
+              {loading ? (
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              ) : (
+                  <>
+                    <CheckCircle size={20} />
+                    {type === 'create' ? t('meeting_create') : t('meeting_join')}
+                  </>
+              )}
             </motion.button>
           </div>
         </footer>
