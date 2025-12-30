@@ -9,6 +9,7 @@ const CombinedView = ({ onNavigate }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [locationName, setLocationName] = useState(t('map_sample_location') || "Locating...");
+  const [mapInstance, setMapInstance] = useState(null);
 
   // Mock data for the home screen
   const friends = [
@@ -62,6 +63,19 @@ const CombinedView = ({ onNavigate }) => {
       setSearchResults([]); // Hide dropdown
   };
 
+  const handleCenterOnMe = () => {
+    if (userLocation && mapInstance) {
+      mapInstance.panTo({ lat: userLocation[0], lng: userLocation[1] });
+    } else if (navigator.geolocation && mapInstance) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          mapInstance.panTo({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        },
+        (error) => console.error(error)
+      );
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-background-dark overflow-hidden relative font-sans">
       {/* Real Interactive Map Layer */}
@@ -74,7 +88,7 @@ const CombinedView = ({ onNavigate }) => {
             searchQuery={searchQuery}
             onSearchResults={setSearchResults}
             selectedPlaceId={selectedPlaceId}
-            bottomOffset={isExpanded ? 160 : 110}
+            onMapLoad={setMapInstance}
           />
       </div>
 
@@ -153,6 +167,12 @@ const CombinedView = ({ onNavigate }) => {
 
       {/* Quick Actions & Controls */}
       <div className="absolute right-4 bottom-28 flex flex-col gap-3 z-30 transition-transform duration-500" style={{ transform: isExpanded ? 'translateY(-200%)' : 'none' }}>
+        <button 
+          onClick={handleCenterOnMe}
+          className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-slate-900 border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.4)] hover:bg-slate-100 transition-all active:scale-90"
+        >
+          <span className="material-symbols-outlined text-3xl font-bold">my_location</span>
+        </button>
         <button className="w-14 h-14 bg-card-dark/90 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white border border-white/5 shadow-2xl hover:bg-white/10 transition-colors">
           <span className="material-symbols-outlined">layers</span>
         </button>
