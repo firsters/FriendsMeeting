@@ -74,6 +74,7 @@ const CombinedView = ({ onNavigate }) => {
             searchQuery={searchQuery}
             onSearchResults={setSearchResults}
             selectedPlaceId={selectedPlaceId}
+            bottomOffset={isExpanded ? 160 : 110}
           />
       </div>
 

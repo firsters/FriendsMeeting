@@ -82,7 +82,7 @@ const PlacesHandler = ({ searchQuery, onSearchResults, selectedPlaceId, onPlaceS
     return null;
 };
 
-const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected }) => {
+const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected, bottomOffset = 110 }) => {
     // Initial center state only for defaultCenter
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
@@ -292,13 +292,16 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
                     );
                 })}
 
-                {/* My Location FAB */}
-                <div className="absolute right-4 top-40 z-30 pointer-events-auto">
+                {/* My Location FAB - Standard Map Position */}
+                <div 
+                    className="absolute right-4 z-30 pointer-events-auto transition-all duration-500"
+                    style={{ bottom: `${bottomOffset}px` }}
+                >
                     <button 
                         onClick={handleCenterOnMe}
-                        className="w-12 h-12 bg-card-dark/95 backdrop-blur-xl rounded-2xl flex items-center justify-center text-primary border border-white/10 shadow-2xl hover:bg-white/10 transition-all active:scale-90"
+                        className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-slate-900 border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.4)] hover:bg-slate-100 transition-all active:scale-90"
                     >
-                        <span className="material-symbols-outlined">my_location</span>
+                        <span className="material-symbols-outlined text-3xl font-bold">my_location</span>
                     </button>
                 </div>
             </Map>
