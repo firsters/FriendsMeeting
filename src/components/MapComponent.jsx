@@ -185,7 +185,11 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
                                 <span className="material-symbols-outlined text-red-500 text-base font-bold">location_on</span>
                             )}
                             {pt.type === 'friend' && (
-                                <img src={pt.data.image} className="w-full h-full object-cover" alt={pt.data.name} />
+                                <div className="flex items-center justify-center w-full h-full">
+                                    <span className="text-[14px] font-black text-white uppercase tracking-tighter">
+                                        {pt.data.name.substring(0, 2)}
+                                    </span>
+                                </div>
                             )}
                         </div>
                         
@@ -542,25 +546,51 @@ const MapComponent = ({
                         lat: friend.lat,
                         lng: friend.lng
                     };
+                    const isSelected = selectedFriend?.id === friend.id;
 
                     return (
                         <AdvancedMarker
                             key={friend.id}
                             position={friendPos}
-                            onClick={() => handleFriendClick(friend, friendPos)}
+                            onClick={() => onFriendClick?.(isSelected ? null : friend)}
+                            zIndex={isSelected ? 100 : 1}
                         >
-                            <div className="relative group cursor-pointer transition-transform hover:scale-110">
-                                <div
-                                    className="w-10 h-10 rounded-full border-2 p-0.5 bg-[#1a1a1a] shadow-xl"
-                                    style={{ borderColor: friend.status === 'nearby' ? '#4285F4' : '#F97316' }}
-                                >
-                                    <img src={friend.image} className="w-full h-full rounded-full object-cover" alt={friend.name} />
-                                </div>
-                                {friend.status === 'driving' && (
-                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-500 rounded-full border border-[#1a1a1a] flex items-center justify-center text-white shadow-lg">
-                                        <span className="material-symbols-outlined text-[10px]">directions_car</span>
+                            <div className="relative flex flex-col items-center">
+                                {/* Anchored Tooltip */}
+                                {isSelected && (
+                                    <div className="absolute bottom-[calc(100%+8px)] bg-card-dark/95 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/10 shadow-2xl animate-fade-in-up whitespace-nowrap z-50">
+                                        <div className="flex flex-col items-center gap-0.5">
+                                            <p className="text-[13px] font-black text-white leading-none tracking-tight">{friend.name}</p>
+                                            <p className="text-[9px] text-primary font-bold uppercase tracking-widest opacity-90">
+                                                {friend.status} • {friend.distance || 'nearby'}
+                                            </p>
+                                        </div>
+                                        {/* Tooltip Arrow */}
+                                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card-dark/95 border-r border-b border-white/10 rotate-45"></div>
                                     </div>
                                 )}
+
+                                {/* Minimalist Marker */}
+                                <div className="relative group cursor-pointer transition-transform hover:scale-110">
+                                    <div
+                                        className={`w-10 h-10 rounded-full border-[2.5px] bg-[#1a1a1a] shadow-xl flex items-center justify-center transition-colors
+                                            ${isSelected ? 'border-primary ring-4 ring-primary/20' : 'border-white/20'}`}
+                                        style={!isSelected && friend.status === 'nearby' ? { borderColor: '#4285F4' } : 
+                                               !isSelected && friend.status === 'driving' ? { borderColor: '#F97316' } : {}}
+                                    >
+                                        <span className="text-[15px] font-black text-white uppercase tracking-tighter">
+                                            {friend.name.substring(0, 2)}
+                                        </span>
+                                    </div>
+                                    
+                                    {/* Status Indicator Dot (if not selected) */}
+                                    {!isSelected && (
+                                        <div className={`absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-[#1a1a1a] shadow-lg
+                                            ${friend.status === 'nearby' ? 'bg-blue-500' : 
+                                              friend.status === 'driving' ? 'bg-orange-500' : 'bg-gray-500'}`}
+                                        ></div>
+                                    )}
+                                </div>
                             </div>
                         </AdvancedMarker>
                     );

@@ -528,26 +528,6 @@ const CombinedView = ({ onNavigate }) => {
         </div>
       </header>
 
-      {/* Friend Tooltip Overlay */}
-      {selectedFriend && (
-         <div 
-            className="absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-[120px] bg-card-dark/95 backdrop-blur px-4 py-3 rounded-2xl border border-white/10 shadow-2xl animate-fade-in-up"
-            onClick={() => setSelectedFriend(null)}
-         >
-             <div className="flex items-center gap-3">
-                 <img src={selectedFriend.image} className="w-10 h-10 rounded-full object-cover border border-white/10" alt={selectedFriend.name} />
-                 <div>
-                     <p className="text-sm font-bold text-white leading-none mb-1">{selectedFriend.name}</p>
-                     <p className="text-[10px] text-primary font-bold uppercase tracking-wider">{selectedFriend.status} • {selectedFriend.distance}</p>
-                 </div>
-                 <button className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary hover:bg-primary/30 ml-2">
-                     <span className="material-symbols-outlined text-lg">chat</span>
-                 </button>
-             </div>
-             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-card-dark border-r border-b border-white/10 rotate-45"></div>
-         </div>
-      )}
-
       {/* Quick Actions & Controls */}
       <div className="absolute right-4 bottom-28 flex flex-col gap-3 z-50 transition-transform duration-500" style={{ transform: isExpanded ? 'translateY(-220%)' : 'none' }}>
         <button 
