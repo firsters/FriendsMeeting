@@ -61,7 +61,7 @@ const GeocodingHandler = ({ location, onAddressResolved }) => {
     return null;
 };
 
-const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker }) => {
+const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker, bottomOffset = 100 }) => {
     const map = useMap();
     const [bounds, setBounds] = useState(null);
 
@@ -92,8 +92,15 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
         const latMargin = (ne.lat - sw.lat) * 0.01;
         const lngMargin = (ne.lng - sw.lng) * 0.01;
 
+        // Bottom Safe Area Calculation (convert pixels to lat/lng)
+        const mapContainer = map.getDiv();
+        const heightInPixels = mapContainer.offsetHeight;
+        const latRange = ne.lat - sw.lat;
+        const pixelToLat = latRange / heightInPixels;
+        const bottomSafeLat = sw.lat + (bottomOffset * pixelToLat);
+
         const north = ne.lat - latMargin;
-        const south = sw.lat + latMargin;
+        const south = Math.max(sw.lat + latMargin, bottomSafeLat);
         const east = ne.lng - lngMargin;
         const west = sw.lng + lngMargin;
 
@@ -140,30 +147,41 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
                     position={{ lat: pt.lat, lng: pt.lng }}
                     onClick={() => onCenterMarker(pt.original || pt.pos)}
                 >
-                    <div className="relative group cursor-pointer animate-pulse-slow hover:opacity-100 transition-opacity">
-                        {/* Virtual Marker Container: Smaller, semi-transparent */}
-                        <div className="w-7 h-7 rounded-full bg-black/40 backdrop-blur-md border-2 border-white/60 flex items-center justify-center overflow-hidden opacity-80">
+                    <div className="relative group cursor-pointer transition-all hover:scale-110">
+                        {/* Virtual Marker Container: Larger, more vibrant */}
+                        <div className={`w-9 h-9 rounded-full bg-[#1a1a1a]/95 backdrop-blur-md border-[2.5px] flex items-center justify-center shadow-2xl overflow-hidden
+                            ${pt.type === 'meeting' ? 'border-primary shadow-primary/30' : 
+                              pt.type === 'general' ? 'border-red-500 shadow-red-500/30' : 
+                              'border-white/40 shadow-white/10'}`}
+                        >
                             {pt.type === 'meeting' && (
-                                <span className="material-symbols-outlined text-white text-sm opacity-90">star</span>
+                                <span className="material-symbols-outlined text-primary text-base font-bold">star</span>
                             )}
                             {pt.type === 'general' && (
-                                <span className="material-symbols-outlined text-red-400 text-sm opacity-90">location_on</span>
+                                <span className="material-symbols-outlined text-red-500 text-base font-bold">location_on</span>
                             )}
                             {pt.type === 'friend' && (
-                                <img src={pt.data.image} className="w-full h-full object-cover opacity-70" alt={pt.data.name} />
+                                <img src={pt.data.image} className="w-full h-full object-cover" alt={pt.data.name} />
                             )}
                         </div>
                         
-                        {/* Directional Arrow Overlay */}
-                        <div className="absolute -inset-2 flex items-center justify-center pointer-events-none">
+                        {/* Directional Wave Overlay */}
+                        <div className="absolute -inset-3 flex items-center justify-center pointer-events-none">
                              <div 
-                                className="w-full h-full border border-white/20 rounded-full animate-ping"
+                                className={`w-full h-full border-2 rounded-full animate-ping opacity-60
+                                    ${pt.type === 'meeting' ? 'border-primary' : 
+                                      pt.type === 'general' ? 'border-red-500' : 
+                                      'border-white/40'}`}
                                 style={{ transform: `rotate(${Math.atan2(pt.lat - center.lat, pt.lng - center.lng)}rad)` }}
                              ></div>
                         </div>
                         
-                        {/* Standard Virtual Indicator - Indicator Dot */}
-                        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full border border-white shadow-sm ring-2 ring-primary/20"></div>
+                        {/* Status Indicator Dot */}
+                        <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-[#1a1a1a] shadow-lg
+                            ${pt.type === 'meeting' ? 'bg-primary' : 
+                              pt.type === 'general' ? 'bg-red-500' : 
+                              'bg-white'}`}
+                        ></div>
                     </div>
                 </AdvancedMarker>
             ))}
