@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import MapComponent from '../components/MapComponent';
 import { auth } from '../firebase';
 
@@ -39,6 +40,15 @@ const CombinedView = ({ onNavigate }) => {
     { id: 2, name: 'Mike', x: 65, y: 55, distance: '1.2km', image: 'https://picsum.photos/seed/friend2/100/100', status: 'driving' },
     { id: 3, name: 'Alex', x: 20, y: 70, distance: '2.4km', image: 'https://picsum.photos/seed/friend3/100/100', status: 'idle' },
   ];
+
+  const geocodingLib = useMapsLibrary('geocoding');
+  const [geocoder, setGeocoder] = useState(null);
+
+  useEffect(() => {
+    if (geocodingLib) {
+      setGeocoder(new geocodingLib.Geocoder());
+    }
+  }, [geocodingLib]);
 
   const activeMeeting = {
     title: t('mock_meeting_title') || "Cafe study session",
@@ -142,6 +152,29 @@ const CombinedView = ({ onNavigate }) => {
     setCenterTrigger(prev => prev + 1);
   };
 
+  const handleMarkerDrag = (type, latLng) => {
+    if (type === 'meeting') {
+      setMeetingLocation(prev => ({ ...prev, ...latLng }));
+      
+      // Real-time geocoding for the top bar
+      if (geocoder) {
+        geocoder.geocode({ location: latLng }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            setMeetingLocation(prev => ({ ...prev, address: results[0].formatted_address }));
+          }
+        });
+      }
+    } else {
+        setGeneralLocation(latLng);
+        // If we want to show general address in some UI, we could geocode here too
+    }
+  };
+
+  const handleMarkerDragEnd = (type, latLng) => {
+      // Finalize the location if needed, though handleMarkerDrag already updates state
+      console.log(`Marker ${type} drag ended at`, latLng);
+  };
+
   const handleToggleMapType = () => {
     setMapType(prev => prev === 'roadmap' ? 'hybrid' : 'roadmap');
   };
@@ -191,6 +224,8 @@ const CombinedView = ({ onNavigate }) => {
             mapType={mapType}
             meetingLocation={meetingLocation}
             generalLocation={generalLocation}
+            onMarkerDrag={handleMarkerDrag}
+            onMarkerDragEnd={handleMarkerDragEnd}
           />
       </div>
 
@@ -276,7 +311,7 @@ const CombinedView = ({ onNavigate }) => {
                             className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${isSearchOpen ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
                         >
                             <span className="material-symbols-outlined text-lg">
-                                {isSearchOpen ? 'close' : 'edit_location'}
+                                {isSearchOpen ? 'close' : 'star'}
                             </span>
                         </button>
                     )}

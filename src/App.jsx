@@ -10,9 +10,11 @@ import GroupJoin from './pages/GroupJoin';
 import Profile from './pages/Profile';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { APIProvider } from '@vis.gl/react-google-maps';
 import './index.css';
 
 function App() {
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   // Start on the Welcome screen (onboarding) as requested
   const [currentScreen, setCurrentScreen] = useState(ScreenType.ONBOARDING);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -156,9 +158,11 @@ function App() {
 
   return (
     <div className="h-[100dvh] w-full flex justify-center bg-black overflow-hidden font-sans antialiased">
-      <div className="relative w-full h-full bg-background-dark shadow-2xl flex flex-col">
-        {renderScreen()}
-      </div>
+      <APIProvider apiKey={apiKey}>
+        <div className="relative w-full h-full bg-background-dark shadow-2xl flex flex-col">
+          {renderScreen()}
+        </div>
+      </APIProvider>
     </div>
   );
 }
