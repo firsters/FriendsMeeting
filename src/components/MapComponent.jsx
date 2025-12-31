@@ -122,7 +122,8 @@ const MapComponent = ({
 
     centerTrigger = 0,
     mapType = 'roadmap',
-    meetingLocation = null
+    meetingLocation = null,
+    generalLocation = null
 }) => {
     const { t } = useTranslation();
     // Initial center state only for defaultCenter
@@ -217,15 +218,11 @@ const MapComponent = ({
 
     // Update currentCenter when userLocation changes
     useEffect(() => {
-        if (userLocation) {
+        if (userLocation && !hasCenteredInitially && mapInstance) {
             const newCenter = { lat: userLocation[0], lng: userLocation[1] };
             setCurrentCenter(newCenter);
-            
-            // Auto-center only once when the first valid location is received
-            if (!hasCenteredInitially && mapInstance) {
-                mapInstance.setCenter(newCenter);
-                setHasCenteredInitially(true);
-            }
+            mapInstance.setCenter(newCenter);
+            setHasCenteredInitially(true);
         }
     }, [userLocation, mapInstance, hasCenteredInitially]);
 
@@ -310,6 +307,18 @@ const MapComponent = ({
                                     <p className="text-[10px] font-bold text-gray-800 whitespace-nowrap">{meetingLocation.name}</p>
                                 </div>
                              </div>
+                        </AdvancedMarker>
+                    )}
+
+                    {/* General Search Marker (Red Pin) */}
+                    {generalLocation && (
+                        <AdvancedMarker position={generalLocation}>
+                            <div className="relative flex flex-col items-center animate-bounce-short">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-red-500 to-red-600 border-4 border-white shadow-2xl flex items-center justify-center relative z-10">
+                                    <span className="material-symbols-outlined text-white text-xl drop-shadow-md">location_on</span>
+                                </div>
+                                <div className="absolute -bottom-1 w-3 h-1.5 bg-black/50 blur-sm rounded-full"></div>
+                            </div>
                         </AdvancedMarker>
                     )}
 
