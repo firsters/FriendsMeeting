@@ -87,6 +87,8 @@ const CombinedView = ({ onNavigate }) => {
 
   // Geolocation & Live Status
   useEffect(() => {
+    let watchId = null;
+
     if (navigator.geolocation) {
       const success = (position) => {
           const { latitude, longitude } = position.coords;
@@ -94,7 +96,7 @@ const CombinedView = ({ onNavigate }) => {
           setUserLocation(newPos);
           setLiveStatus('online');
 
-          // Resolve user address
+          // Resolve user address (Geocoding)
           if (geocoder) {
             geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
               if (status === 'OK' && results[0]) {
@@ -103,16 +105,28 @@ const CombinedView = ({ onNavigate }) => {
             });
           }
       };
+      
       const error = (err) => {
-          console.error("Location permission denied:", err);
+          console.error("Location permission denied or error:", err);
           setLiveStatus('offline');
       };
 
-      navigator.geolocation.getCurrentPosition(success, error);
+      // Watch position for real-time updates
+      watchId = navigator.geolocation.watchPosition(success, error, {
+          enableHighAccuracy: true,
+          maximumAge: 5000,
+          timeout: 10000
+      });
     } else {
         setLiveStatus('offline');
     }
-  }, [geocoder]); // Add geocoder as dependency
+
+    return () => {
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+        }
+    };
+  }, [geocoder]); 
 
   // Host Search State (Meeting Location)
   const [searchQuery, setSearchQuery] = useState("");
