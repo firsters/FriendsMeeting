@@ -101,7 +101,7 @@ const PlacesHandler = ({ searchQuery, onSearchResults, selectedPlaceId, onPlaceS
     return null;
 };
 
-const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected, centerTrigger = 0, mapType = 'roadmap' }) => {
+const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected, centerTrigger = 0, mapType = 'roadmap', meetingLocation = null }) => {
     // Initial center state only for defaultCenter
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
@@ -257,6 +257,21 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
                         selectedPlaceId={selectedPlaceId}
                         onPlaceSelected={handlePlaceSelected} 
                     />
+
+                    {/* Meeting Location Marker */}
+                    {meetingLocation && meetingLocation.lat && (
+                        <AdvancedMarker position={{ lat: meetingLocation.lat, lng: meetingLocation.lng }}>
+                             <div className="relative flex flex-col items-center animate-bounce-short">
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-blue-400 border-4 border-white shadow-2xl flex items-center justify-center relative z-10">
+                                    <span className="material-symbols-outlined text-white text-2xl drop-shadow-md">star</span>
+                                </div>
+                                <div className="absolute -bottom-1 w-4 h-2 bg-black/50 blur-sm rounded-full"></div>
+                                <div className="mt-1 bg-white/90 backdrop-blur px-2 py-1 rounded-lg border border-white/20 shadow-lg">
+                                    <p className="text-[10px] font-bold text-gray-800 whitespace-nowrap">{meetingLocation.name}</p>
+                                </div>
+                             </div>
+                        </AdvancedMarker>
+                    )}
 
                     {/* User Location Marker */}
                     <AdvancedMarker position={currentCenter}>

@@ -2,13 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import MapComponent from '../components/MapComponent';
+import { auth } from '../firebase';
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-  const [locationName, setLocationName] = useState(t('map_sample_location') || "Locating...");
+
+  // New Header State
+  const [meetingLocation, setMeetingLocation] = useState(null); // { name, address, lat, lng }
+  const [meetingStatus, setMeetingStatus] = useState('unconfirmed'); // unconfirmed, confirmed, temporary
+  const [liveStatus, setLiveStatus] = useState('offline'); // online, offline
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isHost, setIsHost] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(3);
+  const [pendingLocationName, setPendingLocationName] = useState(null);
+
   const [centerTrigger, setCenterTrigger] = useState(0);
   const [mapType, setMapType] = useState('roadmap'); // 'roadmap' or 'hybrid'
 
@@ -26,20 +36,32 @@ const CombinedView = ({ onNavigate }) => {
     participants: 4
   };
 
+  // Auth Check
+  useEffect(() => {
+     const unsubscribe = auth.onAuthStateChanged(user => {
+         setIsHost(!!user);
+     });
+     return () => unsubscribe();
+  }, []);
+
+  // Geolocation & Live Status
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
+      const success = (position) => {
           const { latitude, longitude } = position.coords;
           setUserLocation([latitude, longitude]);
-        },
-        (error) => {
-          console.error("Location permission denied:", error);
-          setLocationName("Location permission denied");
-        }
-      );
+          setLiveStatus('online');
+      };
+      const error = (err) => {
+          console.error("Location permission denied:", err);
+          setLiveStatus('offline');
+      };
+
+      navigator.geolocation.getCurrentPosition(success, error);
+      const watchId = navigator.geolocation.watchPosition(success, error);
+      return () => navigator.geolocation.clearWatch(watchId);
     } else {
-        setLocationName("Geolocation not supported");
+        setLiveStatus('offline');
     }
   }, []);
 
@@ -47,10 +69,7 @@ const CombinedView = ({ onNavigate }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedPlaceId, setSelectedPlaceId] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
 
-  // Debounced search trigger handled by passing query to MapComponent which uses PlacesHandler
-  // But we need to update local state to react.
   const handleSearchInput = (e) => {
     setSearchQuery(e.target.value);
     if (e.target.value.length === 0) {
@@ -58,30 +77,52 @@ const CombinedView = ({ onNavigate }) => {
     }
   };
 
-  const handleSelectLocation = (placeId, description) => {
+  const handleSelectLocation = (placeId, description, mainText, secondaryText) => {
       setSelectedPlaceId(placeId);
-      setSearchQuery(description); // Update input to show full name
-      setSearchResults([]); // Hide dropdown
+      setSearchQuery(description);
+      setPendingLocationName({ name: mainText || description, address: secondaryText || "" });
+      setSearchResults([]);
+      setMeetingStatus('temporary');
+  };
+
+  const onPlaceSelectedFromMap = (location) => {
+      if (pendingLocationName) {
+          setMeetingLocation({
+              ...pendingLocationName,
+              lat: location.lat,
+              lng: location.lng
+          });
+          setMeetingStatus('confirmed');
+          setPendingLocationName(null);
+          setIsSearchOpen(false);
+      }
   };
 
   const handleCenterOnMe = () => {
     setCenterTrigger(prev => prev + 1);
-    
-    // Also refresh the location state
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserLocation([pos.coords.latitude, pos.coords.longitude]);
-        },
-        (error) => console.error(error),
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-      );
-    }
   };
 
   const handleToggleMapType = () => {
     setMapType(prev => prev === 'roadmap' ? 'hybrid' : 'roadmap');
   };
+
+  // Status Helpers
+  const getLiveStatusInfo = () => {
+      return liveStatus === 'online'
+        ? { text: "Receiving Location", color: "bg-green-500" }
+        : { text: "Offline", color: "bg-red-500" };
+  };
+
+  const getMeetingStatusInfo = () => {
+      switch(meetingStatus) {
+          case 'confirmed': return { text: "Location Confirmed", color: "bg-green-500" };
+          case 'temporary': return { text: "Temporary Location", color: "bg-yellow-500" };
+          case 'unconfirmed': default: return { text: "Location Unconfirmed", color: "bg-red-500" };
+      }
+  };
+
+  const liveInfo = getLiveStatusInfo();
+  const meetingInfo = getMeetingStatusInfo();
 
   return (
     <div className="flex flex-col h-full bg-background-dark overflow-hidden relative font-sans">
@@ -91,65 +132,110 @@ const CombinedView = ({ onNavigate }) => {
             friends={friends} 
             onFriendClick={setSelectedFriend} 
             userLocation={userLocation}
-            onAddressResolved={setLocationName}
             searchQuery={searchQuery}
             onSearchResults={setSearchResults}
             selectedPlaceId={selectedPlaceId}
+            onPlaceSelected={onPlaceSelectedFromMap}
             centerTrigger={centerTrigger}
             mapType={mapType}
+            meetingLocation={meetingLocation}
           />
       </div>
 
-      {/* Top Header & Search - z-10 to stay above map */}
+      {/* Top Header Bar */}
       <header className="relative z-10 px-4 pt-10 pb-4 pointer-events-none">
-        <div className="flex items-center gap-3 bg-card-dark/90 backdrop-blur-xl p-3 pr-4 rounded-3xl border border-white/5 shadow-2xl pointer-events-auto">
-           <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white shadow-lg overflow-hidden border border-white/10">
-             <img src="https://picsum.photos/seed/me/100/100" className="w-full h-full object-cover" alt="Me" />
-           </div>
-           <div className="flex-1">
-             <div className="flex items-center gap-1.5">
-               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Live Status</p>
-             </div>
-             <p className="text-white font-extrabold text-sm truncate">{locationName}</p>
-           </div>
-           <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:bg-white/10 transition-colors shadow-inner">
-             <span className="material-symbols-outlined text-xl">notifications</span>
-           </button>
-        </div>
+        <div className="flex items-center bg-card-dark/90 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl pointer-events-auto overflow-visible min-h-[4rem]">
 
-        <div className="mt-4 relative group pointer-events-auto">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-600 group-focus-within:text-primary transition-colors text-xl">search</span>
-          <input 
-            value={searchQuery}
-            onChange={handleSearchInput}
-            className="w-full h-14 bg-card-dark/80 backdrop-blur-xl border border-white/5 rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 outline-none transition-all shadow-xl" 
-            placeholder={t('map_search_placeholder')} 
-          />
-          <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-xl">mic</span>
-          </button>
+           {/* Left Section: Indicators */}
+           <div className="flex flex-col justify-center px-4 py-2 border-r border-white/10 gap-1.5 shrink-0 min-w-[150px]">
+               {/* Live Status */}
+               <div className="flex items-center gap-2">
+                   <span className={`w-2 h-2 rounded-full ${liveInfo.color} ${liveStatus === 'online' ? 'animate-pulse' : ''} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
+                   <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-widest">{liveInfo.text}</span>
+               </div>
+               {/* Meeting Status */}
+               <div className="flex items-center gap-2">
+                   <span className={`w-2 h-2 rounded-full ${meetingInfo.color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
+                   <span className="text-[9px] font-extrabold text-gray-300 uppercase tracking-widest">{meetingInfo.text}</span>
+               </div>
+           </div>
 
-          {/* Search Results Dropdown */}
-          {searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 animate-fade-in-up">
-              {searchResults.map((result) => (
-                <div
-                  key={result.place_id}
-                  onClick={() => handleSelectLocation(result.place_id, result.description)}
-                  className="px-4 py-3 hover:bg-white/10 cursor-pointer flex items-center gap-3 border-b border-white/5 last:border-none transition-colors"
-                >
-                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-gray-400 text-sm">location_on</span>
-                  </div>
-                  <div className="overflow-hidden">
-                    <p className="text-sm font-bold text-white truncate">{result.structured_formatting?.main_text || result.description}</p>
-                    <p className="text-xs text-gray-500 truncate">{result.structured_formatting?.secondary_text || ""}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+           {/* Center Section: Info or Search */}
+           <div className="flex-1 px-4 py-2 relative flex items-center h-14">
+               {isSearchOpen ? (
+                   <div className="w-full relative group">
+                       <span className="absolute left-0 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-lg">search</span>
+                       <input
+                           autoFocus
+                           value={searchQuery}
+                           onChange={handleSearchInput}
+                           className="w-full bg-transparent text-white placeholder:text-gray-500 font-bold text-sm outline-none pl-7"
+                           placeholder="Search meeting location..."
+                       />
+                       {/* Dropdown */}
+                       {searchResults.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-4 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 animate-fade-in-up">
+                            {searchResults.map((result) => (
+                                <div
+                                key={result.place_id}
+                                onClick={() => handleSelectLocation(result.place_id, result.description, result.structured_formatting?.main_text, result.structured_formatting?.secondary_text)}
+                                className="px-4 py-3 hover:bg-white/10 cursor-pointer flex items-center gap-3 border-b border-white/5 last:border-none transition-colors"
+                                >
+                                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                                    <span className="material-symbols-outlined text-gray-400 text-sm">location_on</span>
+                                </div>
+                                <div className="overflow-hidden text-left">
+                                    <p className="text-sm font-bold text-white truncate">{result.structured_formatting?.main_text || result.description}</p>
+                                    <p className="text-xs text-gray-500 truncate">{result.structured_formatting?.secondary_text || ""}</p>
+                                </div>
+                                </div>
+                            ))}
+                        </div>
+                       )}
+                   </div>
+               ) : (
+                   <div className="flex flex-col justify-center w-full">
+                       <p className="text-white font-extrabold text-sm truncate leading-tight w-full">
+                           {meetingLocation?.name || "No Meeting Location"}
+                       </p>
+                       <p className="text-[10px] text-gray-400 truncate mt-0.5 w-full font-medium">
+                           {meetingLocation?.address || "Please set a location"}
+                       </p>
+                   </div>
+               )}
+           </div>
+
+           {/* Right Section: Buttons */}
+           <div className="flex items-center gap-2 px-3 border-l border-white/10 h-10 my-auto">
+               {isHost && (
+                   <button
+                       onClick={() => {
+                           setIsSearchOpen(!isSearchOpen);
+                           if (!isSearchOpen) {
+                               setSearchQuery(""); // Clear on open
+                               setSearchResults([]);
+                           }
+                       }}
+                       className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${isSearchOpen ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
+                   >
+                       <span className="material-symbols-outlined text-lg">
+                           {isSearchOpen ? 'close' : 'search'}
+                       </span>
+                   </button>
+               )}
+
+               <button
+                   onClick={() => setIsExpanded(true)}
+                   className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-90 relative"
+               >
+                   <span className="material-symbols-outlined text-lg">notifications</span>
+                   {notificationCount > 0 && (
+                       <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-card-dark flex items-center justify-center text-[8px] font-bold text-white">
+                           {notificationCount}
+                       </span>
+                   )}
+               </button>
+           </div>
         </div>
       </header>
 
@@ -222,7 +308,7 @@ const CombinedView = ({ onNavigate }) => {
                 </div>
                 <div>
                   <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{friends.length} Friends Online</p>
-                  <p className="text-white text-xs font-bold">2 new messages from Sarah</p>
+                  <p className="text-white text-xs font-bold">{notificationCount} new messages</p>
                 </div>
               </div>
               <button className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
