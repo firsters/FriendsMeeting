@@ -204,11 +204,13 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
                              ></div>
                         </div>
                         
-                        {/* Status Indicator Dot */}
+                        {/* Status Indicator Dot (Directional Marker) */}
                         <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-[#1a1a1a] shadow-lg
                             ${pt.type === 'meeting' ? 'bg-primary' : 
                               pt.type === 'general' ? 'bg-red-500' : 
-                              'bg-white'}`}
+                              pt.data.status === 'nearby' ? 'bg-blue-500' :
+                              pt.data.status === 'driving' ? 'bg-orange-500' :
+                              'bg-gray-400'}`}
                         ></div>
                     </div>
                 </AdvancedMarker>
@@ -590,13 +592,7 @@ const MapComponent = ({
                                         </span>
                                     </div>
                                     
-                                    {/* Status Indicator Dot (if not selected) */}
-                                    {!isSelected && (
-                                        <div className={`absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-[#1a1a1a] shadow-lg
-                                            ${friend.status === 'nearby' ? 'bg-blue-500' : 
-                                              friend.status === 'driving' ? 'bg-orange-500' : 'bg-gray-500'}`}
-                                        ></div>
-                                    )}
+                                    {/* Status Indicator Dot Removed (Border color handles status info) */}
                                 </div>
                             </div>
                         </AdvancedMarker>
