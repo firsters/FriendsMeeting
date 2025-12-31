@@ -4,7 +4,7 @@ import { useTranslation } from '../context/LanguageContext';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import MapComponent from '../components/MapComponent';
 import { auth, db } from '../firebase';
-import { subscribeToMeetings, updateMeetingLocation } from '../utils/meetingService';
+import { subscribeToMeetings, updateMeetingLocation, createMeeting } from '../utils/meetingService';
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
@@ -128,6 +128,28 @@ const CombinedView = ({ onNavigate }) => {
       setMeetingStatus('temporary');
   };
 
+  const handleLocationPersistence = async (location) => {
+      if (!location) return;
+      
+      try {
+          if (activeMeetingId) {
+              await updateMeetingLocation(activeMeetingId, location);
+          } else if (isHost && currentUserId) {
+              // Create a meeting if none exists so we can share the location
+              const nickname = auth.currentUser?.displayName || 'Host';
+              const newMeeting = await createMeeting({
+                  title: location.name || "Live Meeting",
+                  meetingLocation: location,
+                  status: 'active'
+              }, currentUserId, { nickname });
+              setActiveMeetingId(newMeeting.id);
+              console.log("Auto-created meeting for location persistence:", newMeeting.id);
+          }
+      } catch (err) {
+          console.error("Failed to persist location:", err);
+      }
+  };
+
   const onPlaceSelectedFromMap = (location) => {
       if (pendingLocationName) {
           const updatedLocation = {
@@ -140,10 +162,7 @@ const CombinedView = ({ onNavigate }) => {
           setPendingLocationName(null);
           setIsSearchOpen(false);
 
-          // Persist to DB
-          if (activeMeetingId) {
-              updateMeetingLocation(activeMeetingId, updatedLocation);
-          }
+          handleLocationPersistence(updatedLocation);
       }
   };
 
@@ -204,8 +223,8 @@ const CombinedView = ({ onNavigate }) => {
   const handleMarkerDragEnd = (type, latLng) => {
       console.log(`Marker ${type} drag ended at`, latLng);
       // Persist to DB on drag end
-      if (type === 'meeting' && activeMeetingId && meetingLocation) {
-          updateMeetingLocation(activeMeetingId, meetingLocation);
+      if (type === 'meeting' && meetingLocation) {
+          handleLocationPersistence(meetingLocation);
       }
   };
 

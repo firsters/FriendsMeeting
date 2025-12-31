@@ -39,6 +39,7 @@ export const createMeeting = async (meetingData, userId, userProfile) => {
     groupCode,
     hostId: userId,
     createdAt: serverTimestamp(),
+    participantIds: [userId],
     participants: [{
       id: userId,
       nickname: userProfile.nickname || 'Unknown',
@@ -77,6 +78,7 @@ export const joinMeetingByCode = async (groupCode, userId, userProfile) => {
   };
   
   await updateDoc(doc(db, 'meetings', meetingDoc.id), {
+    participantIds: arrayUnion(userId),
     participants: arrayUnion(newParticipant)
   });
   
@@ -92,19 +94,11 @@ export const updateMeetingLocation = async (meetingId, locationData) => {
 };
 
 export const subscribeToMeetings = (userId, callback) => {
-  // Listen for meetings where the user is a participant
-  const q = query(collection(db, 'meetings'), where('participants', 'array-contains-any', [{ id: userId }]));
-  // Note: array-contains-any with objects is tricky in Firestore. 
-  // Simplified for this demo: query all meetings and filter on client side if needed, 
-  // or structure data differently (e.g., participantsIds array).
+  // Listen for meetings where the user is a participant using the dedicated IDs array
+  const q = query(collection(db, 'meetings'), where('participantIds', 'array-contains', userId));
   
-  // Better approach for Firestore:
-  const qBetter = query(collection(db, 'meetings')); // Actually, let's just use IDs for filtering if possible
-  
-  return onSnapshot(collection(db, 'meetings'), (snapshot) => {
-    const meetings = snapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(m => m.participants.some(p => p.id === userId));
+  return onSnapshot(q, (snapshot) => {
+    const meetings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     callback(meetings);
   });
 };
