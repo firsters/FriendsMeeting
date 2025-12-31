@@ -61,6 +61,110 @@ const GeocodingHandler = ({ location, onAddressResolved }) => {
     return null;
 };
 
+const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker }) => {
+    const map = useMap();
+    const [bounds, setBounds] = useState(null);
+
+    useEffect(() => {
+        if (!map) return;
+        const listener = map.addListener('bounds_changed', () => {
+            setBounds(map.getBounds());
+        });
+        // Initial bounds
+        setBounds(map.getBounds());
+        return () => listener.remove();
+    }, [map]);
+
+    if (!bounds) return null;
+
+    const center = map.getCenter().toJSON();
+    const ne = bounds.getNorthEast().toJSON();
+    const sw = bounds.getSouthWest().toJSON();
+
+    const calculateEdgePoint = (target) => {
+        if (!target || !target.lat || !target.lng) return null;
+        if (bounds.contains(target)) return null;
+
+        const dLat = target.lat - center.lat;
+        const dLng = target.lng - center.lng;
+
+        // Apply a small margin (5%)
+        const latMargin = (ne.lat - sw.lat) * 0.05;
+        const lngMargin = (ne.lng - sw.lng) * 0.05;
+
+        const north = ne.lat - latMargin;
+        const south = sw.lat + latMargin;
+        const east = ne.lng - lngMargin;
+        const west = sw.lng + lngMargin;
+
+        let t = 2; // Start with a value > 1
+
+        if (dLat > 0) t = Math.min(t, (north - center.lat) / dLat);
+        else if (dLat < 0) t = Math.min(t, (south - center.lat) / dLat);
+
+        if (dLng > 0) t = Math.min(t, (east - center.lng) / dLng);
+        else if (dLng < 0) t = Math.min(t, (west - center.lng) / dLng);
+
+        if (t < 0 || t > 1) return null;
+
+        return {
+            lat: center.lat + t * dLat,
+            lng: center.lng + t * dLng,
+            original: target
+        };
+    };
+
+    const edgePoints = [];
+    if (meetingLocation) {
+        const pt = calculateEdgePoint({ lat: meetingLocation.lat, lng: meetingLocation.lng });
+        if (pt) edgePoints.push({ ...pt, type: 'meeting', data: meetingLocation });
+    }
+    if (generalLocation) {
+        const pt = calculateEdgePoint(generalLocation);
+        if (pt) edgePoints.push({ ...pt, type: 'general', data: generalLocation });
+    }
+    friends.forEach(friend => {
+        const friendPos = {
+            lat: center.lat + (friend.y - 50) * 0.0001,
+            lng: center.lng + (friend.x - 50) * 0.0001
+        };
+        const pt = calculateEdgePoint(friendPos);
+        if (pt) edgePoints.push({ ...pt, type: 'friend', data: friend, pos: friendPos });
+    });
+
+    return (
+        <>
+            {edgePoints.map((pt, idx) => (
+                <AdvancedMarker
+                    key={`${pt.type}-${idx}`}
+                    position={{ lat: pt.lat, lng: pt.lng }}
+                    onClick={() => onCenterMarker(pt.original || pt.pos)}
+                >
+                    <div className="relative group cursor-pointer animate-pulse-slow">
+                        {pt.type === 'meeting' && (
+                            <div className="w-8 h-8 rounded-full bg-primary border-2 border-white shadow-xl flex items-center justify-center">
+                                <span className="material-symbols-outlined text-white text-base">star</span>
+                            </div>
+                        )}
+                        {pt.type === 'general' && (
+                            <div className="w-8 h-8 rounded-full bg-red-500 border-2 border-white shadow-xl flex items-center justify-center">
+                                <span className="material-symbols-outlined text-white text-base">location_on</span>
+                            </div>
+                        )}
+                        {pt.type === 'friend' && (
+                            <div className="w-8 h-8 rounded-full border-2 border-white overflow-hidden shadow-xl">
+                                <img src={pt.data.image} className="w-full h-full object-cover" alt={pt.data.name} />
+                            </div>
+                        )}
+                        {/* Direction Arrow */}
+                        <div className="absolute -inset-1 border-2 border-primary/20 rounded-full animate-ping"></div>
+                    </div>
+                </AdvancedMarker>
+            ))}
+        </>
+    );
+};
+
 const PlacesHandler = ({ searchQuery, searchTrigger = 0, onSearchResults, selectedPlaceId, onPlaceSelected }) => {
     const placesLib = useMapsLibrary('places');
     const geocodingLib = useMapsLibrary('geocoding');
@@ -129,7 +233,8 @@ const MapComponent = ({
     centerTrigger = 0,
     mapType = 'roadmap',
     meetingLocation = null,
-    generalLocation = null
+    generalLocation = null,
+    onCenterRequest
 }) => {
     const { t } = useTranslation();
     // Initial center state only for defaultCenter
@@ -253,7 +358,13 @@ const MapComponent = ({
 
     const handleMapLoad = (map) => {
         setMapInstance(map);
-        if (onMapLoad) onMapLoad(map);
+    };
+
+    const handleCenterOnMarker = (pos) => {
+        if (!pos) return;
+        setCurrentCenter(pos);
+        setInternalPanTrigger(prev => prev + 1);
+        if (onCenterRequest) onCenterRequest(pos);
     };
 
     // Fallback geolocation
@@ -312,6 +423,13 @@ const MapComponent = ({
                     onSearchResults={onGeneralSearchResults}
                     selectedPlaceId={generalSelectedPlaceId}
                     onPlaceSelected={handleGeneralPlaceSelected}
+                />
+
+                <EdgeMarkers
+                    meetingLocation={meetingLocation}
+                    generalLocation={generalLocation}
+                    friends={friends}
+                    onCenterMarker={handleCenterOnMarker}
                 />
 
                 {/* Meeting Location Marker */}
