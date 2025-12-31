@@ -283,23 +283,23 @@ const CombinedView = ({ onNavigate }) => {
       </div>
 
       {/* Top Header Bar Container */}
-      <header className="relative z-10 px-4 pt-10 pb-4 pointer-events-none flex flex-col items-center gap-2">
+      <header className="relative z-10 px-4 pt-2 pb-4 pointer-events-none flex flex-col items-center gap-2">
         {/* Main Header Container (Row 1 + Row 2) */}
         <div className="flex flex-col w-full bg-card-dark/90 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl pointer-events-auto transition-all duration-300">
 
             {/* ROW 1: Meeting Status & Host Location (Always Visible) */}
             <div className="flex items-center min-h-[4rem] w-full border-b border-white/5 last:border-none">
-                {/* Left Section: Indicators */}
-                <div className="flex flex-col justify-center px-4 py-2 border-r border-white/10 gap-1.5 shrink-0 min-w-[150px]">
-                    {/* Live Status */}
-                    <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full ${liveInfo.color} ${liveStatus === 'online' ? 'animate-pulse' : ''} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
-                        <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-widest">{liveInfo.text}</span>
-                    </div>
-                    {/* Meeting Status */}
+                {/* Left Section: Indicators (Order swapped and emphasized) */}
+                <div className="flex flex-col justify-center px-4 py-2 border-r border-white/10 gap-1 shrink-0 min-w-[150px]">
+                    {/* Meeting Status (Higher Priority) */}
                     <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${meetingInfo.color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
-                        <span className="text-[9px] font-extrabold text-gray-300 uppercase tracking-widest">{meetingInfo.text}</span>
+                        <span className="text-[10px] font-black text-white uppercase tracking-wider">{meetingInfo.text}</span>
+                    </div>
+                    {/* Live Status */}
+                    <div className="flex items-center gap-2 opacity-60">
+                        <span className={`w-1.5 h-1.5 rounded-full ${liveInfo.color} ${liveStatus === 'online' ? 'animate-pulse' : ''} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
+                        <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">{liveInfo.text}</span>
                     </div>
                 </div>
 
@@ -339,10 +339,10 @@ const CombinedView = ({ onNavigate }) => {
                         </div>
                     ) : (
                         <div className="flex flex-col justify-center w-full">
-                            <p className="text-white font-extrabold text-sm truncate leading-tight w-full">
+                            <p className="text-white font-black text-base truncate leading-tight w-full drop-shadow-sm">
                                 {meetingLocation?.name || t('header_no_location')}
                             </p>
-                            <p className="text-[10px] text-gray-400 truncate mt-0.5 w-full font-medium">
+                            <p className="text-[9px] text-gray-400 truncate mt-0.5 w-full font-bold uppercase tracking-tighter">
                                 {meetingLocation?.address || t('header_set_location_prompt')}
                             </p>
                         </div>

@@ -100,7 +100,7 @@ export const translations = {
 
     // Header Status
     status_receiving_location: "위치 수신 중",
-    status_location_confirmed: "위치 확정됨",
+    status_location_confirmed: "모임위치 확정됨",
     status_location_temporary: "임시 위치",
     status_location_unconfirmed: "위치 미확정",
     search_meeting_placeholder: "모임 장소 검색...",
