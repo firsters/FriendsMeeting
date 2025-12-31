@@ -156,8 +156,8 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
     }
     friends.forEach(friend => {
         const friendPos = {
-            lat: center.lat + (friend.y - 50) * 0.0001,
-            lng: center.lng + (friend.x - 50) * 0.0001
+            lat: friend.lat,
+            lng: friend.lng
         };
         const pt = calculateEdgePoint(friendPos);
         if (pt) edgePoints.push({ ...pt, type: 'friend', data: friend, pos: friendPos });
