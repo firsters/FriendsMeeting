@@ -264,6 +264,7 @@ const CombinedView = ({ onNavigate }) => {
   return (
     <div className="flex flex-col h-full bg-background-dark overflow-hidden relative font-sans">
       {/* Real Interactive Map Layer */}
+      {/* MAIN MAP AREA */}
       <div className="absolute inset-0 z-0">
           <MapComponent 
             friends={friends} 
@@ -290,6 +291,11 @@ const CombinedView = ({ onNavigate }) => {
             generalLocation={generalLocation}
             onMarkerDrag={handleMarkerDrag}
             onMarkerDragEnd={handleMarkerDragEnd}
+            onLocationSelect={handleLocationSelect}
+            onMeetingUpdate={handleMeetingUpdate}
+            onCenterMarker={(pos) => setMapCenter(pos)}
+            bottomOffset={100}
+            topOffset={isSearchExpanded ? 180 : 90}
           />
       </div>
 

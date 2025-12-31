@@ -61,7 +61,7 @@ const GeocodingHandler = ({ location, onAddressResolved }) => {
     return null;
 };
 
-const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker, bottomOffset = 100 }) => {
+const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker, bottomOffset = 100, topOffset = 80 }) => {
     const map = useMap();
     const [bounds, setBounds] = useState(null);
 
@@ -97,9 +97,11 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
         const heightInPixels = mapContainer.offsetHeight;
         const latRange = ne.lat - sw.lat;
         const pixelToLat = latRange / heightInPixels;
+        
         const bottomSafeLat = sw.lat + (bottomOffset * pixelToLat);
+        const topSafeLat = ne.lat - (topOffset * pixelToLat);
 
-        const north = ne.lat - latMargin;
+        const north = Math.min(ne.lat - latMargin, topSafeLat);
         const south = Math.max(sw.lat + latMargin, bottomSafeLat);
         const east = ne.lng - lngMargin;
         const west = sw.lng + lngMargin;
