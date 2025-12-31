@@ -46,9 +46,9 @@ const CombinedView = ({ onNavigate }) => {
   // Randomize friend locations on mount
   useEffect(() => {
     const friendData = [
-      { id: 1, name: 'Sarah', image: 'https://picsum.photos/seed/friend1/100/100', status: 'nearby' },
-      { id: 2, name: 'Mike', image: 'https://picsum.photos/seed/friend2/100/100', status: 'driving' },
-      { id: 3, name: 'Alex', image: 'https://picsum.photos/seed/friend3/100/100', status: 'idle' },
+      { id: 1, name: '김지아', image: 'https://picsum.photos/seed/friend1/100/100', status: 'nearby' },
+      { id: 2, name: '이현우', image: 'https://picsum.photos/seed/friend2/100/100', status: 'driving' },
+      { id: 3, name: '박서준', image: 'https://picsum.photos/seed/friend3/100/100', status: 'idle' },
     ];
 
     const randomizedFriends = friendData.map(f => ({
