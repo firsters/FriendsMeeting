@@ -88,9 +88,9 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
         const dLat = target.lat - center.lat;
         const dLng = target.lng - center.lng;
 
-        // Apply a small margin (5%)
-        const latMargin = (ne.lat - sw.lat) * 0.05;
-        const lngMargin = (ne.lng - sw.lng) * 0.05;
+        // Apply a very small margin (1%) to sit exactly on the edge
+        const latMargin = (ne.lat - sw.lat) * 0.01;
+        const lngMargin = (ne.lng - sw.lng) * 0.01;
 
         const north = ne.lat - latMargin;
         const south = sw.lat + latMargin;
@@ -140,24 +140,30 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
                     position={{ lat: pt.lat, lng: pt.lng }}
                     onClick={() => onCenterMarker(pt.original || pt.pos)}
                 >
-                    <div className="relative group cursor-pointer animate-pulse-slow">
-                        {pt.type === 'meeting' && (
-                            <div className="w-8 h-8 rounded-full bg-primary border-2 border-white shadow-xl flex items-center justify-center">
-                                <span className="material-symbols-outlined text-white text-base">star</span>
-                            </div>
-                        )}
-                        {pt.type === 'general' && (
-                            <div className="w-8 h-8 rounded-full bg-red-500 border-2 border-white shadow-xl flex items-center justify-center">
-                                <span className="material-symbols-outlined text-white text-base">location_on</span>
-                            </div>
-                        )}
-                        {pt.type === 'friend' && (
-                            <div className="w-8 h-8 rounded-full border-2 border-white overflow-hidden shadow-xl">
-                                <img src={pt.data.image} className="w-full h-full object-cover" alt={pt.data.name} />
-                            </div>
-                        )}
-                        {/* Direction Arrow */}
-                        <div className="absolute -inset-1 border-2 border-primary/20 rounded-full animate-ping"></div>
+                    <div className="relative group cursor-pointer animate-pulse-slow hover:opacity-100 transition-opacity">
+                        {/* Virtual Marker Container: Smaller, semi-transparent */}
+                        <div className="w-7 h-7 rounded-full bg-black/40 backdrop-blur-md border-2 border-white/60 flex items-center justify-center overflow-hidden opacity-80">
+                            {pt.type === 'meeting' && (
+                                <span className="material-symbols-outlined text-white text-sm opacity-90">star</span>
+                            )}
+                            {pt.type === 'general' && (
+                                <span className="material-symbols-outlined text-red-400 text-sm opacity-90">location_on</span>
+                            )}
+                            {pt.type === 'friend' && (
+                                <img src={pt.data.image} className="w-full h-full object-cover opacity-70" alt={pt.data.name} />
+                            )}
+                        </div>
+                        
+                        {/* Directional Arrow Overlay */}
+                        <div className="absolute -inset-2 flex items-center justify-center pointer-events-none">
+                             <div 
+                                className="w-full h-full border border-white/20 rounded-full animate-ping"
+                                style={{ transform: `rotate(${Math.atan2(pt.lat - center.lat, pt.lng - center.lng)}rad)` }}
+                             ></div>
+                        </div>
+                        
+                        {/* Standard Virtual Indicator - Indicator Dot */}
+                        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full border border-white shadow-sm ring-2 ring-primary/20"></div>
                     </div>
                 </AdvancedMarker>
             ))}
