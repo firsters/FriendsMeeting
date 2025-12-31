@@ -83,6 +83,14 @@ export const joinMeetingByCode = async (groupCode, userId, userProfile) => {
   return { id: meetingDoc.id, ...meetingData, participants: [...meetingData.participants, newParticipant] };
 };
 
+export const updateMeetingLocation = async (meetingId, locationData) => {
+  const meetingRef = doc(db, 'meetings', meetingId);
+  await updateDoc(meetingRef, {
+    meetingLocation: locationData,
+    updatedAt: serverTimestamp()
+  });
+};
+
 export const subscribeToMeetings = (userId, callback) => {
   // Listen for meetings where the user is a participant
   const q = query(collection(db, 'meetings'), where('participants', 'array-contains-any', [{ id: userId }]));

@@ -3,7 +3,8 @@ import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import MapComponent from '../components/MapComponent';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
+import { subscribeToMeetings, updateMeetingLocation } from '../utils/meetingService';
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
@@ -19,6 +20,8 @@ const CombinedView = ({ onNavigate }) => {
   const [isHost, setIsHost] = useState(false);
   const [notificationCount, setNotificationCount] = useState(3);
   const [pendingLocationName, setPendingLocationName] = useState(null);
+  const [activeMeetingId, setActiveMeetingId] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   // General Search State (Row 2)
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -57,10 +60,25 @@ const CombinedView = ({ onNavigate }) => {
     participants: 4
   };
 
-  // Auth Check
+  // Auth Check and Meeting Subscription
   useEffect(() => {
      const unsubscribe = auth.onAuthStateChanged(user => {
          setIsHost(!!user);
+         setCurrentUserId(user?.uid);
+         if (user) {
+             // For demo purposes, we'll just subscribe to any meetings the user is in
+             const unsubMeetings = subscribeToMeetings(user.uid, (meetings) => {
+                 if (meetings.length > 0) {
+                     const meeting = meetings[0]; // Take the first one for current view
+                     setActiveMeetingId(meeting.id);
+                     if (meeting.meetingLocation) {
+                         setMeetingLocation(meeting.meetingLocation);
+                         setMeetingStatus('confirmed');
+                     }
+                 }
+             });
+             return () => unsubMeetings();
+         }
      });
      return () => unsubscribe();
   }, []);
@@ -112,14 +130,20 @@ const CombinedView = ({ onNavigate }) => {
 
   const onPlaceSelectedFromMap = (location) => {
       if (pendingLocationName) {
-          setMeetingLocation({
+          const updatedLocation = {
               ...pendingLocationName,
               lat: location.lat,
               lng: location.lng
-          });
+          };
+          setMeetingLocation(updatedLocation);
           setMeetingStatus('confirmed');
           setPendingLocationName(null);
           setIsSearchOpen(false);
+
+          // Persist to DB
+          if (activeMeetingId) {
+              updateMeetingLocation(activeMeetingId, updatedLocation);
+          }
       }
   };
 
@@ -171,8 +195,11 @@ const CombinedView = ({ onNavigate }) => {
   };
 
   const handleMarkerDragEnd = (type, latLng) => {
-      // Finalize the location if needed, though handleMarkerDrag already updates state
       console.log(`Marker ${type} drag ended at`, latLng);
+      // Persist to DB on drag end
+      if (type === 'meeting' && activeMeetingId && meetingLocation) {
+          updateMeetingLocation(activeMeetingId, meetingLocation);
+      }
   };
 
   const handleToggleMapType = () => {
