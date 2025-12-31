@@ -4,6 +4,7 @@ import { useTranslation } from '../context/LanguageContext';
 import MapComponent from '../components/MapComponent';
 import { auth } from '../firebase';
 
+// Force new build trigger
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
