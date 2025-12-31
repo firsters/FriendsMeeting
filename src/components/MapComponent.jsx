@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { APIProvider, Map, AdvancedMarker, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 import { useTranslation } from '../context/LanguageContext';
 
-const MapUpdater = ({ center, shouldPan = true, centerTrigger = 0 }) => {
+const MapUpdater = ({ center, shouldPan = true, centerTrigger = 0, internalPanTrigger = 0 }) => {
     const map = useMap();
     const [lastTrigger, setLastTrigger] = useState(0);
+    const [lastInternalTrigger, setLastInternalTrigger] = useState(0);
 
     useEffect(() => {
         if (!map || !center) return;
@@ -14,10 +15,13 @@ const MapUpdater = ({ center, shouldPan = true, centerTrigger = 0 }) => {
         if (centerTrigger > lastTrigger) {
             map.panTo(center);
             setLastTrigger(centerTrigger);
+        } else if (internalPanTrigger > lastInternalTrigger) {
+            map.panTo(center);
+            setLastInternalTrigger(internalPanTrigger);
         } else if (shouldPan) {
             map.panTo(center);
         }
-    }, [map, center, shouldPan, centerTrigger, lastTrigger]);
+    }, [map, center, shouldPan, centerTrigger, lastTrigger, internalPanTrigger, lastInternalTrigger]);
     return null;
 };
 
@@ -130,6 +134,7 @@ const MapComponent = ({
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [hasCenteredInitially, setHasCenteredInitially] = useState(false);
+    const [internalPanTrigger, setInternalPanTrigger] = useState(0);
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
     const [mapInstance, setMapInstance] = useState(null);
 
@@ -228,12 +233,20 @@ const MapComponent = ({
 
     const handlePlaceSelected = (location) => {
         setCurrentCenter(location);
+        setInternalPanTrigger(prev => prev + 1);
         if (onPlaceSelected) onPlaceSelected(location);
     };
 
     const handleGeneralPlaceSelected = (location) => {
         setCurrentCenter(location);
+        setInternalPanTrigger(prev => prev + 1);
         if (onGeneralPlaceSelected) onGeneralPlaceSelected(location);
+    };
+
+    const handleFriendClick = (friend, pos) => {
+        setCurrentCenter(pos);
+        setInternalPanTrigger(prev => prev + 1);
+        if (onFriendClick) onFriendClick(friend);
     };
 
     const handleMapLoad = (map) => {
@@ -261,109 +274,116 @@ const MapComponent = ({
     }, [userLocation, mapInstance, hasCenteredInitially]);
 
     return (
-        <APIProvider apiKey={apiKey}>
-            <div className="relative w-full h-full">
-                <Map
-                    defaultCenter={initialCenter}
-                    defaultZoom={15}
-                    mapId={mapId} 
-                    gestureHandling={'greedy'}
-                    mapTypeId={mapType}
-                    disableDefaultUI={true}
-                    styles={mapType === 'roadmap' ? darkMapStyle : []}
-                    className="w-full h-full"
-                    onLoad={(ev) => handleMapLoad(ev.detail.map)}
-                >
-                    <MapUpdater center={currentCenter} shouldPan={hasCenteredInitially} centerTrigger={centerTrigger} />
-                    <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
+        <div className="relative w-full h-full">
+            <APIProvider apiKey={apiKey}>
+                <div className="relative w-full h-full">
+                    <Map
+                        defaultCenter={initialCenter}
+                        defaultZoom={15}
+                        mapId={mapId}
+                        gestureHandling={'greedy'}
+                        mapTypeId={mapType}
+                        disableDefaultUI={true}
+                        styles={mapType === 'roadmap' ? darkMapStyle : []}
+                        className="w-full h-full"
+                        onLoad={(ev) => handleMapLoad(ev.detail.map)}
+                    >
+                        <MapUpdater
+                            center={currentCenter}
+                            shouldPan={hasCenteredInitially}
+                            centerTrigger={centerTrigger}
+                            internalPanTrigger={internalPanTrigger}
+                        />
+                        <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
 
-                    {/* Primary Search (Meeting Location) */}
-                    <PlacesHandler 
-                        searchQuery={searchQuery}
-                        searchTrigger={searchTrigger}
-                        onSearchResults={onSearchResults} 
-                        selectedPlaceId={selectedPlaceId}
-                        onPlaceSelected={handlePlaceSelected} 
-                    />
+                        {/* Primary Search (Meeting Location) */}
+                        <PlacesHandler
+                            searchQuery={searchQuery}
+                            searchTrigger={searchTrigger}
+                            onSearchResults={onSearchResults}
+                            selectedPlaceId={selectedPlaceId}
+                            onPlaceSelected={handlePlaceSelected}
+                        />
 
-                    {/* Secondary Search (General) */}
-                    <PlacesHandler
-                        searchQuery={generalSearchQuery}
-                        searchTrigger={generalSearchTrigger}
-                        onSearchResults={onGeneralSearchResults}
-                        selectedPlaceId={generalSelectedPlaceId}
-                        onPlaceSelected={handleGeneralPlaceSelected}
-                    />
+                        {/* Secondary Search (General) */}
+                        <PlacesHandler
+                            searchQuery={generalSearchQuery}
+                            searchTrigger={generalSearchTrigger}
+                            onSearchResults={onGeneralSearchResults}
+                            selectedPlaceId={generalSelectedPlaceId}
+                            onPlaceSelected={handleGeneralPlaceSelected}
+                        />
 
-                    {/* Meeting Location Marker */}
-                    {meetingLocation && meetingLocation.lat && (
-                        <AdvancedMarker position={{ lat: meetingLocation.lat, lng: meetingLocation.lng }}>
-                             <div className="relative flex flex-col items-center animate-bounce-short">
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-blue-400 border-4 border-white shadow-2xl flex items-center justify-center relative z-10">
-                                    <span className="material-symbols-outlined text-white text-2xl drop-shadow-md">star</span>
-                                </div>
-                                <div className="absolute -bottom-1 w-4 h-2 bg-black/50 blur-sm rounded-full"></div>
-                                <div className="mt-1 bg-white/90 backdrop-blur px-2 py-1 rounded-lg border border-white/20 shadow-lg">
-                                    <p className="text-[10px] font-bold text-gray-800 whitespace-nowrap">{meetingLocation.name}</p>
-                                </div>
-                             </div>
-                        </AdvancedMarker>
-                    )}
-
-                    {/* General Search Marker (Red Pin) */}
-                    {generalLocation && (
-                        <AdvancedMarker position={generalLocation}>
-                            <div className="relative flex flex-col items-center animate-bounce-short">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-red-500 to-red-600 border-4 border-white shadow-2xl flex items-center justify-center relative z-10">
-                                    <span className="material-symbols-outlined text-white text-xl drop-shadow-md">location_on</span>
-                                </div>
-                                <div className="absolute -bottom-1 w-3 h-1.5 bg-black/50 blur-sm rounded-full"></div>
-                            </div>
-                        </AdvancedMarker>
-                    )}
-
-                    {/* User Location Marker */}
-                    <AdvancedMarker position={currentCenter}>
-                        <div className="relative flex items-center justify-center w-12 h-12">
-                            <div className="absolute inset-0 bg-blue-500/30 rounded-full animate-ping"></div>
-                            <div className="w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-lg relative z-10 flex items-center justify-center">
-                                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                            </div>
-                        </div>
-                    </AdvancedMarker>
-
-                    {/* Friend Markers */}
-                    {friends.map((friend) => {
-                        const friendPos = { 
-                            lat: currentCenter.lat + (friend.y - 50) * 0.0001, 
-                            lng: currentCenter.lng + (friend.x - 50) * 0.0001 
-                        };
-
-                        return (
-                            <AdvancedMarker 
-                                key={friend.id} 
-                                position={friendPos}
-                                onClick={() => onFriendClick(friend)}
-                            >
-                                <div className="relative group cursor-pointer transition-transform hover:scale-110">
-                                    <div 
-                                        className="w-10 h-10 rounded-full border-2 p-0.5 bg-[#1a1a1a] shadow-xl" 
-                                        style={{ borderColor: friend.status === 'nearby' ? '#4285F4' : '#F97316' }}
-                                    >
-                                        <img src={friend.image} className="w-full h-full rounded-full object-cover" alt={friend.name} />
+                        {/* Meeting Location Marker */}
+                        {meetingLocation && meetingLocation.lat && (
+                            <AdvancedMarker position={{ lat: meetingLocation.lat, lng: meetingLocation.lng }}>
+                                <div className="relative flex flex-col items-center animate-bounce-short">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-blue-400 border-4 border-white shadow-2xl flex items-center justify-center relative z-10">
+                                        <span className="material-symbols-outlined text-white text-2xl drop-shadow-md">star</span>
                                     </div>
-                                    {friend.status === 'driving' && (
-                                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-500 rounded-full border border-[#1a1a1a] flex items-center justify-center text-white shadow-lg">
-                                            <span className="material-symbols-outlined text-[10px]">directions_car</span>
-                                        </div>
-                                    )}
+                                    <div className="absolute -bottom-1 w-4 h-2 bg-black/50 blur-sm rounded-full"></div>
+                                    <div className="mt-1 bg-white/90 backdrop-blur px-2 py-1 rounded-lg border border-white/20 shadow-lg">
+                                        <p className="text-[10px] font-bold text-gray-800 whitespace-nowrap">{meetingLocation.name}</p>
+                                    </div>
                                 </div>
                             </AdvancedMarker>
-                        );
-                    })}
-                </Map>
-            </div>
-        </APIProvider>
+                        )}
+
+                        {/* General Search Marker (Red Pin) */}
+                        {generalLocation && (
+                            <AdvancedMarker position={generalLocation}>
+                                <div className="relative flex flex-col items-center animate-bounce-short">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-red-500 to-red-600 border-4 border-white shadow-2xl flex items-center justify-center relative z-10">
+                                        <span className="material-symbols-outlined text-white text-xl drop-shadow-md">location_on</span>
+                                    </div>
+                                    <div className="absolute -bottom-1 w-3 h-1.5 bg-black/50 blur-sm rounded-full"></div>
+                                </div>
+                            </AdvancedMarker>
+                        )}
+
+                        {/* User Location Marker */}
+                        <AdvancedMarker position={currentCenter}>
+                            <div className="relative flex items-center justify-center w-12 h-12">
+                                <div className="absolute inset-0 bg-blue-500/30 rounded-full animate-ping"></div>
+                                <div className="w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-lg relative z-10 flex items-center justify-center">
+                                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                                </div>
+                            </div>
+                        </AdvancedMarker>
+
+                        {/* Friend Markers */}
+                        {friends.map((friend) => {
+                            const friendPos = {
+                                lat: currentCenter.lat + (friend.y - 50) * 0.0001,
+                                lng: currentCenter.lng + (friend.x - 50) * 0.0001
+                            };
+
+                            return (
+                                <AdvancedMarker
+                                    key={friend.id}
+                                    position={friendPos}
+                                    onClick={() => handleFriendClick(friend, friendPos)}
+                                >
+                                    <div className="relative group cursor-pointer transition-transform hover:scale-110">
+                                        <div
+                                            className="w-10 h-10 rounded-full border-2 p-0.5 bg-[#1a1a1a] shadow-xl"
+                                            style={{ borderColor: friend.status === 'nearby' ? '#4285F4' : '#F97316' }}
+                                        >
+                                            <img src={friend.image} className="w-full h-full rounded-full object-cover" alt={friend.name} />
+                                        </div>
+                                        {friend.status === 'driving' && (
+                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-500 rounded-full border border-[#1a1a1a] flex items-center justify-center text-white shadow-lg">
+                                                <span className="material-symbols-outlined text-[10px]">directions_car</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </AdvancedMarker>
+                            );
+                        })}
+                    </Map>
+                </div>
+            </APIProvider>
+        </div>
     );
 };
 
