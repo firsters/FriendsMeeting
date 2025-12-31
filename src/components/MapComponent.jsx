@@ -83,7 +83,7 @@ const GeocodingHandler = ({ location, onAddressResolved }) => {
     return null;
 };
 
-const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker, bottomOffset = 100, topOffset = 80 }) => {
+const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, onCenterMarker, bottomOffset = 100, topOffset = 80 }) => {
     const map = useMap();
     const [bounds, setBounds] = useState(null);
 
@@ -163,6 +163,12 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
         if (pt) edgePoints.push({ ...pt, type: 'friend', data: friend, pos: friendPos });
     });
 
+    if (userLocation) {
+        const userPos = { lat: userLocation[0], lng: userLocation[1] };
+        const pt = calculateEdgePoint(userPos);
+        if (pt) edgePoints.push({ ...pt, type: 'me', data: { name: '나' }, pos: userPos });
+    }
+
     return (
         <>
             {edgePoints.map((pt, idx) => (
@@ -176,6 +182,7 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
                         <div className={`w-9 h-9 rounded-full bg-[#1a1a1a]/95 backdrop-blur-md border-[2.5px] flex items-center justify-center shadow-2xl overflow-hidden
                             ${pt.type === 'meeting' ? 'border-primary shadow-primary/30' : 
                               pt.type === 'general' ? 'border-red-500 shadow-red-500/30' : 
+                              pt.type === 'me' ? 'border-blue-400 shadow-blue-400/30' :
                               'border-white/40 shadow-white/10'}`}
                         >
                             {pt.type === 'meeting' && (
@@ -184,10 +191,10 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
                             {pt.type === 'general' && (
                                 <span className="material-symbols-outlined text-red-500 text-base font-bold">location_on</span>
                             )}
-                            {pt.type === 'friend' && (
+                            {(pt.type === 'friend' || pt.type === 'me') && (
                                 <div className="flex items-center justify-center w-full h-full">
                                     <span className="text-[14px] font-black text-white uppercase tracking-tighter">
-                                        {pt.data.name.substring(0, 2)}
+                                        {pt.type === 'me' ? '나' : pt.data.name.substring(0, 2)}
                                     </span>
                                 </div>
                             )}
@@ -208,6 +215,7 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, onCenterMarker
                         <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-[#1a1a1a] shadow-lg
                             ${pt.type === 'meeting' ? 'bg-primary' : 
                               pt.type === 'general' ? 'bg-red-500' : 
+                              pt.type === 'me' ? 'bg-blue-500' :
                               pt.data.status === 'nearby' ? 'bg-blue-500' :
                               pt.data.status === 'driving' ? 'bg-orange-500' :
                               'bg-gray-400'}`}
@@ -471,6 +479,7 @@ const MapComponent = ({
                     meetingLocation={meetingLocation} 
                     generalLocation={generalLocation}
                     friends={friends}
+                    userLocation={userLocation}
                     onCenterMarker={handleCenterOnMarker}
                     bottomOffset={bottomOffset}
                     topOffset={topOffset}
