@@ -97,10 +97,25 @@ export const translations = {
     nav_meetings: "모임",
     nav_alerts: "알림",
     nav_profile: "프로필",
+
+    // Header Status
+    status_receiving_location: "위치 수신 중",
+    status_location_confirmed: "위치 확정됨",
+    status_location_temporary: "임시 위치",
+    status_location_unconfirmed: "위치 미확정",
+    search_meeting_placeholder: "모임 장소 검색...",
+    header_no_location: "모임 장소 없음",
+    header_set_location_prompt: "장소를 설정해주세요",
     
+    // Dashboard
+    mock_meeting_title: "카페 스터디 모임",
+    dashboard_friends_online: "명 접속 중",
+    dashboard_new_messages: "새 메시지",
+
     // Map / Radar
     radar_live: "실시간 레이더",
     radar_move_map: "지도를 움직여 위치를 조정하세요",
+    map_location_unavailable: "상세 주소 확인 불가",
     
     // Meetings
     meeting_list_title: "모임 목록",
@@ -350,9 +365,24 @@ export const translations = {
     nav_alerts: "Alerts",
     nav_profile: "Profile",
 
+    // Header Status
+    status_receiving_location: "Receiving Location",
+    status_location_confirmed: "Location Confirmed",
+    status_location_temporary: "Temporary Location",
+    status_location_unconfirmed: "Location Unconfirmed",
+    search_meeting_placeholder: "Search meeting location...",
+    header_no_location: "No Meeting Location",
+    header_set_location_prompt: "Please set a location",
+
+    // Dashboard
+    mock_meeting_title: "Cafe study session",
+    dashboard_friends_online: "Friends Online",
+    dashboard_new_messages: "new messages",
+
     // Map / Radar
     radar_live: "Live Radar",
     radar_move_map: "Move map to adjust",
+    map_location_unavailable: "Detailed location unavailable",
 
     // Meetings
     meeting_list_title: "Meetings",
