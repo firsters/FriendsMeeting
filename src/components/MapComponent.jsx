@@ -260,7 +260,9 @@ const MapComponent = ({
     mapType = 'roadmap',
     meetingLocation = null,
     generalLocation = null,
-    onCenterRequest
+    onCenterRequest,
+    bottomOffset = 100,
+    topOffset = 80
 }) => {
     const { t } = useTranslation();
     // Initial center state only for defaultCenter
@@ -432,6 +434,14 @@ const MapComponent = ({
                     internalPanTrigger={internalPanTrigger}
                 />
                 <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
+                <EdgeMarkers 
+                    meetingLocation={meetingLocation} 
+                    generalLocation={generalLocation}
+                    friends={friends}
+                    onCenterMarker={handleCenterOnMarker}
+                    bottomOffset={bottomOffset}
+                    topOffset={topOffset}
+                />
 
                 {/* Primary Search (Meeting Location) */}
                 <PlacesHandler

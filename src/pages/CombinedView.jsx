@@ -291,9 +291,7 @@ const CombinedView = ({ onNavigate }) => {
             generalLocation={generalLocation}
             onMarkerDrag={handleMarkerDrag}
             onMarkerDragEnd={handleMarkerDragEnd}
-            onLocationSelect={handleLocationSelect}
-            onMeetingUpdate={handleMeetingUpdate}
-            onCenterMarker={(pos) => setMapCenter(pos)}
+            onCenterRequest={(pos) => setCenterTrigger(prev => prev + 1)}
             bottomOffset={100}
             topOffset={isSearchExpanded ? 180 : 90}
           />
