@@ -4,14 +4,32 @@ import { getFirestore } from "firebase/firestore";
 
 // Firebase project configuration using environment variables
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "dummy-key",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "dummy-domain",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "dummy-project",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "dummy-bucket",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "00000000000",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:00000000000:web:000000000000"
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+let app;
+let auth;
+let db;
+
+try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+} catch (error) {
+    console.warn("Firebase initialization failed, using mocks:", error);
+    auth = {
+        onAuthStateChanged: (callback) => {
+            callback(null); // Simulate not logged in
+            return () => {};
+        },
+        currentUser: null
+    };
+    db = {};
+}
+
+export { auth, db };

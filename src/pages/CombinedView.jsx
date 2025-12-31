@@ -19,6 +19,12 @@ const CombinedView = ({ onNavigate }) => {
   const [notificationCount, setNotificationCount] = useState(3);
   const [pendingLocationName, setPendingLocationName] = useState(null);
 
+  // General Search State (Row 2)
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [generalSearchQuery, setGeneralSearchQuery] = useState("");
+  const [generalSearchResults, setGeneralSearchResults] = useState([]);
+  const [generalSelectedPlaceId, setGeneralSelectedPlaceId] = useState(null);
+
   const [centerTrigger, setCenterTrigger] = useState(0);
   const [mapType, setMapType] = useState('roadmap'); // 'roadmap' or 'hybrid'
 
@@ -30,7 +36,7 @@ const CombinedView = ({ onNavigate }) => {
   ];
 
   const activeMeeting = {
-    title: "Cafe study session",
+    title: t('mock_meeting_title') || "Cafe study session",
     time: "2:00 PM",
     location: "Starbucks Gangnam",
     participants: 4
@@ -65,7 +71,7 @@ const CombinedView = ({ onNavigate }) => {
     }
   }, []);
 
-  // Search State
+  // Host Search State (Meeting Location)
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedPlaceId, setSelectedPlaceId] = useState(null);
@@ -98,6 +104,25 @@ const CombinedView = ({ onNavigate }) => {
       }
   };
 
+  // General Search State Handlers (Row 2)
+  const handleGeneralSearchInput = (e) => {
+    setGeneralSearchQuery(e.target.value);
+    if (e.target.value.length === 0) {
+        setGeneralSearchResults([]);
+    }
+  };
+
+  const handleSelectGeneralLocation = (placeId, description) => {
+      setGeneralSelectedPlaceId(placeId);
+      setGeneralSearchQuery(description);
+      setGeneralSearchResults([]);
+  };
+
+  // This just updates the map center without setting meeting location
+  const onGeneralPlaceSelectedFromMap = (location) => {
+      // Just map movement, handled by MapComponent + setCurrentCenter
+  };
+
   const handleCenterOnMe = () => {
     setCenterTrigger(prev => prev + 1);
   };
@@ -109,15 +134,15 @@ const CombinedView = ({ onNavigate }) => {
   // Status Helpers
   const getLiveStatusInfo = () => {
       return liveStatus === 'online'
-        ? { text: "Receiving Location", color: "bg-green-500" }
-        : { text: "Offline", color: "bg-red-500" };
+        ? { text: t('status_receiving_location'), color: "bg-green-500" }
+        : { text: t('offline'), color: "bg-red-500" };
   };
 
   const getMeetingStatusInfo = () => {
       switch(meetingStatus) {
-          case 'confirmed': return { text: "Location Confirmed", color: "bg-green-500" };
-          case 'temporary': return { text: "Temporary Location", color: "bg-yellow-500" };
-          case 'unconfirmed': default: return { text: "Location Unconfirmed", color: "bg-red-500" };
+          case 'confirmed': return { text: t('status_location_confirmed'), color: "bg-green-500" };
+          case 'temporary': return { text: t('status_location_temporary'), color: "bg-yellow-500" };
+          case 'unconfirmed': default: return { text: t('status_location_unconfirmed'), color: "bg-red-500" };
       }
   };
 
@@ -132,53 +157,154 @@ const CombinedView = ({ onNavigate }) => {
             friends={friends} 
             onFriendClick={setSelectedFriend} 
             userLocation={userLocation}
+
+            // Primary Search (Host)
             searchQuery={searchQuery}
             onSearchResults={setSearchResults}
             selectedPlaceId={selectedPlaceId}
             onPlaceSelected={onPlaceSelectedFromMap}
+
+            // General Search (Row 2)
+            generalSearchQuery={generalSearchQuery}
+            onGeneralSearchResults={setGeneralSearchResults}
+            generalSelectedPlaceId={generalSelectedPlaceId}
+            onGeneralPlaceSelected={onGeneralPlaceSelectedFromMap}
+
             centerTrigger={centerTrigger}
             mapType={mapType}
             meetingLocation={meetingLocation}
           />
       </div>
 
-      {/* Top Header Bar */}
-      <header className="relative z-10 px-4 pt-10 pb-4 pointer-events-none">
-        <div className="flex items-center bg-card-dark/90 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl pointer-events-auto overflow-visible min-h-[4rem]">
+      {/* Top Header Bar Container */}
+      <header className="relative z-10 px-4 pt-10 pb-4 pointer-events-none flex flex-col items-center gap-2">
+        {/* Main Header Container (Row 1 + Row 2) */}
+        <div className="flex flex-col w-full bg-card-dark/90 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl pointer-events-auto overflow-hidden transition-all duration-300">
 
-           {/* Left Section: Indicators */}
-           <div className="flex flex-col justify-center px-4 py-2 border-r border-white/10 gap-1.5 shrink-0 min-w-[150px]">
-               {/* Live Status */}
-               <div className="flex items-center gap-2">
-                   <span className={`w-2 h-2 rounded-full ${liveInfo.color} ${liveStatus === 'online' ? 'animate-pulse' : ''} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
-                   <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-widest">{liveInfo.text}</span>
-               </div>
-               {/* Meeting Status */}
-               <div className="flex items-center gap-2">
-                   <span className={`w-2 h-2 rounded-full ${meetingInfo.color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
-                   <span className="text-[9px] font-extrabold text-gray-300 uppercase tracking-widest">{meetingInfo.text}</span>
-               </div>
-           </div>
+            {/* ROW 1: Meeting Status & Host Location (Always Visible) */}
+            <div className="flex items-center min-h-[4rem] w-full border-b border-white/5 last:border-none">
+                {/* Left Section: Indicators */}
+                <div className="flex flex-col justify-center px-4 py-2 border-r border-white/10 gap-1.5 shrink-0 min-w-[150px]">
+                    {/* Live Status */}
+                    <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${liveInfo.color} ${liveStatus === 'online' ? 'animate-pulse' : ''} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
+                        <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-widest">{liveInfo.text}</span>
+                    </div>
+                    {/* Meeting Status */}
+                    <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${meetingInfo.color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
+                        <span className="text-[9px] font-extrabold text-gray-300 uppercase tracking-widest">{meetingInfo.text}</span>
+                    </div>
+                </div>
 
-           {/* Center Section: Info or Search */}
-           <div className="flex-1 px-4 py-2 relative flex items-center h-14">
-               {isSearchOpen ? (
-                   <div className="w-full relative group">
-                       <span className="absolute left-0 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-lg">search</span>
+                {/* Center Section: Info or Search (Host) */}
+                <div className="flex-1 px-4 py-2 relative flex items-center h-14">
+                    {isSearchOpen ? (
+                        <div className="w-full relative group">
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-lg">search</span>
+                            <input
+                                autoFocus
+                                value={searchQuery}
+                                onChange={handleSearchInput}
+                                className="w-full bg-transparent text-white placeholder:text-gray-500 font-bold text-sm outline-none pl-7"
+                                placeholder={t('search_meeting_placeholder')}
+                            />
+                            {/* Dropdown */}
+                            {searchResults.length > 0 && (
+                                <div className="absolute top-full left-0 right-0 mt-4 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 animate-fade-in-up">
+                                    {searchResults.map((result) => (
+                                        <div
+                                        key={result.place_id}
+                                        onClick={() => handleSelectLocation(result.place_id, result.description, result.structured_formatting?.main_text, result.structured_formatting?.secondary_text)}
+                                        className="px-4 py-3 hover:bg-white/10 cursor-pointer flex items-center gap-3 border-b border-white/5 last:border-none transition-colors"
+                                        >
+                                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                                            <span className="material-symbols-outlined text-gray-400 text-sm">location_on</span>
+                                        </div>
+                                        <div className="overflow-hidden text-left">
+                                            <p className="text-sm font-bold text-white truncate">{result.structured_formatting?.main_text || result.description}</p>
+                                            <p className="text-xs text-gray-500 truncate">{result.structured_formatting?.secondary_text || ""}</p>
+                                        </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col justify-center w-full">
+                            <p className="text-white font-extrabold text-sm truncate leading-tight w-full">
+                                {meetingLocation?.name || t('header_no_location')}
+                            </p>
+                            <p className="text-[10px] text-gray-400 truncate mt-0.5 w-full font-medium">
+                                {meetingLocation?.address || t('header_set_location_prompt')}
+                            </p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Right Section: Buttons */}
+                <div className="flex items-center gap-2 px-3 border-l border-white/10 h-10 my-auto">
+                    {/* Host Edit Toggle */}
+                    {isHost && (
+                        <button
+                            onClick={() => {
+                                setIsSearchOpen(!isSearchOpen);
+                                if (!isSearchOpen) {
+                                    setSearchQuery(""); // Clear on open
+                                    setSearchResults([]);
+                                }
+                            }}
+                            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${isSearchOpen ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
+                        >
+                            <span className="material-symbols-outlined text-lg">
+                                {isSearchOpen ? 'close' : 'edit_location'}
+                            </span>
+                        </button>
+                    )}
+
+                    {/* General Search Expand Toggle */}
+                     <button
+                        onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+                        className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${isSearchExpanded ? 'bg-white/20 text-white' : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
+                    >
+                        <span className="material-symbols-outlined text-lg">
+                            {isSearchExpanded ? 'expand_less' : 'expand_more'}
+                        </span>
+                    </button>
+
+                    <button
+                        onClick={() => setIsExpanded(true)}
+                        className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-90 relative"
+                    >
+                        <span className="material-symbols-outlined text-lg">notifications</span>
+                        {notificationCount > 0 && (
+                            <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-card-dark flex items-center justify-center text-[8px] font-bold text-white">
+                                {notificationCount}
+                            </span>
+                        )}
+                    </button>
+                </div>
+            </div>
+
+            {/* ROW 2: General Search (Collapsible) */}
+            {isSearchExpanded && (
+                <div className="w-full px-4 py-3 bg-black/20 border-t border-white/5 animate-fade-in-down">
+                    <div className="relative group w-full">
+                       <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-lg">search</span>
                        <input
                            autoFocus
-                           value={searchQuery}
-                           onChange={handleSearchInput}
-                           className="w-full bg-transparent text-white placeholder:text-gray-500 font-bold text-sm outline-none pl-7"
-                           placeholder="Search meeting location..."
+                           value={generalSearchQuery}
+                           onChange={handleGeneralSearchInput}
+                           className="w-full bg-white/5 rounded-xl text-white placeholder:text-gray-500 font-bold text-sm outline-none pl-10 pr-4 py-2.5 transition-colors focus:bg-white/10"
+                           placeholder={t('loc_search_placeholder')}
                        />
-                       {/* Dropdown */}
-                       {searchResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-4 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 animate-fade-in-up">
-                            {searchResults.map((result) => (
+                       {/* General Search Dropdown */}
+                       {generalSearchResults.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50">
+                            {generalSearchResults.map((result) => (
                                 <div
                                 key={result.place_id}
-                                onClick={() => handleSelectLocation(result.place_id, result.description, result.structured_formatting?.main_text, result.structured_formatting?.secondary_text)}
+                                onClick={() => handleSelectGeneralLocation(result.place_id, result.description)}
                                 className="px-4 py-3 hover:bg-white/10 cursor-pointer flex items-center gap-3 border-b border-white/5 last:border-none transition-colors"
                                 >
                                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
@@ -193,49 +319,8 @@ const CombinedView = ({ onNavigate }) => {
                         </div>
                        )}
                    </div>
-               ) : (
-                   <div className="flex flex-col justify-center w-full">
-                       <p className="text-white font-extrabold text-sm truncate leading-tight w-full">
-                           {meetingLocation?.name || "No Meeting Location"}
-                       </p>
-                       <p className="text-[10px] text-gray-400 truncate mt-0.5 w-full font-medium">
-                           {meetingLocation?.address || "Please set a location"}
-                       </p>
-                   </div>
-               )}
-           </div>
-
-           {/* Right Section: Buttons */}
-           <div className="flex items-center gap-2 px-3 border-l border-white/10 h-10 my-auto">
-               {isHost && (
-                   <button
-                       onClick={() => {
-                           setIsSearchOpen(!isSearchOpen);
-                           if (!isSearchOpen) {
-                               setSearchQuery(""); // Clear on open
-                               setSearchResults([]);
-                           }
-                       }}
-                       className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${isSearchOpen ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
-                   >
-                       <span className="material-symbols-outlined text-lg">
-                           {isSearchOpen ? 'close' : 'search'}
-                       </span>
-                   </button>
-               )}
-
-               <button
-                   onClick={() => setIsExpanded(true)}
-                   className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-90 relative"
-               >
-                   <span className="material-symbols-outlined text-lg">notifications</span>
-                   {notificationCount > 0 && (
-                       <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-card-dark flex items-center justify-center text-[8px] font-bold text-white">
-                           {notificationCount}
-                       </span>
-                   )}
-               </button>
-           </div>
+                </div>
+            )}
         </div>
       </header>
 
@@ -307,8 +392,8 @@ const CombinedView = ({ onNavigate }) => {
                   ))}
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{friends.length} Friends Online</p>
-                  <p className="text-white text-xs font-bold">{notificationCount} new messages</p>
+                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{friends.length} {t('dashboard_friends_online')}</p>
+                  <p className="text-white text-xs font-bold">{notificationCount} {t('dashboard_new_messages')}</p>
                 </div>
               </div>
               <button className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">

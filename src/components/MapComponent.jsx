@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { APIProvider, Map, AdvancedMarker, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
+import { useTranslation } from '../context/LanguageContext';
 
 const MapUpdater = ({ center, shouldPan = true, centerTrigger = 0 }) => {
     const map = useMap();
@@ -31,6 +32,7 @@ const MapInstanceShaper = ({ onMapLoad }) => {
 };
 
 const GeocodingHandler = ({ location, onAddressResolved }) => {
+    const { t } = useTranslation();
     const geocodingLib = useMapsLibrary('geocoding');
     const [geocoder, setGeocoder] = useState(null);
 
@@ -47,10 +49,10 @@ const GeocodingHandler = ({ location, onAddressResolved }) => {
                 onAddressResolved(results[0].formatted_address);
             } else {
                 console.error("Geocode failed due to: " + status);
-                onAddressResolved("Detailed location unavailable");
+                onAddressResolved(t('map_location_unavailable'));
             }
         });
-    }, [geocoder, location, onAddressResolved]);
+    }, [geocoder, location, onAddressResolved, t]);
 
     return null;
 };
@@ -101,7 +103,26 @@ const PlacesHandler = ({ searchQuery, onSearchResults, selectedPlaceId, onPlaceS
     return null;
 };
 
-const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved, searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected, centerTrigger = 0, mapType = 'roadmap', meetingLocation = null }) => {
+const MapComponent = ({
+    friends,
+    onFriendClick,
+    userLocation,
+    onAddressResolved,
+    searchQuery,
+    onSearchResults,
+    selectedPlaceId,
+    onPlaceSelected,
+    // General Search Props
+    generalSearchQuery,
+    onGeneralSearchResults,
+    generalSelectedPlaceId,
+    onGeneralPlaceSelected,
+
+    centerTrigger = 0,
+    mapType = 'roadmap',
+    meetingLocation = null
+}) => {
+    const { t } = useTranslation();
     // Initial center state only for defaultCenter
     const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
@@ -211,6 +232,11 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
         if (onPlaceSelected) onPlaceSelected(location);
     };
 
+    const handleGeneralPlaceSelected = (location) => {
+        setCurrentCenter(location);
+        if (onGeneralPlaceSelected) onGeneralPlaceSelected(location);
+    };
+
     const handleMapLoad = (map) => {
         setMapInstance(map);
         if (onMapLoad) onMapLoad(map);
@@ -251,11 +277,21 @@ const MapComponent = ({ friends, onFriendClick, userLocation, onAddressResolved,
                 >
                     <MapUpdater center={currentCenter} shouldPan={hasCenteredInitially} centerTrigger={centerTrigger} />
                     <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
+
+                    {/* Primary Search (Meeting Location) */}
                     <PlacesHandler 
                         searchQuery={searchQuery} 
                         onSearchResults={onSearchResults} 
                         selectedPlaceId={selectedPlaceId}
                         onPlaceSelected={handlePlaceSelected} 
+                    />
+
+                    {/* Secondary Search (General) */}
+                    <PlacesHandler
+                        searchQuery={generalSearchQuery}
+                        onSearchResults={onGeneralSearchResults}
+                        selectedPlaceId={generalSelectedPlaceId}
+                        onPlaceSelected={handleGeneralPlaceSelected}
                     />
 
                     {/* Meeting Location Marker */}
