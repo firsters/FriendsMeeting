@@ -36,6 +36,7 @@ const CombinedView = ({ onNavigate }) => {
   const [generalSearchTrigger, setGeneralSearchTrigger] = useState(0);
 
   const [centerTrigger, setCenterTrigger] = useState(0);
+  const [centerOnMeTrigger, setCenterOnMeTrigger] = useState(0);
   const [mapType, setMapType] = useState('roadmap'); // 'roadmap' or 'hybrid'
 
   // Mock data for the home screen
@@ -203,7 +204,7 @@ const CombinedView = ({ onNavigate }) => {
   };
 
   const handleCenterOnMe = () => {
-    setCenterTrigger(prev => prev + 1);
+    setCenterOnMeTrigger(prev => prev + 1);
   };
 
   const handleMarkerDrag = (type, latLng) => {
@@ -286,6 +287,7 @@ const CombinedView = ({ onNavigate }) => {
             onGeneralPlaceSelected={onGeneralPlaceSelectedFromMap}
 
             centerTrigger={centerTrigger}
+            centerOnMeTrigger={centerOnMeTrigger}
             mapType={mapType}
             meetingLocation={meetingLocation}
             generalLocation={generalLocation}
@@ -293,7 +295,7 @@ const CombinedView = ({ onNavigate }) => {
             onMarkerDragEnd={handleMarkerDragEnd}
             onCenterRequest={(pos) => setCenterTrigger(prev => prev + 1)}
             bottomOffset={100}
-            topOffset={isSearchExpanded ? 180 : 90}
+            topOffset={isSearchExpanded ? 210 : 115}
           />
       </div>
 

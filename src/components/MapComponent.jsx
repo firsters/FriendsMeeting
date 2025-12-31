@@ -257,6 +257,7 @@ const MapComponent = ({
     onGeneralPlaceSelected,
 
     centerTrigger = 0,
+    centerOnMeTrigger = 0,
     mapType = 'roadmap',
     meetingLocation = null,
     generalLocation = null,
@@ -365,6 +366,16 @@ const MapComponent = ({
             setHasCenteredInitially(true);
         }
     }, [userLocation, mapInstance, hasCenteredInitially]);
+
+    // Explicit My Location Centering
+    useEffect(() => {
+        if (centerOnMeTrigger > 0 && userLocation && mapInstance) {
+            const myPos = { lat: userLocation[0], lng: userLocation[1] };
+            setCurrentCenter(myPos);
+            mapInstance.panTo(myPos);
+            setInternalPanTrigger(prev => prev + 1);
+        }
+    }, [centerOnMeTrigger, userLocation, mapInstance]);
 
     const handlePlaceSelected = (location) => {
         setCurrentCenter(location);
