@@ -197,7 +197,7 @@ const CombinedView = ({ onNavigate }) => {
       {/* Top Header Bar Container */}
       <header className="relative z-10 px-4 pt-10 pb-4 pointer-events-none flex flex-col items-center gap-2">
         {/* Main Header Container (Row 1 + Row 2) */}
-        <div className="flex flex-col w-full bg-card-dark/90 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl pointer-events-auto overflow-hidden transition-all duration-300">
+        <div className="flex flex-col w-full bg-card-dark/90 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl pointer-events-auto transition-all duration-300">
 
             {/* ROW 1: Meeting Status & Host Location (Always Visible) */}
             <div className="flex items-center min-h-[4rem] w-full border-b border-white/5 last:border-none">
@@ -307,7 +307,7 @@ const CombinedView = ({ onNavigate }) => {
 
             {/* ROW 2: General Search (Collapsible) */}
             {isSearchExpanded && (
-                <div className="w-full px-4 py-3 bg-black/20 border-t border-white/5 animate-fade-in-down">
+                <div className="w-full px-4 py-3 bg-black/20 border-t border-white/5 animate-fade-in-down rounded-b-3xl">
                     <div className="relative group w-full">
                        <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-lg">search</span>
                        <input
