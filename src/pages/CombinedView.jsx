@@ -10,17 +10,27 @@ const CombinedView = ({ onNavigate }) => {
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
 
-  // New Header State
+  // New Header State (Meeting Search)
   const [meetingLocation, setMeetingLocation] = useState(null); // { name, address, lat, lng }
   const [meetingStatus, setMeetingStatus] = useState('unconfirmed'); // unconfirmed, confirmed, temporary
   const [liveStatus, setLiveStatus] = useState('offline'); // online, offline
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMeetingSearchOpen, setIsMeetingSearchOpen] = useState(false);
   const [isHost, setIsHost] = useState(false);
   const [notificationCount, setNotificationCount] = useState(3);
   const [pendingLocationName, setPendingLocationName] = useState(null);
 
+  // Dual Search State
+  const [meetingSearchQuery, setMeetingSearchQuery] = useState("");
+  const [meetingSearchResults, setMeetingSearchResults] = useState([]);
+
+  const [genSearchQuery, setGenSearchQuery] = useState("");
+  const [genSearchResults, setGenSearchResults] = useState([]);
+  const [activeSearchType, setActiveSearchType] = useState('general'); // 'general' | 'meeting'
+
   const [centerTrigger, setCenterTrigger] = useState(0);
   const [mapType, setMapType] = useState('roadmap'); // 'roadmap' or 'hybrid'
+  const [selectedPlaceId, setSelectedPlaceId] = useState(null);
+
 
   // Mock data for the home screen
   const friends = [
@@ -65,37 +75,73 @@ const CombinedView = ({ onNavigate }) => {
     }
   }, []);
 
-  // Search State
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [selectedPlaceId, setSelectedPlaceId] = useState(null);
 
-  const handleSearchInput = (e) => {
-    setSearchQuery(e.target.value);
-    if (e.target.value.length === 0) {
-        setSearchResults([]);
+  // --- Search Handlers ---
+
+  // Meeting Search (Host Only)
+  const handleMeetingSearchInput = (e) => {
+    const val = e.target.value;
+    setMeetingSearchQuery(val);
+    setActiveSearchType('meeting');
+    if (val.length === 0) {
+        setMeetingSearchResults([]);
     }
   };
 
-  const handleSelectLocation = (placeId, description, mainText, secondaryText) => {
-      setSelectedPlaceId(placeId);
-      setSearchQuery(description);
-      setPendingLocationName({ name: mainText || description, address: secondaryText || "" });
-      setSearchResults([]);
-      setMeetingStatus('temporary');
+  // General Search (Everyone)
+  const handleGenSearchInput = (e) => {
+    const val = e.target.value;
+    setGenSearchQuery(val);
+    setActiveSearchType('general');
+    if (val.length === 0) {
+        setGenSearchResults([]);
+    }
   };
 
-  const onPlaceSelectedFromMap = (location) => {
-      if (pendingLocationName) {
-          setMeetingLocation({
-              ...pendingLocationName,
-              lat: location.lat,
-              lng: location.lng
-          });
-          setMeetingStatus('confirmed');
-          setPendingLocationName(null);
-          setIsSearchOpen(false);
+  // Unified Search Results Handler (from MapComponent)
+  const handleSearchResults = (results) => {
+      if (activeSearchType === 'meeting') {
+          setMeetingSearchResults(results);
+      } else {
+          setGenSearchResults(results);
       }
+  };
+
+  // Select Location Logic
+  const handleSelectLocation = (placeId, description, mainText, secondaryText, type) => {
+      setSelectedPlaceId(placeId);
+      setActiveSearchType(type);
+
+      if (type === 'meeting') {
+          setMeetingSearchQuery(description);
+          setPendingLocationName({ name: mainText || description, address: secondaryText || "" });
+          setMeetingSearchResults([]);
+          setMeetingStatus('temporary');
+      } else {
+          setGenSearchQuery(description);
+          setGenSearchResults([]);
+          // General search just centers map, doesn't need pending meeting logic
+      }
+  };
+
+  // Map Callback when Place ID is Resolved
+  const onPlaceSelectedFromMap = (location) => {
+      // Always center map
+      // MapComponent handles centering via internal state update when we pass onPlaceSelected
+
+      if (activeSearchType === 'meeting') {
+          if (pendingLocationName) {
+              setMeetingLocation({
+                  ...pendingLocationName,
+                  lat: location.lat,
+                  lng: location.lng
+              });
+              setMeetingStatus('confirmed');
+              setPendingLocationName(null);
+              setIsMeetingSearchOpen(false);
+          }
+      }
+      // General search: Already handled by map centering on result
   };
 
   const handleCenterOnMe = () => {
@@ -132,8 +178,8 @@ const CombinedView = ({ onNavigate }) => {
             friends={friends} 
             onFriendClick={setSelectedFriend} 
             userLocation={userLocation}
-            searchQuery={searchQuery}
-            onSearchResults={setSearchResults}
+            searchQuery={activeSearchType === 'meeting' ? meetingSearchQuery : genSearchQuery}
+            onSearchResults={handleSearchResults}
             selectedPlaceId={selectedPlaceId}
             onPlaceSelected={onPlaceSelectedFromMap}
             centerTrigger={centerTrigger}
@@ -142,8 +188,10 @@ const CombinedView = ({ onNavigate }) => {
           />
       </div>
 
-      {/* Top Header Bar */}
-      <header className="relative z-10 px-4 pt-10 pb-4 pointer-events-none">
+      {/* Header Container */}
+      <header className="relative z-10 px-4 pt-10 pb-4 pointer-events-none flex flex-col gap-4">
+
+        {/* ROW 1: Meeting Status & Host Controls */}
         <div className="flex items-center bg-card-dark/90 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl pointer-events-auto overflow-visible min-h-[4rem]">
 
            {/* Left Section: Indicators */}
@@ -160,25 +208,26 @@ const CombinedView = ({ onNavigate }) => {
                </div>
            </div>
 
-           {/* Center Section: Info or Search */}
+           {/* Center Section: Meeting Info or Host Search */}
            <div className="flex-1 px-4 py-2 relative flex items-center h-14">
-               {isSearchOpen ? (
+               {isMeetingSearchOpen ? (
                    <div className="w-full relative group">
                        <span className="absolute left-0 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-lg">search</span>
                        <input
                            autoFocus
-                           value={searchQuery}
-                           onChange={handleSearchInput}
+                           value={meetingSearchQuery}
+                           onChange={handleMeetingSearchInput}
+                           onFocus={() => setActiveSearchType('meeting')}
                            className="w-full bg-transparent text-white placeholder:text-gray-500 font-bold text-sm outline-none pl-7"
                            placeholder={t('map_search_button_label')}
                        />
-                       {/* Dropdown */}
-                       {searchResults.length > 0 && (
+                       {/* Dropdown for Meeting Search */}
+                       {meetingSearchResults.length > 0 && activeSearchType === 'meeting' && (
                         <div className="absolute top-full left-0 right-0 mt-4 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 animate-fade-in-up">
-                            {searchResults.map((result) => (
+                            {meetingSearchResults.map((result) => (
                                 <div
                                 key={result.place_id}
-                                onClick={() => handleSelectLocation(result.place_id, result.description, result.structured_formatting?.main_text, result.structured_formatting?.secondary_text)}
+                                onClick={() => handleSelectLocation(result.place_id, result.description, result.structured_formatting?.main_text, result.structured_formatting?.secondary_text, 'meeting')}
                                 className="px-4 py-3 hover:bg-white/10 cursor-pointer flex items-center gap-3 border-b border-white/5 last:border-none transition-colors"
                                 >
                                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
@@ -210,16 +259,17 @@ const CombinedView = ({ onNavigate }) => {
                {isHost && (
                    <button
                        onClick={() => {
-                           setIsSearchOpen(!isSearchOpen);
-                           if (!isSearchOpen) {
-                               setSearchQuery(""); // Clear on open
-                               setSearchResults([]);
+                           setIsMeetingSearchOpen(!isMeetingSearchOpen);
+                           if (!isMeetingSearchOpen) {
+                               setMeetingSearchQuery(""); // Clear on open
+                               setMeetingSearchResults([]);
+                               setActiveSearchType('meeting');
                            }
                        }}
-                       className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${isSearchOpen ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
+                       className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${isMeetingSearchOpen ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
                    >
                        <span className="material-symbols-outlined text-lg">
-                           {isSearchOpen ? 'close' : 'search'}
+                           {isMeetingSearchOpen ? 'close' : 'search'}
                        </span>
                    </button>
                )}
@@ -237,6 +287,43 @@ const CombinedView = ({ onNavigate }) => {
                </button>
            </div>
         </div>
+
+        {/* ROW 2: General Address Search (Restored) */}
+        <div className="relative group pointer-events-auto">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-600 group-focus-within:text-primary transition-colors text-xl">search</span>
+          <input
+            value={genSearchQuery}
+            onChange={handleGenSearchInput}
+            onFocus={() => setActiveSearchType('general')}
+            className="w-full h-14 bg-card-dark/80 backdrop-blur-xl border border-white/5 rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-600 focus:ring-2 focus:ring-primary/50 outline-none transition-all shadow-xl"
+            placeholder={t('map_search_placeholder')}
+          />
+          <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white transition-colors">
+            <span className="material-symbols-outlined text-xl">mic</span>
+          </button>
+
+          {/* Search Results Dropdown for General Search */}
+          {genSearchResults.length > 0 && activeSearchType === 'general' && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto z-50 animate-fade-in-up">
+              {genSearchResults.map((result) => (
+                <div
+                  key={result.place_id}
+                  onClick={() => handleSelectLocation(result.place_id, result.description, result.structured_formatting?.main_text, result.structured_formatting?.secondary_text, 'general')}
+                  className="px-4 py-3 hover:bg-white/10 cursor-pointer flex items-center gap-3 border-b border-white/5 last:border-none transition-colors"
+                >
+                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-gray-400 text-sm">location_on</span>
+                  </div>
+                  <div className="overflow-hidden text-left">
+                    <p className="text-sm font-bold text-white truncate">{result.structured_formatting?.main_text || result.description}</p>
+                    <p className="text-xs text-gray-500 truncate">{result.structured_formatting?.secondary_text || ""}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
       </header>
 
       {/* Friend Tooltip Overlay */}
