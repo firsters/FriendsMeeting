@@ -247,7 +247,8 @@ const PlacesHandler = ({ searchQuery, searchTrigger = 0, onSearchResults, select
             if (status === 'OK' && results[0]) {
                 const location = {
                     lat: results[0].geometry.location.lat(),
-                    lng: results[0].geometry.location.lng()
+                    lng: results[0].geometry.location.lng(),
+                    address: results[0].formatted_address
                 };
                 onPlaceSelected(location);
             } else {

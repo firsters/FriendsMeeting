@@ -182,7 +182,8 @@ const CombinedView = ({ onNavigate }) => {
           const updatedLocation = {
               ...pendingLocationName,
               lat: location.lat,
-              lng: location.lng
+              lng: location.lng,
+              address: location.address || pendingLocationName.address
           };
           setMeetingLocation(updatedLocation);
           setMeetingStatus('confirmed');
@@ -237,15 +238,18 @@ const CombinedView = ({ onNavigate }) => {
   const onGeneralPlaceSelectedFromMap = (location) => {
       setGeneralLocation(location);
   };
-
   const handleCenterOnMe = () => {
     setCenterOnMeTrigger(prev => prev + 1);
   };
 
   const handleMarkerDrag = (type, latLng) => {
     if (type === 'meeting') {
-      setMeetingLocation(prev => ({ ...prev, ...latLng }));
-      
+      setMeetingLocation(prev => ({
+        ...prev,
+        ...latLng,
+        name: "" // Clear name on drag to force address update
+      }));
+
       // Real-time geocoding for the top bar
       if (geocoder) {
         geocoder.geocode({ location: latLng }, (results, status) => {
@@ -392,7 +396,7 @@ const CombinedView = ({ onNavigate }) => {
                     ) : (
                         <div className="flex flex-col justify-center w-full">
                             <p className="text-white font-black text-lg truncate leading-none w-full drop-shadow-lg mb-0.5">
-                                {meetingLocation?.address || t('header_no_location')}
+                                {meetingLocation?.name || meetingLocation?.address || t('header_no_location')}
                             </p>
                             <p className="text-[10px] text-gray-400 truncate w-full font-bold uppercase tracking-tight opacity-80">
                                 {userAddress || t('header_set_location_prompt')}
