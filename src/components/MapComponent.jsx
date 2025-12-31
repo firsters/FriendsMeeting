@@ -2,26 +2,48 @@ import React, { useEffect, useState } from 'react';
 import { Map, AdvancedMarker, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 import { useTranslation } from '../context/LanguageContext';
 
-const MapUpdater = ({ center, shouldPan = true, centerTrigger = 0, internalPanTrigger = 0 }) => {
+const MapUpdater = ({ 
+    center, 
+    userLocation, 
+    shouldPan = true, 
+    centerTrigger = 0, 
+    centerOnMeTrigger = 0, 
+    internalPanTrigger = 0 
+}) => {
     const map = useMap();
     const [lastTrigger, setLastTrigger] = useState(0);
     const [lastInternalTrigger, setLastInternalTrigger] = useState(0);
+    const [lastCenterOnMeTrigger, setLastCenterOnMeTrigger] = useState(0);
 
     useEffect(() => {
-        if (!map || !center) return;
+        if (!map) return;
 
-        // Force pan if trigger changed, regardless of shouldPan
-        // shouldPan is typically for auto-tracking, while trigger is for manual click
-        if (centerTrigger > lastTrigger) {
+        // 1. Explicit My Location Trigger (Highest Priority)
+        if (centerOnMeTrigger > lastCenterOnMeTrigger && userLocation) {
+            const myPos = { lat: userLocation[0], lng: userLocation[1] };
+            map.panTo(myPos);
+            setLastCenterOnMeTrigger(centerOnMeTrigger);
+            return; // Exit to avoid conflict with other triggers in same frame
+        }
+
+        // 2. Manual Marker/Place Trigger
+        if (centerTrigger > lastTrigger && center) {
             map.panTo(center);
             setLastTrigger(centerTrigger);
-        } else if (internalPanTrigger > lastInternalTrigger) {
+        } 
+        
+        // 3. Internal Selection Trigger
+        else if (internalPanTrigger > lastInternalTrigger && center) {
             map.panTo(center);
             setLastInternalTrigger(internalPanTrigger);
-        } else if (shouldPan) {
+        } 
+        
+        // 4. Auto-tracking (Passive)
+        else if (shouldPan && center) {
             map.panTo(center);
         }
-    }, [map, center, shouldPan, centerTrigger, lastTrigger, internalPanTrigger, lastInternalTrigger]);
+    }, [map, center, userLocation, shouldPan, centerTrigger, lastTrigger, internalPanTrigger, lastInternalTrigger, centerOnMeTrigger, lastCenterOnMeTrigger]);
+    
     return null;
 };
 
@@ -267,11 +289,10 @@ const MapComponent = ({
 }) => {
     const { t } = useTranslation();
     // Initial center state only for defaultCenter
-    const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
+    const [initialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [hasCenteredInitially, setHasCenteredInitially] = useState(false);
     const [internalPanTrigger, setInternalPanTrigger] = useState(0);
-    const [lastCenterOnMeTrigger, setLastCenterOnMeTrigger] = useState(0);
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
     const [mapInstance, setMapInstance] = useState(null);
 
@@ -358,7 +379,7 @@ const MapComponent = ({
         },
     ];
 
-    // Update currentCenter when userLocation changes
+    // Initial Center only
     useEffect(() => {
         if (userLocation && !hasCenteredInitially && mapInstance) {
             const newCenter = { lat: userLocation[0], lng: userLocation[1] };
@@ -367,17 +388,6 @@ const MapComponent = ({
             setHasCenteredInitially(true);
         }
     }, [userLocation, mapInstance, hasCenteredInitially]);
-
-    // Explicit My Location Centering
-    useEffect(() => {
-        if (centerOnMeTrigger > lastCenterOnMeTrigger && userLocation && mapInstance) {
-            const myPos = { lat: userLocation[0], lng: userLocation[1] };
-            setCurrentCenter(myPos);
-            mapInstance.panTo(myPos);
-            setInternalPanTrigger(prev => prev + 1);
-            setLastCenterOnMeTrigger(centerOnMeTrigger);
-        }
-    }, [centerOnMeTrigger, lastCenterOnMeTrigger, userLocation, mapInstance]);
 
     const handlePlaceSelected = (location) => {
         setCurrentCenter(location);
@@ -442,8 +452,10 @@ const MapComponent = ({
             >
                 <MapUpdater
                     center={currentCenter}
+                    userLocation={userLocation}
                     shouldPan={hasCenteredInitially}
                     centerTrigger={centerTrigger}
+                    centerOnMeTrigger={centerOnMeTrigger}
                     internalPanTrigger={internalPanTrigger}
                 />
                 <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
