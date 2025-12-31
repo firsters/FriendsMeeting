@@ -40,12 +40,26 @@ const CombinedView = ({ onNavigate }) => {
   const [centerOnMeTrigger, setCenterOnMeTrigger] = useState(0);
   const [mapType, setMapType] = useState('roadmap'); // 'roadmap' or 'hybrid'
 
-  // Mock data for the home screen
-  const friends = [
-    { id: 1, name: 'Sarah', x: 30, y: 35, distance: '500m', image: 'https://picsum.photos/seed/friend1/100/100', status: 'nearby' },
-    { id: 2, name: 'Mike', x: 65, y: 55, distance: '1.2km', image: 'https://picsum.photos/seed/friend2/100/100', status: 'driving' },
-    { id: 3, name: 'Alex', x: 20, y: 70, distance: '2.4km', image: 'https://picsum.photos/seed/friend3/100/100', status: 'idle' },
-  ];
+  // Mock data for the home screen - Moved to state for randomization
+  const [friends, setFriends] = useState([]);
+
+  // Randomize friend locations on mount
+  useEffect(() => {
+    const friendData = [
+      { id: 1, name: 'Sarah', image: 'https://picsum.photos/seed/friend1/100/100', status: 'nearby' },
+      { id: 2, name: 'Mike', image: 'https://picsum.photos/seed/friend2/100/100', status: 'driving' },
+      { id: 3, name: 'Alex', image: 'https://picsum.photos/seed/friend3/100/100', status: 'idle' },
+    ];
+
+    const randomizedFriends = friendData.map(f => ({
+      ...f,
+      // Random coordinates within Seoul (roughly)
+      lat: 37.428 + Math.random() * (37.701 - 37.428),
+      lng: 126.764 + Math.random() * (127.184 - 126.764)
+    }));
+
+    setFriends(randomizedFriends);
+  }, []);
 
   const geocodingLib = useMapsLibrary('geocoding');
   const [geocoder, setGeocoder] = useState(null);

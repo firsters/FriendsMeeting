@@ -539,8 +539,8 @@ const MapComponent = ({
                 {/* Friend Markers */}
                 {friends.map((friend) => {
                     const friendPos = {
-                        lat: currentCenter.lat + (friend.y - 50) * 0.0001,
-                        lng: currentCenter.lng + (friend.x - 50) * 0.0001
+                        lat: friend.lat,
+                        lng: friend.lng
                     };
 
                     return (
