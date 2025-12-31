@@ -23,6 +23,7 @@ const CombinedView = ({ onNavigate }) => {
   const [activeMeetingId, setActiveMeetingId] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [userAddress, setUserAddress] = useState("");
+  const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
 
   // General Search State (Row 2)
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -187,9 +188,29 @@ const CombinedView = ({ onNavigate }) => {
           setMeetingStatus('confirmed');
           setPendingLocationName(null);
           setIsSearchOpen(false);
+          setIsLocationMenuOpen(false);
 
           handleLocationPersistence(updatedLocation);
       }
+  };
+
+  const handleDeleteLocation = async () => {
+      setMeetingLocation(null);
+      setMeetingStatus('unconfirmed');
+      setIsLocationMenuOpen(false);
+      setIsSearchOpen(false);
+      if (activeMeetingId) {
+          await updateMeetingLocation(activeMeetingId, null);
+      }
+  };
+
+  const handleResetLocation = () => {
+      setMeetingLocation(null);
+      setMeetingStatus('unconfirmed');
+      setIsLocationMenuOpen(false);
+      setIsSearchOpen(true);
+      setSearchQuery("");
+      setSearchResults([]);
   };
 
   // General Search State Handlers (Row 2)
@@ -382,22 +403,48 @@ const CombinedView = ({ onNavigate }) => {
 
                 {/* Right Section: Buttons */}
                 <div className="flex items-center gap-2 px-3 border-l border-white/10 h-10 my-auto">
-                    {/* Host Edit Toggle */}
+                    {/* Host Edit Toggle / Management Menu */}
                     {isHost && (
-                        <button
-                            onClick={() => {
-                                setIsSearchOpen(!isSearchOpen);
-                                if (!isSearchOpen) {
-                                    setSearchQuery(""); // Clear on open
-                                    setSearchResults([]);
-                                }
-                            }}
-                            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${isSearchOpen ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
-                        >
-                            <span className="material-symbols-outlined text-lg">
-                                {isSearchOpen ? 'close' : 'star'}
-                            </span>
-                        </button>
+                        <div className="relative">
+                            <button
+                                onClick={() => {
+                                    if (meetingLocation && !isSearchOpen) {
+                                        setIsLocationMenuOpen(!isLocationMenuOpen);
+                                    } else {
+                                        setIsSearchOpen(!isSearchOpen);
+                                        if (!isSearchOpen) {
+                                            setSearchQuery(""); // Clear on open
+                                            setSearchResults([]);
+                                        }
+                                    }
+                                }}
+                                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${isSearchOpen || isLocationMenuOpen ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
+                            >
+                                <span className="material-symbols-outlined text-lg">
+                                    {isSearchOpen || isLocationMenuOpen ? 'close' : 'star'}
+                                </span>
+                            </button>
+
+                            {/* Management Menu Dropdown */}
+                            {isLocationMenuOpen && meetingLocation && (
+                                <div className="absolute top-full right-0 mt-4 bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-fade-in-up flex flex-col min-w-[120px]">
+                                    <button 
+                                        onClick={handleResetLocation}
+                                        className="px-4 py-3 hover:bg-white/10 text-white text-xs font-bold flex items-center gap-2 border-b border-white/5"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">restart_alt</span>
+                                        {t('meeting_reset_location') || '재설정'}
+                                    </button>
+                                    <button 
+                                        onClick={handleDeleteLocation}
+                                        className="px-4 py-3 hover:bg-red-500/20 text-red-400 text-xs font-bold flex items-center gap-2"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">delete</span>
+                                        {t('meeting_delete_location') || '삭제'}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     {/* General Search Expand Toggle */}

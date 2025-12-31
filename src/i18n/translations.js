@@ -144,6 +144,8 @@ export const translations = {
     meeting_hide: "대시보드 숨기기",
     meeting_notif_title: "장소 알림",
     meeting_preview: "실시간 미리보기",
+    meeting_reset_location: "장소 재설정",
+    meeting_delete_location: "장소 삭제",
     meeting_notif_banner: "장소 변경 알림",
     meeting_notif_prefix: "안녕하세요!",
     meeting_notif_mid: "모임 장소가",
