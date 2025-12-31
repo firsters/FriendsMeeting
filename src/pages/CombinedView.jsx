@@ -190,7 +190,14 @@ const CombinedView = ({ onNavigate }) => {
       }
     } else {
         setGeneralLocation(latLng);
-        // If we want to show general address in some UI, we could geocode here too
+        // Real-time geocoding for the general address input
+        if (geocoder) {
+          geocoder.geocode({ location: latLng }, (results, status) => {
+            if (status === 'OK' && results[0]) {
+              setGeneralSearchQuery(results[0].formatted_address);
+            }
+          });
+        }
     }
   };
 
