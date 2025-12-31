@@ -109,15 +109,15 @@ const CombinedView = ({ onNavigate }) => {
   // Status Helpers
   const getLiveStatusInfo = () => {
       return liveStatus === 'online'
-        ? { text: "Receiving Location", color: "bg-green-500" }
-        : { text: "Offline", color: "bg-red-500" };
+        ? { text: t('live_status_receiving'), color: "bg-green-500" }
+        : { text: t('live_status_offline'), color: "bg-red-500" };
   };
 
   const getMeetingStatusInfo = () => {
       switch(meetingStatus) {
-          case 'confirmed': return { text: "Location Confirmed", color: "bg-green-500" };
-          case 'temporary': return { text: "Temporary Location", color: "bg-yellow-500" };
-          case 'unconfirmed': default: return { text: "Location Unconfirmed", color: "bg-red-500" };
+          case 'confirmed': return { text: t('meeting_status_confirmed'), color: "bg-green-500" };
+          case 'temporary': return { text: t('meeting_status_temporary'), color: "bg-yellow-500" };
+          case 'unconfirmed': default: return { text: t('meeting_status_unconfirmed'), color: "bg-red-500" };
       }
   };
 
@@ -170,7 +170,7 @@ const CombinedView = ({ onNavigate }) => {
                            value={searchQuery}
                            onChange={handleSearchInput}
                            className="w-full bg-transparent text-white placeholder:text-gray-500 font-bold text-sm outline-none pl-7"
-                           placeholder="Search meeting location..."
+                           placeholder={t('map_search_button_label')}
                        />
                        {/* Dropdown */}
                        {searchResults.length > 0 && (
@@ -196,10 +196,10 @@ const CombinedView = ({ onNavigate }) => {
                ) : (
                    <div className="flex flex-col justify-center w-full">
                        <p className="text-white font-extrabold text-sm truncate leading-tight w-full">
-                           {meetingLocation?.name || "No Meeting Location"}
+                           {meetingLocation?.name || t('map_no_location_name')}
                        </p>
                        <p className="text-[10px] text-gray-400 truncate mt-0.5 w-full font-medium">
-                           {meetingLocation?.address || "Please set a location"}
+                           {meetingLocation?.address || t('map_no_location_addr')}
                        </p>
                    </div>
                )}
@@ -307,8 +307,8 @@ const CombinedView = ({ onNavigate }) => {
                   ))}
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{friends.length} Friends Online</p>
-                  <p className="text-white text-xs font-bold">{notificationCount} new messages</p>
+                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{friends.length} {t('map_friends_online_count')}</p>
+                  <p className="text-white text-xs font-bold">{notificationCount} {t('map_new_messages_count')}</p>
                 </div>
               </div>
               <button className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">

@@ -236,6 +236,18 @@ export const translations = {
     map_recent_chats: "최근 채팅",
     map_new_messages: "개의 새 메시지",
     map_sample_location: "서울시 강남구",
+
+    // Top Bar Status
+    live_status_receiving: "위치 수신 중",
+    live_status_offline: "오프라인",
+    meeting_status_confirmed: "장소 확정",
+    meeting_status_temporary: "임시 장소",
+    meeting_status_unconfirmed: "장소 미확정",
+    map_search_button_label: "모임 장소 검색...",
+    map_no_location_name: "모임 장소 없음",
+    map_no_location_addr: "장소를 설정해주세요",
+    map_friends_online_count: "친구 온라인",
+    map_new_messages_count: "새 메시지",
     
     // Profile Additional
     settings_edit_profile: "프로필 수정",
@@ -487,6 +499,18 @@ export const translations = {
     map_recent_chats: "Recent Chats",
     map_new_messages: " New Messages",
     map_sample_location: "Seoul, Korea",
+
+    // Top Bar Status
+    live_status_receiving: "Receiving Location",
+    live_status_offline: "Offline",
+    meeting_status_confirmed: "Location Confirmed",
+    meeting_status_temporary: "Temporary Location",
+    meeting_status_unconfirmed: "Location Unconfirmed",
+    map_search_button_label: "Search meeting location...",
+    map_no_location_name: "No Meeting Location",
+    map_no_location_addr: "Please set a location",
+    map_friends_online_count: "Friends Online",
+    map_new_messages_count: "new messages",
     
     // Profile Additional
     settings_edit_profile: "Edit Profile",
