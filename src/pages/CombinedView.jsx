@@ -24,6 +24,7 @@ const CombinedView = ({ onNavigate }) => {
   const [generalSearchQuery, setGeneralSearchQuery] = useState("");
   const [generalSearchResults, setGeneralSearchResults] = useState([]);
   const [generalSelectedPlaceId, setGeneralSelectedPlaceId] = useState(null);
+  const [generalLocation, setGeneralLocation] = useState(null);
 
   // Search Triggers for Enter Key
   const [searchTrigger, setSearchTrigger] = useState(0);
@@ -68,8 +69,6 @@ const CombinedView = ({ onNavigate }) => {
       };
 
       navigator.geolocation.getCurrentPosition(success, error);
-      const watchId = navigator.geolocation.watchPosition(success, error);
-      return () => navigator.geolocation.clearWatch(watchId);
     } else {
         setLiveStatus('offline');
     }
@@ -136,7 +135,7 @@ const CombinedView = ({ onNavigate }) => {
 
   // This just updates the map center without setting meeting location
   const onGeneralPlaceSelectedFromMap = (location) => {
-      // Just map movement, handled by MapComponent + setCurrentCenter
+      setGeneralLocation(location);
   };
 
   const handleCenterOnMe = () => {
@@ -191,6 +190,7 @@ const CombinedView = ({ onNavigate }) => {
             centerTrigger={centerTrigger}
             mapType={mapType}
             meetingLocation={meetingLocation}
+            generalLocation={generalLocation}
           />
       </div>
 
