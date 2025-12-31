@@ -266,6 +266,7 @@ const PlacesHandler = ({ searchQuery, searchTrigger = 0, onSearchResults, select
 
 const MapComponent = ({
     friends,
+    selectedFriend,
     onFriendClick,
     userLocation,
     onAddressResolved,
@@ -552,7 +553,13 @@ const MapComponent = ({
                         <AdvancedMarker
                             key={friend.id}
                             position={friendPos}
-                            onClick={() => onFriendClick?.(isSelected ? null : friend)}
+                            onClick={() => {
+                                const nextFriend = isSelected ? null : friend;
+                                if (nextFriend) {
+                                    handleCenterOnMarker(friendPos);
+                                }
+                                onFriendClick?.(nextFriend);
+                            }}
                             zIndex={isSelected ? 100 : 1}
                         >
                             <div className="relative flex flex-col items-center">

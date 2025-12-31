@@ -322,6 +322,7 @@ const CombinedView = ({ onNavigate }) => {
       <div className="absolute inset-0 z-0">
           <MapComponent 
             friends={friends} 
+            selectedFriend={selectedFriend}
             onFriendClick={setSelectedFriend} 
             userLocation={userLocation}
 
