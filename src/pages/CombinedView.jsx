@@ -22,6 +22,7 @@ const CombinedView = ({ onNavigate }) => {
   const [pendingLocationName, setPendingLocationName] = useState(null);
   const [activeMeetingId, setActiveMeetingId] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [userAddress, setUserAddress] = useState("");
 
   // General Search State (Row 2)
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -88,8 +89,18 @@ const CombinedView = ({ onNavigate }) => {
     if (navigator.geolocation) {
       const success = (position) => {
           const { latitude, longitude } = position.coords;
-          setUserLocation([latitude, longitude]);
+          const newPos = [latitude, longitude];
+          setUserLocation(newPos);
           setLiveStatus('online');
+
+          // Resolve user address
+          if (geocoder) {
+            geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
+              if (status === 'OK' && results[0]) {
+                setUserAddress(results[0].formatted_address);
+              }
+            });
+          }
       };
       const error = (err) => {
           console.error("Location permission denied:", err);
@@ -100,7 +111,7 @@ const CombinedView = ({ onNavigate }) => {
     } else {
         setLiveStatus('offline');
     }
-  }, []);
+  }, [geocoder]); // Add geocoder as dependency
 
   // Host Search State (Meeting Location)
   const [searchQuery, setSearchQuery] = useState("");
@@ -340,10 +351,10 @@ const CombinedView = ({ onNavigate }) => {
                     ) : (
                         <div className="flex flex-col justify-center w-full">
                             <p className="text-white font-black text-lg truncate leading-none w-full drop-shadow-lg mb-0.5">
-                                {meetingLocation?.name || t('header_no_location')}
+                                {meetingLocation?.address || t('header_no_location')}
                             </p>
                             <p className="text-[10px] text-gray-400 truncate w-full font-bold uppercase tracking-tight opacity-80">
-                                {meetingLocation?.address || t('header_set_location_prompt')}
+                                {userAddress || t('header_set_location_prompt')}
                             </p>
                         </div>
                     )}
