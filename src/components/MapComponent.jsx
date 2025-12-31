@@ -57,7 +57,7 @@ const GeocodingHandler = ({ location, onAddressResolved }) => {
     return null;
 };
 
-const PlacesHandler = ({ searchQuery, onSearchResults, selectedPlaceId, onPlaceSelected }) => {
+const PlacesHandler = ({ searchQuery, searchTrigger = 0, onSearchResults, selectedPlaceId, onPlaceSelected }) => {
     const placesLib = useMapsLibrary('places');
     const geocodingLib = useMapsLibrary('geocoding');
     const [autocompleteService, setAutocompleteService] = useState(null);
@@ -81,7 +81,7 @@ const PlacesHandler = ({ searchQuery, onSearchResults, selectedPlaceId, onPlaceS
                  onSearchResults([]);
              }
         });
-    }, [autocompleteService, searchQuery, placesLib]);
+    }, [autocompleteService, searchQuery, placesLib, searchTrigger]);
 
     // Handle Place Selection
     useEffect(() => {
@@ -109,11 +109,13 @@ const MapComponent = ({
     userLocation,
     onAddressResolved,
     searchQuery,
+    searchTrigger = 0,
     onSearchResults,
     selectedPlaceId,
     onPlaceSelected,
     // General Search Props
     generalSearchQuery,
+    generalSearchTrigger = 0,
     onGeneralSearchResults,
     generalSelectedPlaceId,
     onGeneralPlaceSelected,
@@ -280,7 +282,8 @@ const MapComponent = ({
 
                     {/* Primary Search (Meeting Location) */}
                     <PlacesHandler 
-                        searchQuery={searchQuery} 
+                        searchQuery={searchQuery}
+                        searchTrigger={searchTrigger}
                         onSearchResults={onSearchResults} 
                         selectedPlaceId={selectedPlaceId}
                         onPlaceSelected={handlePlaceSelected} 
@@ -289,6 +292,7 @@ const MapComponent = ({
                     {/* Secondary Search (General) */}
                     <PlacesHandler
                         searchQuery={generalSearchQuery}
+                        searchTrigger={generalSearchTrigger}
                         onSearchResults={onGeneralSearchResults}
                         selectedPlaceId={generalSelectedPlaceId}
                         onPlaceSelected={handleGeneralPlaceSelected}

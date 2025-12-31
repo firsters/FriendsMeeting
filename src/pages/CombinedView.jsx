@@ -25,6 +25,10 @@ const CombinedView = ({ onNavigate }) => {
   const [generalSearchResults, setGeneralSearchResults] = useState([]);
   const [generalSelectedPlaceId, setGeneralSelectedPlaceId] = useState(null);
 
+  // Search Triggers for Enter Key
+  const [searchTrigger, setSearchTrigger] = useState(0);
+  const [generalSearchTrigger, setGeneralSearchTrigger] = useState(0);
+
   const [centerTrigger, setCenterTrigger] = useState(0);
   const [mapType, setMapType] = useState('roadmap'); // 'roadmap' or 'hybrid'
 
@@ -83,6 +87,12 @@ const CombinedView = ({ onNavigate }) => {
     }
   };
 
+  const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+          setSearchTrigger(prev => prev + 1);
+      }
+  };
+
   const handleSelectLocation = (placeId, description, mainText, secondaryText) => {
       setSelectedPlaceId(placeId);
       setSearchQuery(description);
@@ -110,6 +120,12 @@ const CombinedView = ({ onNavigate }) => {
     if (e.target.value.length === 0) {
         setGeneralSearchResults([]);
     }
+  };
+
+  const handleGeneralKeyDown = (e) => {
+      if (e.key === 'Enter') {
+          setGeneralSearchTrigger(prev => prev + 1);
+      }
   };
 
   const handleSelectGeneralLocation = (placeId, description) => {
@@ -160,12 +176,14 @@ const CombinedView = ({ onNavigate }) => {
 
             // Primary Search (Host)
             searchQuery={searchQuery}
+            searchTrigger={searchTrigger}
             onSearchResults={setSearchResults}
             selectedPlaceId={selectedPlaceId}
             onPlaceSelected={onPlaceSelectedFromMap}
 
             // General Search (Row 2)
             generalSearchQuery={generalSearchQuery}
+            generalSearchTrigger={generalSearchTrigger}
             onGeneralSearchResults={setGeneralSearchResults}
             generalSelectedPlaceId={generalSelectedPlaceId}
             onGeneralPlaceSelected={onGeneralPlaceSelectedFromMap}
@@ -206,6 +224,7 @@ const CombinedView = ({ onNavigate }) => {
                                 autoFocus
                                 value={searchQuery}
                                 onChange={handleSearchInput}
+                                onKeyDown={handleKeyDown}
                                 className="w-full bg-transparent text-white placeholder:text-gray-500 font-bold text-sm outline-none pl-7"
                                 placeholder={t('search_meeting_placeholder')}
                             />
@@ -295,6 +314,7 @@ const CombinedView = ({ onNavigate }) => {
                            autoFocus
                            value={generalSearchQuery}
                            onChange={handleGeneralSearchInput}
+                           onKeyDown={handleGeneralKeyDown}
                            className="w-full bg-white/5 rounded-xl text-white placeholder:text-gray-500 font-bold text-sm outline-none pl-10 pr-4 py-2.5 transition-colors focus:bg-white/10"
                            placeholder={t('loc_search_placeholder')}
                        />
