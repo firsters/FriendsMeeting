@@ -271,6 +271,7 @@ const MapComponent = ({
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [hasCenteredInitially, setHasCenteredInitially] = useState(false);
     const [internalPanTrigger, setInternalPanTrigger] = useState(0);
+    const [lastCenterOnMeTrigger, setLastCenterOnMeTrigger] = useState(0);
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
     const [mapInstance, setMapInstance] = useState(null);
 
@@ -369,13 +370,14 @@ const MapComponent = ({
 
     // Explicit My Location Centering
     useEffect(() => {
-        if (centerOnMeTrigger > 0 && userLocation && mapInstance) {
+        if (centerOnMeTrigger > lastCenterOnMeTrigger && userLocation && mapInstance) {
             const myPos = { lat: userLocation[0], lng: userLocation[1] };
             setCurrentCenter(myPos);
             mapInstance.panTo(myPos);
             setInternalPanTrigger(prev => prev + 1);
+            setLastCenterOnMeTrigger(centerOnMeTrigger);
         }
-    }, [centerOnMeTrigger, userLocation, mapInstance]);
+    }, [centerOnMeTrigger, lastCenterOnMeTrigger, userLocation, mapInstance]);
 
     const handlePlaceSelected = (location) => {
         setCurrentCenter(location);
@@ -470,13 +472,6 @@ const MapComponent = ({
                     onSearchResults={onGeneralSearchResults}
                     selectedPlaceId={generalSelectedPlaceId}
                     onPlaceSelected={handleGeneralPlaceSelected}
-                />
-
-                <EdgeMarkers
-                    meetingLocation={meetingLocation}
-                    generalLocation={generalLocation}
-                    friends={friends}
-                    onCenterMarker={handleCenterOnMarker}
                 />
 
                 {/* Meeting Location Marker */}

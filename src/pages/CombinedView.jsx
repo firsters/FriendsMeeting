@@ -295,7 +295,7 @@ const CombinedView = ({ onNavigate }) => {
             onMarkerDragEnd={handleMarkerDragEnd}
             onCenterRequest={(pos) => setCenterTrigger(prev => prev + 1)}
             bottomOffset={100}
-            topOffset={isSearchExpanded ? 210 : 115}
+            topOffset={isSearchExpanded ? 240 : 140}
           />
       </div>
 
