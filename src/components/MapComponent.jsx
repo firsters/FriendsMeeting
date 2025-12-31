@@ -493,15 +493,17 @@ const MapComponent = ({
                     </AdvancedMarker>
                 )}
 
-                {/* User Location Marker */}
-                <AdvancedMarker position={currentCenter}>
-                    <div className="relative flex items-center justify-center w-12 h-12">
-                        <div className="absolute inset-0 bg-blue-500/30 rounded-full animate-ping"></div>
-                        <div className="w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-lg relative z-10 flex items-center justify-center">
-                            <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                {/* User Location Marker (Real GPS position) */}
+                {userLocation && (
+                    <AdvancedMarker position={{ lat: userLocation[0], lng: userLocation[1] }}>
+                        <div className="relative flex items-center justify-center w-12 h-12">
+                            <div className="absolute inset-0 bg-blue-500/30 rounded-full animate-ping"></div>
+                            <div className="w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-lg relative z-10 flex items-center justify-center">
+                                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                            </div>
                         </div>
-                    </div>
-                </AdvancedMarker>
+                    </AdvancedMarker>
+                )}
 
                 {/* Friend Markers */}
                 {friends.map((friend) => {

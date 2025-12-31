@@ -283,28 +283,28 @@ const CombinedView = ({ onNavigate }) => {
       </div>
 
       {/* Top Header Bar Container */}
-      <header className="relative z-10 px-4 pt-2 pb-4 pointer-events-none flex flex-col items-center gap-2">
+      <header className="relative z-10 px-4 pt-0 pb-4 pointer-events-none flex flex-col items-center gap-2">
         {/* Main Header Container (Row 1 + Row 2) */}
-        <div className="flex flex-col w-full bg-card-dark/90 backdrop-blur-xl rounded-3xl border border-white/5 shadow-2xl pointer-events-auto transition-all duration-300">
+        <div className="flex flex-col w-full bg-card-dark/95 backdrop-blur-2xl rounded-b-[2.5rem] border-b border-white/10 shadow-2xl pointer-events-auto transition-all duration-300">
 
             {/* ROW 1: Meeting Status & Host Location (Always Visible) */}
-            <div className="flex items-center min-h-[4rem] w-full border-b border-white/5 last:border-none">
+            <div className="flex items-center min-h-[4.5rem] w-full border-b border-white/5 last:border-none">
                 {/* Left Section: Indicators (Order swapped and emphasized) */}
-                <div className="flex flex-col justify-center px-4 py-2 border-r border-white/10 gap-1 shrink-0 min-w-[150px]">
+                <div className="flex flex-col justify-center px-5 py-3 border-r border-white/10 gap-1 shrink-0 min-w-[170px]">
                     {/* Meeting Status (Higher Priority) */}
                     <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full ${meetingInfo.color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
-                        <span className="text-[10px] font-black text-white uppercase tracking-wider">{meetingInfo.text}</span>
+                        <span className={`w-2.5 h-2.5 rounded-full ${meetingInfo.color} shadow-[0_0_10px_rgba(0,0,0,0.5)]`}></span>
+                        <span className="text-[11px] font-black text-white uppercase tracking-wider">{meetingInfo.text}</span>
                     </div>
                     {/* Live Status */}
-                    <div className="flex items-center gap-2 opacity-60">
-                        <span className={`w-1.5 h-1.5 rounded-full ${liveInfo.color} ${liveStatus === 'online' ? 'animate-pulse' : ''} shadow-[0_0_8px_rgba(0,0,0,0.5)]`}></span>
+                    <div className="flex items-center gap-2 opacity-50 pl-0.5">
+                        <span className={`w-1.5 h-1.5 rounded-full ${liveInfo.color} ${liveStatus === 'online' ? 'animate-pulse' : ''}`}></span>
                         <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">{liveInfo.text}</span>
                     </div>
                 </div>
 
                 {/* Center Section: Info or Search (Host) */}
-                <div className="flex-1 px-4 py-2 relative flex items-center h-14">
+                <div className="flex-1 px-5 py-2 relative flex items-center h-16">
                     {isSearchOpen ? (
                         <div className="w-full relative group">
                             <span className="absolute left-0 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-500 text-lg">search</span>
@@ -339,10 +339,10 @@ const CombinedView = ({ onNavigate }) => {
                         </div>
                     ) : (
                         <div className="flex flex-col justify-center w-full">
-                            <p className="text-white font-black text-base truncate leading-tight w-full drop-shadow-sm">
+                            <p className="text-white font-black text-lg truncate leading-none w-full drop-shadow-lg mb-0.5">
                                 {meetingLocation?.name || t('header_no_location')}
                             </p>
-                            <p className="text-[9px] text-gray-400 truncate mt-0.5 w-full font-bold uppercase tracking-tighter">
+                            <p className="text-[10px] text-gray-400 truncate w-full font-bold uppercase tracking-tight opacity-80">
                                 {meetingLocation?.address || t('header_set_location_prompt')}
                             </p>
                         </div>
