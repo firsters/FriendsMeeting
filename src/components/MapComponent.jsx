@@ -328,12 +328,13 @@ const MapComponent = ({
     meetingLocation = null,
     generalLocation = null,
     onCenterRequest,
+    onFriendAddressResolved, // Add this
     bottomOffset = 100,
     topOffset = 80
 }) => {
     const { t } = useTranslation();
     // Initial center state only for defaultCenter
-    const [initialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
+    const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 }); // Add setter
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [hasCenteredInitially, setHasCenteredInitially] = useState(false);
     const [internalPanTrigger, setInternalPanTrigger] = useState(0);
@@ -492,8 +493,8 @@ const MapComponent = ({
                 disableDefaultUI={true}
                 styles={mapType === 'roadmap' ? darkMapStyle : []}
                 className="w-full h-full"
-                onLoad={(ev) => handleMapLoad(ev.detail.map)}
             >
+                <MapInstanceShaper onMapLoad={handleMapLoad} />
                 <MapUpdater
                     center={currentCenter}
                     userLocation={userLocation}
