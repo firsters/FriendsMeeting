@@ -103,6 +103,32 @@ export const subscribeToMeetings = (userId, callback) => {
   });
 };
 
+export const updateParticipantLocation = async (meetingId, userId, locationData) => {
+  const meetingRef = doc(db, 'meetings', meetingId);
+  // In a real production app, we would use a cloud function or a more granular update
+  // For this PWA demo, we'll fetch then update the array
+  const snapshot = await getDocs(query(collection(db, 'meetings'), where('__name__', '==', meetingId)));
+  if (snapshot.empty) return;
+  
+  const meetingData = snapshot.docs[0].data();
+  const updatedParticipants = meetingData.participants.map(p => {
+    if (p.id === userId) {
+      return { 
+        ...p, 
+        lat: locationData.lat, 
+        lng: locationData.lng,
+        status: locationData.status || p.status || 'nearby',
+        updatedAt: new Date().toISOString()
+      };
+    }
+    return p;
+  });
+
+  await updateDoc(meetingRef, {
+    participants: updatedParticipants
+  });
+};
+
 export const subscribeToMeetingDetails = (meetingId, callback) => {
   return onSnapshot(doc(db, 'meetings', meetingId), (doc) => {
     if (doc.exists()) {

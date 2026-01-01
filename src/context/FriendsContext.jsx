@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { auth } from '../firebase';
+import { subscribeToMeetings } from '../utils/meetingService';
 
 const FriendsContext = createContext();
 
@@ -8,20 +9,51 @@ export const FriendsProvider = ({ children }) => {
   const [userLocation, setUserLocation] = useState({ x: 50, y: 50 });
   const [lastSeenId, setLastSeenId] = useState(null);
   const [selectedFriendId, setSelectedFriendId] = useState(null);
-  const [friends, setFriends] = useState([
-    { id: '1', name: '김지아', nickname: 'Alex', lat: 37.5665, lng: 126.9780, avatar: 'A', color: 'accent-pink', status: 'nearby', address: '' },
-    { id: '2', name: '이현우', nickname: 'Sam', lat: 37.5650, lng: 126.9800, avatar: 'S', color: 'accent-purple', status: 'driving', address: '' },
-    { id: '3', name: '박서준', nickname: 'Jordan', lat: 37.5670, lng: 126.9760, avatar: 'J', color: 'primary-400', status: 'idle', address: '' },
-    { id: '4', name: 'Casey', nickname: 'Casey', lat: 37.5680, lng: 126.9820, avatar: 'C', color: 'accent-blue', status: 'nearby', address: '' },
-    { id: '5', name: 'Riley', nickname: 'Riley', lat: 37.5640, lng: 126.9740, avatar: 'R', color: 'accent-pink', status: 'online', address: '' },
-  ]);
+  const [friends, setFriends] = useState([]);
   const [guestMeetings, setGuestMeetings] = useState([]);
-  const [messages, setMessages] = useState([
-    { id: 'm1', senderId: '1', senderName: '김지아', content: '오늘 5시에 보는 거 맞지?', timestamp: new Date(Date.now() - 3600000) },
-    { id: 'm2', senderId: '2', senderName: '이현우', content: '응응! 나 지금 가는 중이야', timestamp: new Date(Date.now() - 1800000) },
-  ]);
+  const [messages, setMessages] = useState([]);
 
-  // Function to update a friend's address (called from components with map access)
+  // Firebase Subscription for real friends (participants)
+  useEffect(() => {
+    const unsubscribeAuth = auth.onAuthStateChanged(user => {
+      if (user) {
+        const unsubMeetings = subscribeToMeetings(user.uid, (meetings) => {
+          // Extract unique participants from all meetings excluding current user
+          const allParticipants = [];
+          const participantMap = new Map();
+
+          meetings.forEach(meeting => {
+            if (meeting.participants) {
+              meeting.participants.forEach(p => {
+                if (p.id !== user.uid && !participantMap.has(p.id)) {
+                  participantMap.set(p.id, {
+                    id: p.id,
+                    name: p.nickname || p.name || 'Unknown',
+                    lat: p.lat,
+                    lng: p.lng,
+                    status: p.status || 'online',
+                    avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
+                    address: p.address || ''
+                  });
+                }
+              });
+            }
+          });
+
+          setFriends(Array.from(participantMap.values()));
+          setGuestMeetings(meetings);
+        });
+        return () => unsubMeetings();
+      } else {
+        setFriends([]);
+        setGuestMeetings([]);
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
+
+  // Function to update a friend's address (local-only demo)
   const updateFriendAddress = (id, address) => {
     setFriends(prev => prev.map(f => f.id === id ? { ...f, address } : f));
   };
@@ -52,25 +84,6 @@ export const FriendsProvider = ({ children }) => {
     };
     setMessages(prev => [...prev, newMessage]);
   };
-
-  // Simulate real-time movement and status updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFriends(prev => prev.map(f => {
-        // More purposeful movement
-        const moveLat = (Math.random() - 0.5) * 0.0005;
-        const moveLng = (Math.random() - 0.5) * 0.0005;
-        
-        return {
-          ...f,
-          lat: f.lat + moveLat,
-          lng: f.lng + moveLng,
-          status: Math.random() > 0.1 ? f.status : (Math.random() > 0.5 ? 'nearby' : 'driving')
-        };
-      }));
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <FriendsContext.Provider value={{ 

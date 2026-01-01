@@ -4,7 +4,7 @@ import { useTranslation } from '../context/LanguageContext';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import MapComponent from '../components/MapComponent';
 import { auth, db } from '../firebase';
-import { subscribeToMeetings, updateMeetingLocation, createMeeting } from '../utils/meetingService';
+import { subscribeToMeetings, updateMeetingLocation, createMeeting, updateParticipantLocation } from '../utils/meetingService';
 import { useFriends } from '../context/FriendsContext';
 
 const CombinedView = ({ onNavigate }) => {
@@ -139,6 +139,17 @@ const CombinedView = ({ onNavigate }) => {
         }
     };
   }, [geocoder]); 
+
+  // Sync personal location to Firebase
+  useEffect(() => {
+    if (activeMeetingId && currentUserId && userLocation) {
+      updateParticipantLocation(activeMeetingId, currentUserId, {
+        lat: userLocation[0],
+        lng: userLocation[1],
+        status: liveStatus
+      });
+    }
+  }, [userLocation, activeMeetingId, currentUserId, liveStatus]);
 
   // Host Search State (Meeting Location)
   const [searchQuery, setSearchQuery] = useState("");
