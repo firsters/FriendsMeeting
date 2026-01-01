@@ -267,6 +267,14 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
                 {t('auth_signup')}
               </button>
             </div>
+            <div className="pt-2 text-center">
+              <button 
+                onClick={() => onNavigate(ScreenType.GROUP_JOIN)}
+                className="text-xs font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-widest"
+              >
+                {t('auth_guest_login')}
+              </button>
+            </div>
           </div>
         </div>
       );
@@ -296,6 +304,14 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
               <span className="text-gray-500 font-medium">{t('auth_has_account')}</span>
               <button onClick={() => onNavigate(ScreenType.LOGIN)} className="text-primary font-bold hover:underline transition-all">
                 {t('auth_login')}
+              </button>
+            </div>
+            <div className="pt-2 text-center">
+              <button 
+                onClick={() => onNavigate(ScreenType.GROUP_JOIN)}
+                className="text-xs font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-widest"
+              >
+                {t('auth_guest_login')}
               </button>
             </div>
           </div>

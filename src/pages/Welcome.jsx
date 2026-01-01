@@ -98,6 +98,20 @@ const Welcome = ({ onNavigate, deferredPrompt, onInstallSuccess }) => {
             {t('welcome_login_link')}
           </button>
         </div>
+
+        <div className="mt-2 bg-white/5 p-4 rounded-2xl border border-white/10 flex items-center justify-between gap-4">
+          <div className="flex-1">
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">{t('meeting_code')}</p>
+            <p className="text-xs font-medium text-white">{t('group_join_desc')}</p>
+          </div>
+          <button 
+            onClick={() => onNavigate(ScreenType.GROUP_JOIN)}
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl border border-white/10 transition-all active:scale-95 flex items-center gap-2 whitespace-nowrap"
+          >
+            {t('welcome_join_with_code')}
+            <span className="material-symbols-outlined text-sm">key</span>
+          </button>
+        </div>
       </div>
     </div>
   );

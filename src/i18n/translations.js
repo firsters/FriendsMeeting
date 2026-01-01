@@ -22,6 +22,7 @@ export const translations = {
     welcome_start: "시작하기",
     welcome_login_prompt: "이미 계정이 있으신가요?",
     welcome_login_link: "로그인",
+    welcome_join_with_code: "초대 코드로 참여하기",
     
     // Auth
     auth_locate_connect: "위치 공유 및 연결",
@@ -45,6 +46,7 @@ export const translations = {
     auth_error_not_verified: "이메일 인증이 완료되지 않았습니다. 메일을 확인해 주세요.",
     auth_error_not_verified_resent: "인증되지 않은 계정입니다. 인증 메일을 다시 보냈으니 메일함을 확인해 주세요.",
     auth_error_email_already_in_use: "이미 사용 중인 이메일입니다. 로그인해 주세요.",
+    auth_guest_login: "게스트로 참여하기",
     
     // Forgot Password
     forgot_title: "비밀번호 찾기",
@@ -305,6 +307,7 @@ export const translations = {
     welcome_start: "Get Started",
     welcome_login_prompt: "Already have an account?",
     welcome_login_link: "Log in",
+    welcome_join_with_code: "Join with Code",
 
     // Auth
     auth_locate_connect: "Locate & Connect",
@@ -328,6 +331,7 @@ export const translations = {
     auth_error_not_verified: "Email is not verified. Please check your inbox.",
     auth_error_not_verified_resent: "Email not verified. A new verification link has been sent to your inbox.",
     auth_error_email_already_in_use: "This email is already in use. Please login instead.",
+    auth_guest_login: "Join as Guest",
 
     // Forgot Password
     forgot_title: "Forgot Password",
