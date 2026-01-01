@@ -270,7 +270,8 @@ export const translations = {
     meeting_code: "모임 코드",
     
     // Meeting Screens Additional
-    meeting_my_meetings: "내 모임",
+    meeting_enter_chat: "채팅 참여하기",
+    meeting_my_meetings: "내 채팅",
     meeting_status_active: "진행 중",
     meeting_live_now: "현재 진행 중",
     meeting_started_ago: "전 시작됨",
@@ -536,7 +537,8 @@ export const translations = {
     meeting_code: "Meeting Code",
     
     // Meeting Screens Additional
-    meeting_my_meetings: "My Meetings",
+    meeting_enter_chat: "Enter Chat",
+    meeting_my_meetings: "My Chats",
     meeting_status_active: "Active",
     meeting_live_now: "Live Now",
     meeting_started_ago: "Started ago",

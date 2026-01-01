@@ -53,7 +53,7 @@ const FriendScreens = ({ onNavigate }) => {
          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends')}</span>
        </button>
        <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
-         <span className="material-symbols-outlined">calendar_month</span>
+         <span className="material-symbols-outlined">forum</span>
          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings')}</span>
        </button>
        <button onClick={() => onNavigate(ScreenType.SETTINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">

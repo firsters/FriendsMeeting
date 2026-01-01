@@ -14,10 +14,10 @@ const RenderBottomNav = ({ onNavigate, t, currentScreen }) => (
        <span className="material-symbols-outlined">group</span>
        <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends')}</span>
      </button>
-     <button onClick={() => onNavigate(ScreenType.MEETINGS)} className={`flex flex-col items-center gap-1 ${currentScreen === ScreenType.MEETINGS ? 'text-primary' : 'text-gray-600 hover:text-white transition-colors'}`}>
-       <span className="material-symbols-outlined">calendar_month</span>
-       <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings')}</span>
-     </button>
+      <button onClick={() => onNavigate(ScreenType.MEETINGS)} className={`flex flex-col items-center gap-1 ${currentScreen === ScreenType.MEETINGS || currentScreen === ScreenType.MEETING_DETAILS ? 'text-primary' : 'text-gray-600 hover:text-white transition-colors'}`}>
+        <span className="material-symbols-outlined">forum</span>
+        <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings')}</span>
+      </button>
      <button onClick={() => onNavigate(ScreenType.SETTINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
        <span className="material-symbols-outlined">person</span>
        <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_profile')}</span>
@@ -27,111 +27,78 @@ const RenderBottomNav = ({ onNavigate, t, currentScreen }) => (
 
 const ListScreen = ({ onNavigate, t, guestMeetings }) => (
   <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
-    <header className="px-6 pt-10 pb-4 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('meeting_my_meetings')}</h1>
-        <button 
-          onClick={() => onNavigate(ScreenType.CREATE_MEETING)}
-          className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
-        >
-          <span className="material-symbols-outlined">add</span>
-        </button>
-      </div>
-      <div className="flex p-1 bg-white/5 rounded-2xl">
-        <button className="flex-1 py-3 rounded-xl text-sm font-bold bg-white text-primary shadow-sm">{t('meeting_upcoming')}</button>
-        <button className="flex-1 py-3 rounded-xl text-sm font-bold text-gray-500">{t('meeting_status_active')}</button>
-        <button className="flex-1 py-3 rounded-xl text-sm font-bold text-gray-500">{t('meeting_past')}</button>
+    <header className="px-6 pt-10 pb-4 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10 border-b border-white/5">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('nav_meetings')}</h1>
+        <div className="flex gap-2">
+          <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white active:scale-95 transition-all">
+            <span className="material-symbols-outlined text-xl">search</span>
+          </button>
+          <button 
+            onClick={() => onNavigate(ScreenType.CREATE_MEETING)}
+            className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
+          >
+            <span className="material-symbols-outlined text-xl">add_comment</span>
+          </button>
+        </div>
       </div>
     </header>
 
-    <main className="flex-1 px-6 space-y-6 overflow-y-auto scrollbar-hide pb-24">
-      {/* Render Guest Meetings */}
+    <main className="flex-1 space-y-px overflow-y-auto scrollbar-hide pb-24">
+      {/* Active Chats Header */}
+      <div className="px-6 py-4 flex items-center justify-between opacity-50">
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">{t('meeting_status_active')}</span>
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      </div>
+
+      {/* Render Guest Meetings as Chats */}
       {guestMeetings.map(meeting => (
-        <div key={meeting.id} className="relative p-5 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 overflow-hidden group cursor-pointer active:scale-[0.98] transition-all" onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}>
-          <div className="absolute top-4 right-4 bg-primary px-3 py-1 rounded-full flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
-            <span className="text-[8px] font-bold text-white uppercase tracking-widest">{t('meeting_status_live')}</span>
+        <div key={meeting.id} className="px-6 py-4 flex gap-4 hover:bg-white/5 active:bg-white/10 transition-all cursor-pointer items-center border-b border-white/5" onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}>
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
+            <span className="material-symbols-outlined text-white text-2xl">diversity_3</span>
           </div>
-          <div className="flex gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center shrink-0 shadow-lg">
-              <span className="material-symbols-outlined text-white text-2xl">diversity_3</span>
+          <div className="flex-1 min-w-0">
+            <div className="flex justify-between items-center mb-0.5">
+              <h3 className="text-base font-bold text-white truncate">{meeting.title}</h3>
+              <span className="text-[10px] font-bold text-gray-500">{t('alert_just_now')}</span>
             </div>
-            <div className="flex-1 pt-1">
-              <h3 className="text-lg font-bold text-white mb-0.5">{meeting.title}</h3>
-              <div className="flex items-center gap-1 text-gray-400 text-xs font-medium">
-                <span className="material-symbols-outlined text-sm">location_on</span>
-                Map View Enabled
-              </div>
-            </div>
+            <p className="text-sm text-gray-400 truncate font-medium">나: {t('welcome_sample_msg')}</p>
           </div>
-          <div className="mt-4 flex items-center justify-between">
-            <div className="flex -space-x-2">
-              {meeting.participants.map((p, i) => (
-                <div key={i} className="w-7 h-7 rounded-full bg-gray-600 flex items-center justify-center border-2 border-background-dark text-[10px] text-white font-bold" title={p.name}>
-                  {p.name.charAt(0)}
-                </div>
-              ))}
-            </div>
-            <span className="text-[10px] font-bold text-primary uppercase tracking-widest text-[#FF4D8D] animate-pulse">{t('nav_alerts')}</span>
+          <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+            <span className="text-[10px] font-bold text-white">1</span>
           </div>
         </div>
       ))}
 
-      <div className="relative p-5 rounded-3xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 overflow-hidden group cursor-pointer active:scale-[0.98] transition-all" onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}>
-         <div className="absolute top-4 right-4 bg-primary px-3 py-1 rounded-full flex items-center gap-1.5">
-           <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
-           <span className="text-[8px] font-bold text-white uppercase tracking-widest">{t('meeting_status_live')}</span>
-         </div>
-         <div className="flex gap-4">
-           <div className="w-16 h-16 rounded-2xl bg-cover bg-center shrink-0 shadow-lg" style={{backgroundImage: 'url("https://images.unsplash.com/photo-1543269865-cbf427effbad?w=100")'}}></div>
-           <div className="flex-1 pt-1">
-             <h3 className="text-lg font-bold text-white mb-0.5">Friday Night Dinner</h3>
-             <div className="flex items-center gap-1 text-gray-400 text-xs font-medium">
-               <span className="material-symbols-outlined text-sm">location_on</span>
-               Joe's Pizza, Downtown
-             </div>
+      <div className="px-6 py-4 flex gap-4 hover:bg-white/5 active:bg-white/10 transition-all cursor-pointer items-center border-b border-white/5" onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}>
+         <div className="w-14 h-14 rounded-2xl bg-cover bg-center shrink-0 border border-white/10 shadow-lg" style={{backgroundImage: 'url("https://images.unsplash.com/photo-1543269865-cbf427effbad?w=100")'}}></div>
+         <div className="flex-1 min-w-0">
+           <div className="flex justify-between items-center mb-0.5">
+             <h3 className="text-base font-bold text-white truncate">Friday Night Dinner</h3>
+             <span className="text-[10px] font-bold text-gray-500">15m</span>
            </div>
+           <p className="text-sm text-gray-400 truncate font-medium">Alex: {t('chat_msg_1')}</p>
          </div>
-         <div className="mt-4 flex items-center justify-between">
-           <div className="flex -space-x-2">
-             {[1, 2, 3].map((_, i) => (
-               <img key={i} src={`https://picsum.photos/seed/${i + 50}/100/100`} className="w-7 h-7 rounded-full border-2 border-background-dark object-cover" alt="Avatar" />
-             ))}
-             <div className="w-7 h-7 rounded-full bg-surface-dark flex items-center justify-center text-[8px] font-bold text-gray-400 border-2 border-background-dark">+5</div>
-           </div>
-           <span className="text-[10px] font-bold text-primary uppercase tracking-widest text-emerald-400">3 {t('dashboard_new_messages')}</span>
+         <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+             <span className="text-[10px] font-bold text-white">3</span>
          </div>
       </div>
 
-      <div className="pt-4">
-        <div className="flex items-center gap-4 mb-4">
-          <h4 className="text-xs font-bold text-gray-600 uppercase tracking-widest whitespace-nowrap">{t('meeting_tomorrow')}</h4>
-          <div className="h-px w-full bg-white/5"></div>
+      {/* Recent Chats Header */}
+      <div className="px-6 py-6 pb-2 opacity-50">
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">{t('meeting_tomorrow')}</span>
+      </div>
+
+      <div className="px-6 py-4 flex gap-4 hover:bg-white/5 active:bg-white/10 transition-all cursor-pointer items-center border-b border-white/5">
+        <div className="w-14 h-14 rounded-2xl bg-card-dark flex items-center justify-center shrink-0 border border-white/5">
+          <span className="material-symbols-outlined text-gray-400 text-2xl">coffee</span>
         </div>
-        
-        <div className="space-y-4">
-          <div className="p-5 bg-card-dark rounded-3xl border border-white/5 hover:border-white/10 transition-all cursor-pointer active:scale-[0.98]">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-white font-bold mb-1">Coffee with Design Team</h3>
-                <div className="flex items-center gap-1.5 text-gray-500 text-xs font-medium">
-                  <span className="material-symbols-outlined text-sm">schedule</span>
-                  10:00 AM - 11:30 AM
-                </div>
-              </div>
-              <span className="px-2.5 py-1 bg-blue-500/10 text-primary text-[9px] font-bold rounded-lg border border-primary/20 uppercase">{t('meeting_status_upcoming')}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-gray-400 text-xs font-bold">
-                <span className="material-symbols-outlined text-base">storefront</span>
-                Starbucks Reserve
-              </div>
-              <div className="flex -space-x-2">
-                 <img src="https://picsum.photos/seed/a/100/100" className="w-7 h-7 rounded-full border-2 border-background-dark" alt="Avatar" />
-                 <img src="https://picsum.photos/seed/b/100/100" className="w-7 h-7 rounded-full border-2 border-background-dark" alt="Avatar" />
-              </div>
-            </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between items-center mb-0.5">
+            <h3 className="text-base font-bold text-white truncate">Coffee with Design Team</h3>
+            <span className="text-[10px] font-bold text-gray-500">Tomorrow</span>
           </div>
+          <p className="text-sm text-gray-500 truncate font-medium">Harvey: {t('meeting_location')}: Starbucks Reserve</p>
         </div>
       </div>
     </main>

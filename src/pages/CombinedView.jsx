@@ -603,8 +603,11 @@ const CombinedView = ({ onNavigate }) => {
                   <span className="material-symbols-outlined text-sm">location_on</span>
                   <span className="truncate">{activeMeeting.location}</span>
                 </div>
-                <button className="w-full py-4 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]">
-                  {t('meeting_details_title')}
+                <button 
+                  onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
+                  className="w-full py-4 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98]"
+                >
+                  {t('meeting_enter_chat') || '채팅 참여하기'}
                 </button>
               </div>
 
@@ -673,7 +676,7 @@ const CombinedView = ({ onNavigate }) => {
                <span className="text-[9px] font-black uppercase tracking-[0.15em]">{t('nav_friends')}</span>
              </button>
              <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90">
-               <span className="material-symbols-outlined text-2xl">calendar_month</span>
+               <span className="material-symbols-outlined text-2xl">forum</span>
                <span className="text-[9px] font-black uppercase tracking-[0.15em]">{t('nav_meetings')}</span>
              </button>
              <button onClick={() => onNavigate(ScreenType.SETTINGS)} className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90">
