@@ -556,7 +556,9 @@ const CombinedView = ({ onNavigate }) => {
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-3">
                   {friends.map(f => (
-                    <img key={f.id} src={f.image} className="w-8 h-8 rounded-full border-2 border-background-dark shadow-lg object-cover" alt={f.name} />
+                    <div key={f.id} className="w-8 h-8 rounded-full border-2 border-background-dark shadow-lg bg-card-dark flex items-center justify-center">
+                      <span className="text-[10px] font-black text-white">{f.name.substring(0, 1)}</span>
+                    </div>
                   ))}
                 </div>
                 <div>
@@ -603,8 +605,10 @@ const CombinedView = ({ onNavigate }) => {
                 <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
                   {friends.map(f => (
                     <div key={f.id} className="flex flex-col items-center gap-2 shrink-0">
-                      <div className="w-16 h-16 rounded-3xl p-0.5 border-2 border-white/5 bg-card-dark relative group">
-                        <img src={f.image} className="w-full h-full rounded-[1.4rem] object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all" alt={f.name} />
+                      <div className="w-16 h-16 rounded-3xl p-0.5 border-2 border-white/5 bg-card-dark relative group flex items-center justify-center">
+                        <span className="text-[16px] font-black text-white/50 group-hover:text-white transition-all uppercase">
+                          {f.name.substring(0, 2)}
+                        </span>
                         {f.status === 'nearby' && <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-background-dark shadow-lg pulse"></div>}
                       </div>
                       <span className="text-[10px] font-bold text-gray-500">{f.name}</span>
@@ -628,7 +632,9 @@ const CombinedView = ({ onNavigate }) => {
                    {friends.slice(0, 2).map((f, i) => (
                      <div key={f.id} className="flex items-center gap-4 group cursor-pointer hover:bg-white/5 p-2 rounded-2xl transition-colors">
                        <div className="relative">
-                         <img src={f.image} className="w-14 h-14 rounded-2xl object-cover shadow-lg" alt={f.name} />
+                         <div className="w-14 h-14 rounded-2xl bg-card-dark flex items-center justify-center border border-white/10 shadow-lg">
+                           <span className="text-sm font-black text-white">{f.name.substring(0, 2)}</span>
+                         </div>
                          <div className="absolute -bottom-1 -right-1 bg-background-dark p-0.5 rounded-lg flex items-center justify-center border border-white/10">
                            <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>
                          </div>

@@ -8,11 +8,11 @@ export const FriendsProvider = ({ children }) => {
   const [userLocation, setUserLocation] = useState({ x: 50, y: 50 });
   const [lastSeenId, setLastSeenId] = useState(null);
   const [friends, setFriends] = useState([
-    { id: '1', name: '김지아', nickname: 'Alex', lat: 37.5665, lng: 126.9780, avatar: 'A', color: 'accent-pink', image: 'https://picsum.photos/seed/friend1/100/100', status: 'nearby', address: '' },
-    { id: '2', name: '이현우', nickname: 'Sam', lat: 37.5650, lng: 126.9800, avatar: 'S', color: 'accent-purple', image: 'https://picsum.photos/seed/friend2/100/100', status: 'driving', address: '' },
-    { id: '3', name: '박서준', nickname: 'Jordan', lat: 37.5670, lng: 126.9760, avatar: 'J', color: 'primary-400', image: 'https://picsum.photos/seed/friend3/100/100', status: 'idle', address: '' },
-    { id: '4', name: 'Casey', nickname: 'Casey', lat: 37.5680, lng: 126.9820, avatar: 'C', color: 'accent-blue', image: 'https://picsum.photos/seed/friend4/100/100', status: 'nearby', address: '' },
-    { id: '5', name: 'Riley', nickname: 'Riley', lat: 37.5640, lng: 126.9740, avatar: 'R', color: 'accent-pink', image: 'https://picsum.photos/seed/friend5/100/100', status: 'online', address: '' },
+    { id: '1', name: '김지아', nickname: 'Alex', lat: 37.5665, lng: 126.9780, avatar: 'A', color: 'accent-pink', status: 'nearby', address: '' },
+    { id: '2', name: '이현우', nickname: 'Sam', lat: 37.5650, lng: 126.9800, avatar: 'S', color: 'accent-purple', status: 'driving', address: '' },
+    { id: '3', name: '박서준', nickname: 'Jordan', lat: 37.5670, lng: 126.9760, avatar: 'J', color: 'primary-400', status: 'idle', address: '' },
+    { id: '4', name: 'Casey', nickname: 'Casey', lat: 37.5680, lng: 126.9820, avatar: 'C', color: 'accent-blue', status: 'nearby', address: '' },
+    { id: '5', name: 'Riley', nickname: 'Riley', lat: 37.5640, lng: 126.9740, avatar: 'R', color: 'accent-pink', status: 'online', address: '' },
   ]);
   const [guestMeetings, setGuestMeetings] = useState([]);
   const [messages, setMessages] = useState([

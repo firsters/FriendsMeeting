@@ -111,7 +111,11 @@ const FriendScreens = ({ onNavigate }) => {
                 return (
                   <div key={friend.id} className="flex items-center gap-4 group cursor-pointer active:scale-[0.98] transition-all">
                     <div className="relative">
-                      <img src={friend.image} className="w-14 h-14 rounded-full object-cover shadow-2xl group-hover:ring-2 ring-primary/50 ring-offset-2 ring-offset-background-dark transition-all" alt={friend.name} />
+                      <div className="w-14 h-14 rounded-2xl bg-card-dark flex items-center justify-center border-2 border-white/5 shadow-xl group-hover:border-primary/50 transition-all">
+                        <span className="text-[18px] font-black text-white uppercase tracking-tighter">
+                          {friend.name.substring(0, 2)}
+                        </span>
+                      </div>
                       <div className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-[3px] border-background-dark shadow-sm ${friend.status === 'nearby' ? 'bg-blue-500' : friend.status === 'driving' ? 'bg-orange-500' : 'bg-gray-500'}`}></div>
                     </div>
                     <div className="flex-1 border-b border-white/5 py-4 group-last:border-none">

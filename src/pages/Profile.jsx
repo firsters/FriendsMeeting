@@ -66,12 +66,9 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
       </header>
 
       <main className="flex-1 overflow-y-auto scrollbar-hide pb-32">
-        <div className="flex flex-col items-center pt-6 pb-4">
-          <div className="relative group">
-            <img src="https://picsum.photos/seed/alex/200/200" className="w-28 h-28 rounded-full object-cover border-4 border-card-dark shadow-2xl ring-2 ring-primary/20 transition-transform group-hover:scale-105" alt="Profile" />
-            <button className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-2 border-background-dark active:scale-90 transition-all">
-              <span className="material-symbols-outlined text-lg">edit</span>
-            </button>
+        <div className="flex flex-col items-center pt-10 pb-4">
+          <div className="w-28 h-28 rounded-full bg-card-dark flex items-center justify-center border-4 border-white/5 shadow-2xl ring-2 ring-primary/20">
+            <span className="material-symbols-outlined text-gray-700 text-5xl">person</span>
           </div>
           <h2 className="mt-5 text-2xl font-extrabold text-white font-display">Alex Doe</h2>
           <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1 opacity-60">@alexdoe</p>
