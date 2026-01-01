@@ -5,6 +5,7 @@ import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import MapComponent from '../components/MapComponent';
 import { auth, db } from '../firebase';
 import { subscribeToMeetings, updateMeetingLocation, createMeeting } from '../utils/meetingService';
+import { useFriends } from '../context/FriendsContext';
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
@@ -12,6 +13,34 @@ const CombinedView = ({ onNavigate }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
+
+  // New Header State
+  const [meetingLocation, setMeetingLocation] = useState(null); // { name, address, lat, lng }
+  const [meetingStatus, setMeetingStatus] = useState('unconfirmed'); // unconfirmed, confirmed, temporary
+  const [liveStatus, setLiveStatus] = useState('offline'); // online, offline
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isHost, setIsHost] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(3);
+  const [pendingLocationName, setPendingLocationName] = useState(null);
+  const [activeMeetingId, setActiveMeetingId] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [userAddress, setUserAddress] = useState("");
+  const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
+
+  // General Search State (Row 2)
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [generalSearchQuery, setGeneralSearchQuery] = useState("");
+  const [generalSearchResults, setGeneralSearchResults] = useState([]);
+  const [generalSelectedPlaceId, setGeneralSelectedPlaceId] = useState(null);
+  const [generalLocation, setGeneralLocation] = useState(null);
+
+  // Search Triggers for Enter Key
+  const [searchTrigger, setSearchTrigger] = useState(0);
+  const [generalSearchTrigger, setGeneralSearchTrigger] = useState(0);
+
+  const [centerTrigger, setCenterTrigger] = useState(0);
+  const [centerOnMeTrigger, setCenterOnMeTrigger] = useState(0);
+  const [mapType, setMapType] = useState('roadmap'); // 'roadmap' or 'hybrid'
 
   const geocodingLib = useMapsLibrary('geocoding');
   const [geocoder, setGeocoder] = useState(null);
