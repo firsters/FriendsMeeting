@@ -1,4 +1,6 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { subscribeToMeetings } from '../utils/meetingService';
 
 const FriendsContext = createContext();
@@ -15,7 +17,7 @@ export const FriendsProvider = ({ children }) => {
 
   // Firebase Subscription for real friends (participants)
   useEffect(() => {
-    const unsubscribeAuth = auth.onAuthStateChanged(user => {
+    const unsubscribeAuth = onAuthStateChanged(auth, user => {
       if (user) {
         const unsubMeetings = subscribeToMeetings(user.uid, (meetings) => {
           // Extract unique participants from all meetings excluding current user

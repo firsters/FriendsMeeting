@@ -4,6 +4,7 @@ import { useTranslation } from '../context/LanguageContext';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import MapComponent from '../components/MapComponent';
 import { auth, db } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { subscribeToMeetings, updateMeetingLocation, createMeeting, updateParticipantLocation } from '../utils/meetingService';
 import { useFriends } from '../context/FriendsContext';
 
@@ -76,7 +77,7 @@ const CombinedView = ({ onNavigate }) => {
 
   // Auth Check and Meeting Subscription
   useEffect(() => {
-     const unsubscribe = auth.onAuthStateChanged(user => {
+     const unsubscribe = onAuthStateChanged(auth, user => {
          setIsHost(!!user);
          setCurrentUserId(user?.uid);
          if (user) {
