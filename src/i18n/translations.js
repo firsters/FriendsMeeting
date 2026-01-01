@@ -11,7 +11,7 @@ export const translations = {
     ignore: "거절",
     
     // Welcome
-    welcome_title: "야! 어디야?",
+    welcome_title: "야-어디야?",
     welcome_title_stay_close: "어디에 있든,",
     welcome_title_wherever: "가깝게 연결되세요",
     onboarding_new_message: "새 메시지",
@@ -26,7 +26,7 @@ export const translations = {
     // Auth
     auth_locate_connect: "위치 공유 및 연결",
     auth_locate_desc: "도시 어디서든 친구들을 찾아보세요",
-    auth_join_network: "'야! 어디야?' 가입",
+    auth_join_network: "'야-어디야?' 가입",
     auth_join_desc: "당신의 여정을 공유해보세요",
     auth_nickname: "닉네임",
     auth_nickname_placeholder: "예: 길동이",
@@ -294,7 +294,7 @@ export const translations = {
     ignore: "Ignore",
 
     // Welcome
-    welcome_title: "야! 어디야?",
+    welcome_title: "Ya-WhereAreYou?",
     welcome_title_stay_close: "Stay Close,",
     welcome_title_wherever: "Wherever You Are",
     onboarding_new_message: "New Message",
@@ -532,7 +532,7 @@ export const translations = {
     friends_nearby_distance: "away",
     friends_location_sample: "Seoul, Korea",
     invite_title: "Join my Friend Group",
-    invite_text: "Hey! Join my group on FriendsMeeting!",
+    invite_text: "Hey! Join my group on Ya-WhereAreYou?!",
     group_join_title: "Join Meeting",
     group_join_desc: "Enter the code you received to join the meeting.",
     group_join_existing_user: "Existing users should log in to join meetings.",
