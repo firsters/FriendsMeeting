@@ -204,6 +204,7 @@ export const translations = {
     alert_hours_ago: "시간 전",
     
     // Chat
+    chat_new_messages: "여기까지 읽으셨습니다",
     chat_placeholder: "메시지를 입력하세요...",
     chat_uploading: "업로드 중...",
     chat_me: "나",
@@ -471,6 +472,7 @@ export const translations = {
     alert_hours_ago: "h ago",
 
     // Chat
+    chat_new_messages: "New messages below",
     chat_placeholder: "Type a message...",
     chat_uploading: "Uploading...",
     chat_me: "Me",

@@ -8,6 +8,15 @@ const GroupChat = ({ onBack, meetingTitle }) => {
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef(null);
 
+  const [lastSeenId, setLastSeenId] = useState(null);
+
+  useEffect(() => {
+    // Mark the last message currently in the list as "seen" before this session
+    if (messages.length > 0 && lastSeenId === null) {
+      setLastSeenId(messages[messages.length - 1].id);
+    }
+  }, [messages, lastSeenId]);
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -57,29 +66,45 @@ const GroupChat = ({ onBack, meetingTitle }) => {
           </span>
         </div>
 
-        {messages.map((msg) => {
+        {messages.map((msg, index) => {
           const isMe = msg.senderId === 'me';
           const info = getFriendInfo(msg.senderId);
           
+          // Check if we should insert the "New Message" line
+          const isFirstNewMessage = lastSeenId !== null && 
+                                   index > 0 && 
+                                   messages[index-1].id === lastSeenId;
+
           return (
-            <div key={msg.id} className={`flex items-end gap-2 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-              {!isMe && (
-                <div className={`w-8 h-8 rounded-full ${info.color} flex items-center justify-center text-[10px] font-bold text-white shrink-0 border border-white/10`}>
-                  {info.avatar}
+            <React.Fragment key={msg.id}>
+              {isFirstNewMessage && (
+                <div className="flex items-center gap-4 py-4 px-2">
+                  <div className="h-px flex-1 bg-primary/30"></div>
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest whitespace-nowrap">
+                    {t('chat_new_messages') || '여기까지 읽으셨습니다'}
+                  </span>
+                  <div className="h-px flex-1 bg-primary/30"></div>
                 </div>
               )}
-              <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                {!isMe && <span className="text-[10px] font-bold text-gray-500 mb-1 ml-1">{msg.senderName}</span>}
-                <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed
-                  ${isMe ? 'bg-primary text-white rounded-tr-none shadow-lg shadow-primary/20' : 'bg-card-dark text-gray-200 rounded-tl-none border border-white/5'}
-                `}>
-                  {msg.content}
+              <div className={`flex items-end gap-2 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                {!isMe && (
+                  <div className={`w-8 h-8 rounded-full ${info.color} flex items-center justify-center text-[10px] font-bold text-white shrink-0 border border-white/10`}>
+                    {info.avatar}
+                  </div>
+                )}
+                <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                  {!isMe && <span className="text-[10px] font-bold text-gray-500 mb-1 ml-1">{msg.senderName}</span>}
+                  <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed
+                    ${isMe ? 'bg-primary text-white rounded-tr-none shadow-lg shadow-primary/20' : 'bg-card-dark text-gray-200 rounded-tl-none border border-white/5'}
+                  `}>
+                    {msg.content}
+                  </div>
                 </div>
+                <span className="text-[8px] font-bold text-gray-600 uppercase mb-1">
+                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                </span>
               </div>
-              <span className="text-[8px] font-bold text-gray-600 uppercase mb-1">
-                {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
-              </span>
-            </div>
+            </React.Fragment>
           );
         })}
       </main>
