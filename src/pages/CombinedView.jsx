@@ -8,58 +8,10 @@ import { subscribeToMeetings, updateMeetingLocation, createMeeting } from '../ut
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
+  const { friends, updateFriendAddress } = useFriends();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-
-  // New Header State
-  const [meetingLocation, setMeetingLocation] = useState(null); // { name, address, lat, lng }
-  const [meetingStatus, setMeetingStatus] = useState('unconfirmed'); // unconfirmed, confirmed, temporary
-  const [liveStatus, setLiveStatus] = useState('offline'); // online, offline
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isHost, setIsHost] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(3);
-  const [pendingLocationName, setPendingLocationName] = useState(null);
-  const [activeMeetingId, setActiveMeetingId] = useState(null);
-  const [currentUserId, setCurrentUserId] = useState(null);
-  const [userAddress, setUserAddress] = useState("");
-  const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
-
-  // General Search State (Row 2)
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [generalSearchQuery, setGeneralSearchQuery] = useState("");
-  const [generalSearchResults, setGeneralSearchResults] = useState([]);
-  const [generalSelectedPlaceId, setGeneralSelectedPlaceId] = useState(null);
-  const [generalLocation, setGeneralLocation] = useState(null);
-
-  // Search Triggers for Enter Key
-  const [searchTrigger, setSearchTrigger] = useState(0);
-  const [generalSearchTrigger, setGeneralSearchTrigger] = useState(0);
-
-  const [centerTrigger, setCenterTrigger] = useState(0);
-  const [centerOnMeTrigger, setCenterOnMeTrigger] = useState(0);
-  const [mapType, setMapType] = useState('roadmap'); // 'roadmap' or 'hybrid'
-
-  // Mock data for the home screen - Moved to state for randomization
-  const [friends, setFriends] = useState([]);
-
-  // Randomize friend locations on mount
-  useEffect(() => {
-    const friendData = [
-      { id: 1, name: '김지아', image: 'https://picsum.photos/seed/friend1/100/100', status: 'nearby' },
-      { id: 2, name: '이현우', image: 'https://picsum.photos/seed/friend2/100/100', status: 'driving' },
-      { id: 3, name: '박서준', image: 'https://picsum.photos/seed/friend3/100/100', status: 'idle' },
-    ];
-
-    const randomizedFriends = friendData.map(f => ({
-      ...f,
-      // Random coordinates within Seoul (roughly)
-      lat: 37.428 + Math.random() * (37.701 - 37.428),
-      lng: 126.764 + Math.random() * (127.184 - 126.764)
-    }));
-
-    setFriends(randomizedFriends);
-  }, []);
 
   const geocodingLib = useMapsLibrary('geocoding');
   const [geocoder, setGeocoder] = useState(null);
@@ -348,6 +300,8 @@ const CombinedView = ({ onNavigate }) => {
             onMarkerDrag={handleMarkerDrag}
             onMarkerDragEnd={handleMarkerDragEnd}
             onCenterRequest={(pos) => setCenterTrigger(prev => prev + 1)}
+            onAddressResolved={(addr) => setUserAddress(addr)}
+            onFriendAddressResolved={updateFriendAddress}
             bottomOffset={100}
             topOffset={isSearchExpanded ? 240 : 140}
           />

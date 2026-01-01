@@ -83,6 +83,34 @@ const GeocodingHandler = ({ location, onAddressResolved }) => {
     return null;
 };
 
+const FriendGeocodingHandler = ({ friends, onFriendAddressResolved }) => {
+    const geocodingLib = useMapsLibrary('geocoding');
+    const [geocoder, setGeocoder] = useState(null);
+
+    useEffect(() => {
+        if (!geocodingLib) return;
+        setGeocoder(new geocodingLib.Geocoder());
+    }, [geocodingLib]);
+
+    useEffect(() => {
+        if (!geocoder || !friends || !onFriendAddressResolved) return;
+
+        friends.forEach(friend => {
+            // Only resolve if address is missing or coordinates changed significantly
+            // For simplicity in this demo, we'll just resolve if address is empty
+            if (!friend.address && friend.lat && friend.lng) {
+                geocoder.geocode({ location: { lat: friend.lat, lng: friend.lng } }, (results, status) => {
+                    if (status === 'OK' && results[0]) {
+                        onFriendAddressResolved(friend.id, results[0].formatted_address);
+                    }
+                });
+            }
+        });
+    }, [geocoder, friends, onFriendAddressResolved]);
+
+    return null;
+};
+
 const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, onCenterMarker, bottomOffset = 100, topOffset = 80 }) => {
     const map = useMap();
     const [bounds, setBounds] = useState(null);
@@ -475,6 +503,7 @@ const MapComponent = ({
                     internalPanTrigger={internalPanTrigger}
                 />
                 <GeocodingHandler location={currentCenter} onAddressResolved={onAddressResolved} />
+                <FriendGeocodingHandler friends={friends} onFriendAddressResolved={onFriendAddressResolved} />
                 <EdgeMarkers 
                     meetingLocation={meetingLocation} 
                     generalLocation={generalLocation}

@@ -3,19 +3,17 @@ import { useFriends } from '../context/FriendsContext';
 import { useTranslation } from '../context/LanguageContext';
 
 const GroupChat = ({ onBack, meetingTitle }) => {
-  const { messages, sendMessage, friends } = useFriends();
+  const { messages, sendMessage, friends, lastSeenId, setLastSeenId } = useFriends();
   const { t } = useTranslation();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef(null);
-
-  const [lastSeenId, setLastSeenId] = useState(null);
 
   useEffect(() => {
     // Mark the last message currently in the list as "seen" before this session
     if (messages.length > 0 && lastSeenId === null) {
       setLastSeenId(messages[messages.length - 1].id);
     }
-  }, [messages, lastSeenId]);
+  }, [messages, lastSeenId, setLastSeenId]);
 
   useEffect(() => {
     if (scrollRef.current) {

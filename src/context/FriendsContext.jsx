@@ -6,18 +6,24 @@ export const useFriends = () => useContext(FriendsContext);
 
 export const FriendsProvider = ({ children }) => {
   const [userLocation, setUserLocation] = useState({ x: 50, y: 50 });
+  const [lastSeenId, setLastSeenId] = useState(null);
   const [friends, setFriends] = useState([
-    { id: '1', nickname: 'Alex', x: 30, y: 40, avatar: 'A', color: 'accent-pink' },
-    { id: '2', nickname: 'Sam', x: 70, y: 60, avatar: 'S', color: 'accent-purple' },
-    { id: '3', nickname: 'Jordan', x: 85, y: 20, avatar: 'J', color: 'primary-400' },
-    { id: '4', nickname: 'Casey', x: 120, y: 150, avatar: 'C', color: 'accent-blue' }, // Off-screen
-    { id: '5', nickname: 'Riley', x: -20, y: 80, avatar: 'R', color: 'accent-pink' }, // Off-screen
+    { id: '1', name: '김지아', nickname: 'Alex', lat: 37.5665, lng: 126.9780, avatar: 'A', color: 'accent-pink', image: 'https://picsum.photos/seed/friend1/100/100', status: 'nearby', address: '' },
+    { id: '2', name: '이현우', nickname: 'Sam', lat: 37.5650, lng: 126.9800, avatar: 'S', color: 'accent-purple', image: 'https://picsum.photos/seed/friend2/100/100', status: 'driving', address: '' },
+    { id: '3', name: '박서준', nickname: 'Jordan', lat: 37.5670, lng: 126.9760, avatar: 'J', color: 'primary-400', image: 'https://picsum.photos/seed/friend3/100/100', status: 'idle', address: '' },
+    { id: '4', name: 'Casey', nickname: 'Casey', lat: 37.5680, lng: 126.9820, avatar: 'C', color: 'accent-blue', image: 'https://picsum.photos/seed/friend4/100/100', status: 'nearby', address: '' },
+    { id: '5', name: 'Riley', nickname: 'Riley', lat: 37.5640, lng: 126.9740, avatar: 'R', color: 'accent-pink', image: 'https://picsum.photos/seed/friend5/100/100', status: 'online', address: '' },
   ]);
   const [guestMeetings, setGuestMeetings] = useState([]);
   const [messages, setMessages] = useState([
-    { id: 'm1', senderId: '1', senderName: 'Alex', content: '오늘 5시에 보는 거 맞지?', timestamp: new Date(Date.now() - 3600000) },
-    { id: 'm2', senderId: '2', senderName: 'Sam', content: '응응! 나 지금 가는 중이야', timestamp: new Date(Date.now() - 1800000) },
+    { id: 'm1', senderId: '1', senderName: '김지아', content: '오늘 5시에 보는 거 맞지?', timestamp: new Date(Date.now() - 3600000) },
+    { id: 'm2', senderId: '2', senderName: '이현우', content: '응응! 나 지금 가는 중이야', timestamp: new Date(Date.now() - 1800000) },
   ]);
+
+  // Function to update a friend's address (called from components with map access)
+  const updateFriendAddress = (id, address) => {
+    setFriends(prev => prev.map(f => f.id === id ? { ...f, address } : f));
+  };
 
   // Function to join a guest meeting
   const joinGuestMeeting = (guestNickname, groupCode) => {
@@ -51,29 +57,33 @@ export const FriendsProvider = ({ children }) => {
     const interval = setInterval(() => {
       setFriends(prev => prev.map(f => {
         // More purposeful movement
-        const moveX = (Math.random() - 0.5) * 0.5;
-        const moveY = (Math.random() - 0.5) * 0.5;
+        const moveLat = (Math.random() - 0.5) * 0.0005;
+        const moveLng = (Math.random() - 0.5) * 0.0005;
         
-        // Keep within reasonable bounds simulation
-        let newX = f.x + moveX;
-        let newY = f.y + moveY;
-        
-        if (Math.abs(newX) > 150) newX = f.x - moveX * 5;
-        if (Math.abs(newY) > 150) newY = f.y - moveY * 5;
-
         return {
           ...f,
-          x: newX,
-          y: newY,
-          status: Math.random() > 0.1 ? 'online' : 'away'
+          lat: f.lat + moveLat,
+          lng: f.lng + moveLng,
+          status: Math.random() > 0.1 ? f.status : (Math.random() > 0.5 ? 'nearby' : 'driving')
         };
       }));
-    }, 3000);
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <FriendsContext.Provider value={{ friends, userLocation, setUserLocation, guestMeetings, joinGuestMeeting, messages, sendMessage }}>
+    <FriendsContext.Provider value={{ 
+      friends, 
+      userLocation, 
+      setUserLocation, 
+      guestMeetings, 
+      joinGuestMeeting, 
+      messages, 
+      sendMessage,
+      lastSeenId,
+      setLastSeenId,
+      updateFriendAddress
+    }}>
       {children}
     </FriendsContext.Provider>
   );
