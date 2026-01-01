@@ -14,6 +14,10 @@ export const FriendsProvider = ({ children }) => {
     { id: '5', nickname: 'Riley', x: -20, y: 80, avatar: 'R', color: 'accent-pink' }, // Off-screen
   ]);
   const [guestMeetings, setGuestMeetings] = useState([]);
+  const [messages, setMessages] = useState([
+    { id: 'm1', senderId: '1', senderName: 'Alex', content: '오늘 5시에 보는 거 맞지?', timestamp: new Date(Date.now() - 3600000) },
+    { id: 'm2', senderId: '2', senderName: 'Sam', content: '응응! 나 지금 가는 중이야', timestamp: new Date(Date.now() - 1800000) },
+  ]);
 
   // Function to join a guest meeting
   const joinGuestMeeting = (guestNickname, groupCode) => {
@@ -29,6 +33,17 @@ export const FriendsProvider = ({ children }) => {
       ]
     };
     setGuestMeetings(prev => [newMeeting, ...prev]);
+  };
+
+  const sendMessage = (content, senderId = 'me', senderName = '나') => {
+    const newMessage = {
+      id: `m-${Date.now()}`,
+      senderId,
+      senderName,
+      content,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, newMessage]);
   };
 
   // Simulate real-time movement and status updates
@@ -58,7 +73,7 @@ export const FriendsProvider = ({ children }) => {
   }, []);
 
   return (
-    <FriendsContext.Provider value={{ friends, userLocation, setUserLocation, guestMeetings, joinGuestMeeting }}>
+    <FriendsContext.Provider value={{ friends, userLocation, setUserLocation, guestMeetings, joinGuestMeeting, messages, sendMessage }}>
       {children}
     </FriendsContext.Provider>
   );
