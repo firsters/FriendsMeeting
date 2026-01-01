@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
+import { useModal } from '../context/ModalContext';
 import { signInAsGuest, joinMeetingByCode } from '../utils/meetingService';
 
 const GroupJoin = ({ onNavigate, groupCode }) => {
   const { t } = useTranslation();
+  const { showAlert } = useModal();
   const [nickname, setNickname] = useState('');
   const [code, setCode] = useState(groupCode || '');
   const [loading, setLoading] = useState(false);
@@ -29,7 +31,11 @@ const GroupJoin = ({ onNavigate, groupCode }) => {
         onNavigate(ScreenType.MEETINGS);
     } catch (err) {
         console.error("Guest join failed:", err);
-        alert(err.message || "Failed to join as guest");
+        if (err.code === 'auth/admin-restricted-operation') {
+            showAlert("Firebase Console에서 'Anonymous(익명) 로그인' 기능이 활성화되어 있지 않습니다. 설정이 필요합니다.", "설정 확인 필요");
+        } else {
+            showAlert(err.message || "Failed to join as guest");
+        }
         setLoading(false);
     }
   };

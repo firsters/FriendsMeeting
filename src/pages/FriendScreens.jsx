@@ -4,9 +4,11 @@ import { useTranslation } from '../context/LanguageContext';
 import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { useFriends } from '../context/FriendsContext';
+import { useModal } from '../context/ModalContext';
 
 const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
+  const { showAlert } = useModal();
   const { friends, messages, lastSeenId, setSelectedFriendId } = useFriends();
 
   const handleFriendProfileClick = (friendId) => {
@@ -39,7 +41,7 @@ const FriendScreens = ({ onNavigate }) => {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(link);
-        alert('Link copied to clipboard: ' + link);
+        showAlert(t('modal_info_title') || 'Notice', 'Link copied to clipboard: ' + link);
       }
     } catch (err) {
       console.error("Error sharing:", err);
