@@ -40,9 +40,11 @@ const GroupChat = ({ onBack, meetingTitle }) => {
     <div className="flex flex-col h-full bg-background-dark animate-fade-in font-sans">
       {/* Header */}
       <header className="px-4 py-4 border-b border-white/5 flex items-center gap-4 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
-        <button onClick={onBack} className="p-2 -ml-2 rounded-full hover:bg-white/5 transition-colors text-white">
-          <span className="material-symbols-outlined">arrow_back_ios_new</span>
-        </button>
+        {onBack && (
+          <button onClick={onBack} className="p-2 -ml-2 rounded-full hover:bg-white/5 transition-colors text-white">
+            <span className="material-symbols-outlined">arrow_back_ios_new</span>
+          </button>
+        )}
         <div className="flex-1">
           <h2 className="text-lg font-extrabold text-white font-display truncate leading-tight">{meetingTitle || t('nav_meetings')}</h2>
           <div className="flex items-center gap-1.5 opacity-60">
