@@ -9,7 +9,7 @@ import { useFriends } from '../context/FriendsContext';
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
-  const { friends, updateFriendAddress } = useFriends();
+  const { friends, updateFriendAddress, selectedFriendId, setSelectedFriendId } = useFriends();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
@@ -57,6 +57,22 @@ const CombinedView = ({ onNavigate }) => {
     location: "Starbucks Gangnam",
     participants: 4
   };
+
+  // Sync selection from context (e.g. from FriendScreens)
+  useEffect(() => {
+    if (selectedFriendId) {
+      const friend = friends.find(f => f.id === selectedFriendId);
+      if (friend) {
+        setSelectedFriend(friend);
+        // Pan map to friend
+        setCenterTrigger(prev => prev + 1);
+        setIsExpanded(false); // Collapse bottom sheet to show map
+      }
+      // RESET it so that navigating back to Friends and clicking AGAIN triggers it
+      // But we might want to keep the highlight. The highlight is controlled by 'selectedFriend' local state.
+      setSelectedFriendId(null);
+    }
+  }, [selectedFriendId, friends]);
 
   // Auth Check and Meeting Subscription
   useEffect(() => {
@@ -306,6 +322,7 @@ const CombinedView = ({ onNavigate }) => {
             selectedFriend={selectedFriend}
             onFriendClick={setSelectedFriend} 
             userLocation={userLocation}
+            center={selectedFriend ? { lat: selectedFriend.lat, lng: selectedFriend.lng } : null}
 
             // Primary Search (Host)
             searchQuery={searchQuery}

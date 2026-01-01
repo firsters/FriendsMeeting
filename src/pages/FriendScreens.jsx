@@ -7,7 +7,12 @@ import { useFriends } from '../context/FriendsContext';
 
 const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
-  const { friends, messages, lastSeenId } = useFriends();
+  const { friends, messages, lastSeenId, setSelectedFriendId } = useFriends();
+
+  const handleFriendProfileClick = (friendId) => {
+    setSelectedFriendId(friendId);
+    onNavigate(ScreenType.MAP);
+  };
 
   const handleShareInvite = async () => {
     if (!auth.currentUser) return;
@@ -110,7 +115,7 @@ const FriendScreens = ({ onNavigate }) => {
                 const hasNew = getHasNewMessage(friend.id);
                 return (
                   <div key={friend.id} className="flex items-center gap-4 group cursor-pointer active:scale-[0.98] transition-all">
-                    <div className="relative">
+                    <div className="relative" onClick={() => handleFriendProfileClick(friend.id)}>
                       <div className="w-14 h-14 rounded-2xl bg-card-dark flex items-center justify-center border-2 border-white/5 shadow-xl group-hover:border-primary/50 transition-all">
                         <span className="text-[18px] font-black text-white uppercase tracking-tighter">
                           {friend.name.substring(0, 2)}
@@ -118,7 +123,7 @@ const FriendScreens = ({ onNavigate }) => {
                       </div>
                       <div className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-[3px] border-background-dark shadow-sm ${friend.status === 'nearby' ? 'bg-blue-500' : friend.status === 'driving' ? 'bg-orange-500' : 'bg-gray-500'}`}></div>
                     </div>
-                    <div className="flex-1 border-b border-white/5 py-4 group-last:border-none">
+                    <div className="flex-1 border-b border-white/5 py-4 group-last:border-none" onClick={() => handleFriendProfileClick(friend.id)}>
                       <div className="flex justify-between items-center mb-0.5">
                         <h4 className="text-base font-bold text-white">{friend.name}</h4>
                         <span className="text-[10px] font-bold text-gray-700 uppercase tracking-widest italic font-sans">{friend.status === 'nearby' ? '9m' : friend.status === 'driving' ? '2.5km' : 'far'} {t('friends_nearby_distance')}</span>

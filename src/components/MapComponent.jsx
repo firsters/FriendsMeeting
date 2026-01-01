@@ -307,6 +307,7 @@ const MapComponent = ({
     selectedFriend,
     onFriendClick,
     userLocation,
+    center, // Add this
     onAddressResolved,
     searchQuery,
     searchTrigger = 0,
@@ -340,6 +341,13 @@ const MapComponent = ({
     const [internalPanTrigger, setInternalPanTrigger] = useState(0);
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
     const [mapInstance, setMapInstance] = useState(null);
+
+    // Sync external center prop
+    useEffect(() => {
+        if (center) {
+            setCurrentCenter(center);
+        }
+    }, [center]);
 
     // Dark Mode Map Style
     const mapId = "DEMO_MAP_ID"; // In production, use a real Map ID from Google Cloud Console for advanced markers

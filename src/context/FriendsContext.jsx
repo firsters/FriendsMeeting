@@ -7,6 +7,7 @@ export const useFriends = () => useContext(FriendsContext);
 export const FriendsProvider = ({ children }) => {
   const [userLocation, setUserLocation] = useState({ x: 50, y: 50 });
   const [lastSeenId, setLastSeenId] = useState(null);
+  const [selectedFriendId, setSelectedFriendId] = useState(null);
   const [friends, setFriends] = useState([
     { id: '1', name: '김지아', nickname: 'Alex', lat: 37.5665, lng: 126.9780, avatar: 'A', color: 'accent-pink', status: 'nearby', address: '' },
     { id: '2', name: '이현우', nickname: 'Sam', lat: 37.5650, lng: 126.9800, avatar: 'S', color: 'accent-purple', status: 'driving', address: '' },
@@ -82,7 +83,9 @@ export const FriendsProvider = ({ children }) => {
       sendMessage,
       lastSeenId,
       setLastSeenId,
-      updateFriendAddress
+      updateFriendAddress,
+      selectedFriendId,
+      setSelectedFriendId
     }}>
       {children}
     </FriendsContext.Provider>
