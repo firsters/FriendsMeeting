@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { subscribeToMeetings } from '../utils/meetingService';
+import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages } from '../utils/meetingService';
 
 const FriendsContext = createContext();
 
@@ -52,7 +52,18 @@ export const FriendsProvider = ({ children }) => {
       }
     });
 
-    return () => unsubscribeAuth();
+  // Message Subscription for the first/active meeting
+  useEffect(() => {
+    if (guestMeetings.length > 0) {
+      const activeMeeting = guestMeetings[0]; // For now, assume first meeting is active
+      const unsubMessages = subscribeToMessages(activeMeeting.id, (msgs) => {
+        setMessages(msgs);
+      });
+      return () => unsubMessages();
+    }
+  }, [guestMeetings]);
+
+  return () => unsubscribeAuth();
   }, []);
 
   // Function to update a friend's address (local-only demo)
@@ -76,15 +87,31 @@ export const FriendsProvider = ({ children }) => {
     setGuestMeetings(prev => [newMeeting, ...prev]);
   };
 
-  const sendMessage = (content, senderId = 'me', senderName = '나') => {
-    const newMessage = {
-      id: `m-${Date.now()}`,
-      senderId,
-      senderName,
-      content,
-      timestamp: new Date()
-    };
-    setMessages(prev => [...prev, newMessage]);
+  const sendMessage = async (content, senderId = auth.currentUser?.uid || 'me', senderName = auth.currentUser?.displayName || '나') => {
+    if (guestMeetings.length === 0) {
+      // Fallback for local-only/unauthenticated state
+      const newMessage = {
+        id: `m-${Date.now()}`,
+        senderId,
+        senderName,
+        content,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, newMessage]);
+      return;
+    }
+
+    const activeMeeting = guestMeetings[0];
+    try {
+      await sendFirebaseMessage(activeMeeting.id, {
+        senderId,
+        senderName,
+        content,
+        avatar: auth.currentUser?.photoURL || (auth.currentUser?.displayName || '?').charAt(0)
+      });
+    } catch (err) {
+      console.error("Failed to send message:", err);
+    }
   };
 
   return (

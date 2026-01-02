@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useFriends } from '../context/FriendsContext';
+import { auth } from '../firebase';
 import { useTranslation } from '../context/LanguageContext';
 
 const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
@@ -29,9 +30,10 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
   };
 
   const getFriendInfo = (senderId) => {
-    if (senderId === 'me') return { color: 'bg-primary', avatar: 'ME' };
+    const currentUserId = auth.currentUser?.uid;
+    if (senderId === currentUserId || senderId === 'me') return { color: 'bg-primary', avatar: 'ME' };
     const friend = friends.find(f => f.id === senderId);
-    return friend ? { color: 'bg-gray-600', avatar: friend.avatar } : { color: 'bg-gray-500', avatar: '?' };
+    return friend ? { color: 'bg-gray-600', avatar: friend.avatar || friend.name.charAt(0) } : { color: 'bg-gray-500', avatar: '?' };
   };
 
   return (
@@ -67,7 +69,8 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
         </div>
 
         {messages.map((msg, index) => {
-          const isMe = msg.senderId === 'me';
+          const currentUserId = auth.currentUser?.uid;
+          const isMe = msg.senderId === currentUserId || msg.senderId === 'me';
           const info = getFriendInfo(msg.senderId);
           
           // Check if we should insert the "New Message" line

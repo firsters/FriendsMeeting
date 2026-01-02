@@ -8,6 +8,7 @@ import {
   getDocs, 
   query, 
   where, 
+  orderBy,
   arrayUnion, 
   onSnapshot,
   serverTimestamp 
@@ -134,5 +135,31 @@ export const subscribeToMeetingDetails = (meetingId, callback) => {
     if (doc.exists()) {
       callback({ id: doc.id, ...doc.data() });
     }
+  });
+};
+
+export const sendMessage = async (meetingId, messageData) => {
+  const messagesRef = collection(db, 'meetings', meetingId, 'messages');
+  await addDoc(messagesRef, {
+    ...messageData,
+    timestamp: serverTimestamp()
+  });
+};
+
+export const subscribeToMessages = (meetingId, callback) => {
+  const messagesRef = collection(db, 'meetings', meetingId, 'messages');
+  const q = query(messagesRef, orderBy('timestamp', 'asc'));
+  
+  return onSnapshot(q, (snapshot) => {
+    const messages = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        // Fallback for timestamp if it's still being written (locally)
+        timestamp: data.timestamp?.toDate() || new Date()
+      };
+    });
+    callback(messages);
   });
 };
