@@ -261,6 +261,9 @@ export const translations = {
     settings_edit_profile: "프로필 수정",
     settings_language_value: "한국어",
     settings_who_find_value: "친구만",
+    settings_my_groups: "참여 중인 그룹",
+    settings_copy_code: "코드 복사",
+    settings_code_copied: "그룹 코드가 복사되었습니다!",
     
     // Friend Screens Additional
     friends_nearby_distance: "m 근처",
