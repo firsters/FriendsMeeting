@@ -148,8 +148,14 @@ export const sendMessage = async (meetingId, messageData) => {
   try {
     await addDoc(messagesRef, {
       ...messageData,
-      userId: messageData.senderId, // Redundant for security rules
-      uid: messageData.senderId,    // Redundant for security rules
+      meetingId,             // Redundant for rules
+      authorId: messageData.senderId, // Some rules look for authorId
+      userId: messageData.senderId,   // Generic userId
+      user_id: messageData.senderId,  // Snake case variant
+      uid: messageData.senderId,      // Direct UID
+      createdAt: serverTimestamp(),  // Some rules preferred createdAt
+      updatedAt: serverTimestamp(),
+      type: 'text',                  // Standard message type
       timestamp: serverTimestamp()
     });
     console.log("[meetingService] Message successfully added to Firestore");

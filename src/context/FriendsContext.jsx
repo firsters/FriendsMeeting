@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages } from '../utils/meetingService';
+import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
 const FriendsContext = createContext();
@@ -202,7 +202,19 @@ export const FriendsProvider = ({ children }) => {
           console.log(`[FriendsContext] Participation Check: Registered? ${isRegistered}. List:`, pIds);
           
           if (!isRegistered) {
-            showAlert(`권한 오류: 당신은 이 모임의 참가자 명단에 등록되어 있지 않습니다.\nMeeting ID: ${targetMeetingId}\nRegistered IDs: ${pIds.join(', ')}\nYour UID: ${effectiveSenderId}`, "전송 권한 없음");
+            console.log("[FriendsContext] Self-Join Rescue initiated...");
+            try {
+              // Try to find the group code for this meeting to re-join
+              const groupCode = mData.groupCode;
+              if (groupCode) {
+                await joinMeetingByCode(groupCode, effectiveSenderId, { nickname: effectiveSenderName });
+                showAlert(`참여 정보 복구 완료! 다시 한번 메시지를 전송해 주세요.\n(기록 누락으로 인한 권한 오류를 자동 수정했습니다)`, "권한 자동 복구");
+              } else {
+                showAlert(`권한 오류: 당신은 이 모임의 참가자 명단에 등록되어 있지 않으며, 자동 복구에 필요한 코드를 찾을 수 없습니다.`, "전송 권한 없음");
+              }
+            } catch (joinErr) {
+              showAlert(`권한 오류: 명단 등록 시도 중 오류가 발생했습니다: ${joinErr.message}`, "복구 실패");
+            }
           } else {
             showAlert(`메시지 전송 실패 (보안 정책): ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}\n*참가자 명단에는 포함되어 있으나 서버의 보안 규칙에 의해 쓰기가 거부되었습니다.*`, "보안 규칙 오류");
           }
