@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
@@ -189,9 +190,30 @@ export const FriendsProvider = ({ children }) => {
       });
       console.log(`[FriendsContext] Message SUCCESS for ${targetMeetingId} (tempId: ${tempId})`);
     } catch (err) {
-      console.error(`[FriendsContext] Message FAILURE for ${targetMeetingId} (tempId: ${tempId}):`, err.message || err);
-      // Show actual error and UID to user for diagnostic purposes
-      showAlert(`메시지 전송 실패: ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}`, "전송 오류 발생");
+      console.error(`[FriendsContext] Message FAILURE for ${targetMeetingId}:`, err.message || err);
+      
+      // Diagnostic Sanity Check: Is the user actually on the participantIds list?
+      try {
+        const mDoc = await getDoc(doc(db, 'meetings', targetMeetingId));
+        if (mDoc.exists()) {
+          const mData = mDoc.data();
+          const pIds = mData.participantIds || [];
+          const isRegistered = pIds.includes(effectiveSenderId);
+          console.log(`[FriendsContext] Participation Check: Registered? ${isRegistered}. List:`, pIds);
+          
+          if (!isRegistered) {
+            showAlert(`권한 오류: 당신은 이 모임의 참가자 명단에 등록되어 있지 않습니다.\nMeeting ID: ${targetMeetingId}\nRegistered IDs: ${pIds.join(', ')}\nYour UID: ${effectiveSenderId}`, "전송 권한 없음");
+          } else {
+            showAlert(`메시지 전송 실패 (보안 정책): ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}\n*참가자 명단에는 포함되어 있으나 서버의 보안 규칙에 의해 쓰기가 거부되었습니다.*`, "보안 규칙 오류");
+          }
+        } else {
+          showAlert(`존재하지 않는 모임입니다.\nMeeting ID: ${targetMeetingId}`, "데이터 오류");
+        }
+      } catch (diagErr) {
+        console.error("[FriendsContext] Diagnostic fetch failed:", diagErr);
+        showAlert(`메시지 전송 실패: ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}`, "전송 오류 발생");
+      }
+      
       // Update the optimistic message to reflect failure
       setMessages(prev => prev.map(m => m.id === tempId ? { ...m, status: 'error' } : m));
     }
