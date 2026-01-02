@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useFriends } from '../context/FriendsContext';
 import { useTranslation } from '../context/LanguageContext';
 
-const GroupChat = ({ onBack, meetingTitle }) => {
+const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
   const { messages, sendMessage, friends, lastSeenId, setLastSeenId } = useFriends();
   const { t } = useTranslation();
   const [inputText, setInputText] = useState('');
@@ -44,7 +44,7 @@ const GroupChat = ({ onBack, meetingTitle }) => {
           </button>
         )}
         <div className="flex-1">
-          <h2 className="text-lg font-extrabold text-white font-display truncate leading-tight">{meetingTitle || t('nav_meetings')}</h2>
+          <h2 className="text-lg font-extrabold text-white font-display truncate leading-tight">{meetingLocation || meetingTitle || t('nav_meetings')}</h2>
           <div className="flex items-center gap-1.5 opacity-60">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
             <span className="text-[10px] font-bold text-white uppercase tracking-widest">{friends.length + 1} {t('meeting_active_members')}</span>
