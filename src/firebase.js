@@ -21,7 +21,7 @@ try {
     auth = getAuth(app);
     db = getFirestore(app);
 } catch (error) {
-    console.warn("Firebase initialization failed, using mocks:", error);
+    console.warn("Firebase initialization failed. Please check your .env file (see .env.example). Using mocks:", error);
     auth = {
         onAuthStateChanged: (callback) => {
             callback(null); // Simulate not logged in
