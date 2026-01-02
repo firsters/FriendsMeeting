@@ -1,9 +1,29 @@
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { auth } from '../firebase';
+import { subscribeToMeetings } from '../utils/meetingService';
 
 const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => {
   const { t } = useTranslation();
+  const [meetings, setMeetings] = useState([]);
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user) {
+      const unsubscribe = subscribeToMeetings(user.uid, (data) => {
+        setMeetings(data);
+      });
+      return () => unsubscribe();
+    }
+  }, []);
+
+  const handleCopyCode = (code) => {
+    navigator.clipboard.writeText(code).then(() => {
+        // Simple visual feedback could be added here
+        alert(t('settings_code_copied') || "Group code copied!");
+    });
+  };
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -73,6 +93,24 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           <h2 className="mt-5 text-2xl font-extrabold text-white font-display">Alex Doe</h2>
           <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1 opacity-60">@alexdoe</p>
         </div>
+
+        {meetings.length > 0 && (
+          <>
+            {renderSectionHeader(t('settings_my_groups') || '참여 중인 그룹')}
+            <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
+              {meetings.map((meeting, index) => (
+                renderSettingItem({
+                  icon: "group",
+                  label: meeting.groupCode,
+                  color: "bg-pink-600",
+                  value: t('settings_copy_code') || "복사",
+                  onClick: () => handleCopyCode(meeting.groupCode),
+                  isLast: index === meetings.length - 1
+                })
+              ))}
+            </div>
+          </>
+        )}
 
         {renderSectionHeader(t('settings_general'))}
         <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
