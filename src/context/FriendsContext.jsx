@@ -20,8 +20,6 @@ export const FriendsProvider = ({ children }) => {
     const unsubscribeAuth = onAuthStateChanged(auth, user => {
       if (user) {
         const unsubMeetings = subscribeToMeetings(user.uid, (meetings) => {
-          // Extract unique participants from all meetings excluding current user
-          const allParticipants = [];
           const participantMap = new Map();
 
           meetings.forEach(meeting => {
@@ -52,19 +50,19 @@ export const FriendsProvider = ({ children }) => {
       }
     });
 
+    return () => unsubscribeAuth();
+  }, []);
+
   // Message Subscription for the first/active meeting
   useEffect(() => {
     if (guestMeetings.length > 0) {
-      const activeMeeting = guestMeetings[0]; // For now, assume first meeting is active
+      const activeMeeting = guestMeetings[0];
       const unsubMessages = subscribeToMessages(activeMeeting.id, (msgs) => {
         setMessages(msgs);
       });
       return () => unsubMessages();
     }
   }, [guestMeetings]);
-
-  return () => unsubscribeAuth();
-  }, []);
 
   // Function to update a friend's address (local-only demo)
   const updateFriendAddress = (id, address) => {
