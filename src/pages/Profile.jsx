@@ -1,11 +1,13 @@
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
+import { useModal } from '../context/ModalContext';
 import { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { subscribeToMeetings } from '../utils/meetingService';
 
 const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => {
   const { t } = useTranslation();
+  const { showAlert } = useModal();
   const [meetings, setMeetings] = useState([]);
 
   useEffect(() => {
@@ -21,7 +23,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
   const handleCopyCode = (code) => {
     navigator.clipboard.writeText(code).then(() => {
         // Simple visual feedback could be added here
-        alert(t('settings_code_copied') || "Group code copied!");
+        showAlert(t('settings_code_copied') || "Group code copied!");
     });
   };
 
