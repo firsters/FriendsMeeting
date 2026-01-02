@@ -85,9 +85,7 @@ const CombinedView = ({ onNavigate }) => {
   }, [selectedFriendId, friends]);
 
   // ROW 1 Logic: Auth & Meeting ID sync is now handled by FriendsContext
-  useEffect(() => {
-     setIsHost(!!currentUserId);
-  }, [currentUserId]);
+  const isHost = !!currentUserId;
 
   // 2. Meeting Subscription for Location Sharing
   useEffect(() => {
