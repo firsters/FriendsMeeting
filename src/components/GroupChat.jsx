@@ -4,17 +4,29 @@ import { auth } from '../firebase';
 import { useTranslation } from '../context/LanguageContext';
 
 const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
-  const { messages, sendMessage, friends, lastSeenId, setLastSeenId } = useFriends();
+  const { 
+    messages, 
+    sendMessage, 
+    friends, 
+    lastSeenMap, 
+    setLastSeenId, 
+    activeMeetingId 
+  } = useFriends();
   const { t } = useTranslation();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef(null);
 
+  // Derive the last seen ID for THIS specific meeting
+  const lastSeenId = lastSeenMap[activeMeetingId] || null;
+
   useEffect(() => {
     // Mark the last message currently in the list as "seen" before this session
-    if (messages.length > 0 && lastSeenId === null) {
-      setLastSeenId(messages[messages.length - 1].id);
+    // Only if we haven't set a marker for this meeting yet
+    if (messages.length > 0 && lastSeenId === null && activeMeetingId) {
+      console.log(`[GroupChat] Setting initial lastSeenId for ${activeMeetingId}:`, messages[messages.length - 1].id);
+      setLastSeenId(activeMeetingId, messages[messages.length - 1].id);
     }
-  }, [messages, lastSeenId, setLastSeenId]);
+  }, [messages, lastSeenId, setLastSeenId, activeMeetingId]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -77,9 +89,10 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
           const info = getFriendInfo(msg.senderId);
           
           // Check if we should insert the "New Message" line
+          // We look for the message that WAS the last one when we entered
           const isFirstNewMessage = lastSeenId !== null && 
                                    index > 0 && 
-                                   messages[index-1].id === lastSeenId;
+                                   (messages[index-1].id === lastSeenId || messages[index-1].clientMsgId === lastSeenId);
 
           return (
             <React.Fragment key={msg.id}>

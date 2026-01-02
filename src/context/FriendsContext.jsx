@@ -15,6 +15,7 @@ export const FriendsProvider = ({ children }) => {
   const [guestMeetings, setGuestMeetings] = useState([]);
   const [messages, setMessages] = useState([]);
   const [activeMeetingId, setActiveMeetingId] = useState(null);
+  const [lastSeenMap, setLastSeenMap] = useState({}); // { meetingId: lastSeenId }
   const [currentUserId, setCurrentUserId] = useState(null);
 
   // 1. Auth Subscription
@@ -60,9 +61,10 @@ export const FriendsProvider = ({ children }) => {
       setFriends(Array.from(participantMap.values()));
       setGuestMeetings(meetings);
       
-      // Auto-set active meeting if none is selected
-      if (meetings.length > 0 && !activeMeetingId) {
-        console.log("[FriendsContext] Auto-selecting first meeting:", meetings[0].id);
+      // Auto-set active meeting if none is selected OR if currently on a guest placeholder
+      const isPlaceholder = !activeMeetingId || activeMeetingId.toString().startsWith('guest-');
+      if (meetings.length > 0 && isPlaceholder) {
+        console.log("[FriendsContext] Auto-selecting real meeting over placeholder:", meetings[0].id);
         setActiveMeetingId(meetings[0].id);
       }
     });
@@ -86,13 +88,13 @@ export const FriendsProvider = ({ children }) => {
       console.log(`[FriendsContext] Remote messages received for ${activeMeetingId}:`, remoteMsgs.length);
       
       setMessages(prev => {
-        // Keep local messages that are still "sending" and not yet in the remote list
-        const localPending = prev.filter(m => m.status === 'sending');
+        // Keep local messages that are still "sending" or "error" and not yet in the remote list
+        const localPending = prev.filter(m => m.status === 'sending' || m.status === 'error');
         
-        // Match remote messages with local pending ones to avoid duplicates if we had a match key
-        // For simplicity now, we just prepend/append. ideally use a client-side generated ID.
-        const remoteIds = new Set(remoteMsgs.map(m => m.id));
-        const filteredPending = localPending.filter(m => !remoteIds.has(m.id));
+        const remoteClientIds = new Set(remoteMsgs.map(m => m.clientMsgId).filter(Boolean));
+        
+        // A pending message is removed if its clientMsgId is now present in the remote (persisted) list
+        const filteredPending = localPending.filter(m => !remoteClientIds.has(m.id));
         
         const finalMessages = [...remoteMsgs, ...filteredPending].sort((a, b) => 
           (a.timestamp?.getTime?.() || 0) - (b.timestamp?.getTime?.() || 0)
@@ -128,6 +130,11 @@ export const FriendsProvider = ({ children }) => {
       ]
     };
     setGuestMeetings(prev => [newMeeting, ...prev]);
+    setActiveMeetingId(newMeeting.id); // Switch to the new guest meeting immediately
+  };
+
+  const setLastSeenId = (meetingId, messageId) => {
+    setLastSeenMap(prev => ({ ...prev, [meetingId]: messageId }));
   };
 
   const sendMessage = async (content, senderId = auth.currentUser?.uid || 'me', senderName = auth.currentUser?.displayName || '나') => {
@@ -146,6 +153,7 @@ export const FriendsProvider = ({ children }) => {
     
     // Add to local state immediately
     setMessages(prev => [...prev, optimisticMsg]);
+    console.log(`[FriendsContext] Optimistic message added (tempId: ${tempId}) to meeting: ${activeMeetingId}`);
 
     if (!activeMeetingId) {
       console.warn("[FriendsContext] Cannot persist: No activeMeetingId");
@@ -157,6 +165,7 @@ export const FriendsProvider = ({ children }) => {
         senderId,
         senderName,
         content,
+        clientMsgId: tempId,
         avatar: auth.currentUser?.photoURL || (auth.currentUser?.displayName || '?').charAt(0)
       });
       console.log("[FriendsContext] Message successfully sent to Firebase");
@@ -176,13 +185,13 @@ export const FriendsProvider = ({ children }) => {
       joinGuestMeeting, 
       messages, 
       sendMessage,
-      lastSeenId,
-      setLastSeenId,
       updateFriendAddress,
       selectedFriendId,
       setSelectedFriendId,
       activeMeetingId,
       setActiveMeetingId,
+      lastSeenMap,
+      setLastSeenId,
       currentUserId
     }}>
       {children}

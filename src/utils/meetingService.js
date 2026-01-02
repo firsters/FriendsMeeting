@@ -143,11 +143,18 @@ export const subscribeToMeetingDetails = (meetingId, callback) => {
 };
 
 export const sendMessage = async (meetingId, messageData) => {
+  console.log(`[meetingService] Sending message to meetings/${meetingId}/messages:`, messageData.clientMsgId || 'no-client-id');
   const messagesRef = collection(db, 'meetings', meetingId, 'messages');
-  await addDoc(messagesRef, {
-    ...messageData,
-    timestamp: serverTimestamp()
-  });
+  try {
+    await addDoc(messagesRef, {
+      ...messageData,
+      timestamp: serverTimestamp()
+    });
+    console.log("[meetingService] Message successfully added to Firestore");
+  } catch (err) {
+    console.error("[meetingService] Failed to add message to Firestore:", err);
+    throw err;
+  }
 };
 
 export const subscribeToMessages = (meetingId, callback) => {
