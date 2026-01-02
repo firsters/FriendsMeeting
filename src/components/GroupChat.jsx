@@ -46,7 +46,10 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
           </button>
         )}
         <div className="flex-1">
-          <h2 className="text-lg font-extrabold text-white font-display truncate leading-tight">{meetingLocation || meetingTitle || t('nav_meetings')}</h2>
+          <h2 className="text-lg font-extrabold text-white font-display truncate leading-tight">
+            {meetingLocation || meetingTitle || t('nav_meetings')}
+            <span className="text-[10px] ml-2 font-normal text-primary">({messages.length})</span>
+          </h2>
           <div className="flex items-center gap-1.5 opacity-60">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
             <span className="text-[10px] font-bold text-white uppercase tracking-widest">{friends.length + 1} {t('meeting_active_members')}</span>

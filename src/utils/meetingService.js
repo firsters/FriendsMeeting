@@ -151,21 +151,39 @@ export const sendMessage = async (meetingId, messageData) => {
 };
 
 export const subscribeToMessages = (meetingId, callback) => {
+  if (!meetingId) {
+    console.warn("[meetingService] subscribeToMessages called without meetingId");
+    return () => {};
+  }
+  
+  console.log(`[meetingService] Establishing subscription to: meetings/${meetingId}/messages`);
   const messagesRef = collection(db, 'meetings', meetingId, 'messages');
   const q = query(messagesRef, orderBy('timestamp', 'asc'));
   
   return onSnapshot(q, (snapshot) => {
-    console.log(`[Firebase] New messages received for ${meetingId}: ${snapshot.docs.length}`);
+    console.log(`[Firebase] New messages received for ${meetingId}: count=${snapshot.docs.length}, fromCache=${snapshot.metadata.fromCache}`);
     const messages = snapshot.docs.map(doc => {
       const data = doc.data();
+      let timestamp = new Date();
+      if (data.timestamp) {
+        if (typeof data.timestamp.toDate === 'function') {
+          timestamp = data.timestamp.toDate();
+        } else if (data.timestamp instanceof Date) {
+          timestamp = data.timestamp;
+        } else if (typeof data.timestamp === 'number') {
+          timestamp = new Date(data.timestamp);
+        } else if (data.timestamp.seconds) { // Handle partial timestamp objects
+          timestamp = new Date(data.timestamp.seconds * 1000);
+        }
+      }
       return {
         id: doc.id,
         ...data,
-        timestamp: data.timestamp?.toDate() || new Date()
+        timestamp
       };
     });
     callback(messages);
   }, (err) => {
-    console.error("Chat subscription error:", err);
+    console.error(`[Firebase] Chat subscription error for ${meetingId}:`, err);
   });
 };

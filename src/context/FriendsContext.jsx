@@ -60,9 +60,13 @@ export const FriendsProvider = ({ children }) => {
       setFriends(Array.from(participantMap.values()));
       setGuestMeetings(meetings);
       
-      // Update active meeting ID if changed
-      if (meetings.length > 0 && meetings[0].id !== activeMeetingId) {
-        setActiveMeetingId(meetings[0].id);
+      // Update active meeting ID if changed, prioritizing the first meeting
+      if (meetings.length > 0) {
+        const foundId = meetings[0].id;
+        if (foundId !== activeMeetingId) {
+          console.log("[FriendsContext] Setting activeMeetingId to:", foundId);
+          setActiveMeetingId(foundId);
+        }
       }
     });
 
@@ -74,11 +78,16 @@ export const FriendsProvider = ({ children }) => {
 
   // 3. Message Subscription
   useEffect(() => {
-    if (!activeMeetingId) return;
+    if (!activeMeetingId) {
+      console.log("[FriendsContext] Skipping message subscription: No activeMeetingId");
+      return;
+    }
 
     console.log("[FriendsContext] Subscribing to messages for meeting:", activeMeetingId);
     const unsubMessages = subscribeToMessages(activeMeetingId, (msgs) => {
       console.log(`[FriendsContext] Messages updated for ${activeMeetingId}:`, msgs.length);
+      // We overwrite but we should ideally merge if we have local pending messages.
+      // For this demo, we'll rely on Firestore's speed and onSnapshot metadata if we had it.
       setMessages(msgs);
     });
 
@@ -110,18 +119,24 @@ export const FriendsProvider = ({ children }) => {
   };
 
   const sendMessage = async (content, senderId = auth.currentUser?.uid || 'me', senderName = auth.currentUser?.displayName || '나') => {
-    console.log("[FriendsContext] Sending message:", content);
+    console.log("[FriendsContext] Attempting to send message:", content);
     
+    // Optimistic update for immediate feedback
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg = {
+      id: tempId,
+      senderId,
+      senderName,
+      content,
+      timestamp: new Date(),
+      status: 'sending'
+    };
+    
+    // Only add to local state if we don't have an active meeting yet
+    // because if we do, the Firestore listener will pick it up eventually
     if (!activeMeetingId) {
-      console.warn("[FriendsContext] No active meeting ID, using local fallback");
-      const newMessage = {
-        id: `m-${Date.now()}`,
-        senderId,
-        senderName,
-        content,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, newMessage]);
+      console.warn("[FriendsContext] No active meeting, using local state only");
+      setMessages(prev => [...prev, optimisticMsg]);
       return;
     }
 
@@ -132,9 +147,10 @@ export const FriendsProvider = ({ children }) => {
         content,
         avatar: auth.currentUser?.photoURL || (auth.currentUser?.displayName || '?').charAt(0)
       });
-      console.log("[FriendsContext] Message sent successfully to Firebase");
+      console.log("[FriendsContext] Message sent to Firebase");
     } catch (err) {
       console.error("[FriendsContext] Failed to send message:", err);
+      // Mark optimistic message as failed if possible (future enhancement)
     }
   };
 
