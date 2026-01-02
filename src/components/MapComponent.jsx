@@ -38,11 +38,13 @@ const MapUpdater = ({
             setLastInternalTrigger(internalPanTrigger);
         } 
         
-        // 4. Auto-tracking (Passive)
+        // 4. Auto-tracking (Removed to prevent unwanted snapping)
+        /*
         else if (shouldPan && center) {
             map.panTo(center);
         }
-    }, [map, center, userLocation, shouldPan, centerTrigger, lastTrigger, internalPanTrigger, lastInternalTrigger, centerOnMeTrigger, lastCenterOnMeTrigger]);
+        */
+    }, [map, center, userLocation, centerTrigger, lastTrigger, internalPanTrigger, lastInternalTrigger, centerOnMeTrigger, lastCenterOnMeTrigger]);
     
     return null;
 };

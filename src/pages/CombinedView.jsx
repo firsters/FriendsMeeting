@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
@@ -58,6 +58,10 @@ const CombinedView = ({ onNavigate }) => {
     location: "Starbucks Gangnam",
     participants: 4
   };
+
+  const mapCenter = useMemo(() => {
+    return selectedFriend ? { lat: selectedFriend.lat, lng: selectedFriend.lng } : null;
+  }, [selectedFriend]);
 
   // Sync selection from context (e.g. from FriendScreens)
   useEffect(() => {
@@ -334,7 +338,7 @@ const CombinedView = ({ onNavigate }) => {
             selectedFriend={selectedFriend}
             onFriendClick={setSelectedFriend} 
             userLocation={userLocation}
-            center={selectedFriend ? { lat: selectedFriend.lat, lng: selectedFriend.lng } : null}
+            center={mapCenter}
 
             // Primary Search (Host)
             searchQuery={searchQuery}
