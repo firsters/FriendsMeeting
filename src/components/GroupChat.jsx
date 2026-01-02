@@ -47,11 +47,15 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
     }
   };
 
-  const getFriendInfo = (senderId) => {
+  const getFriendInfo = (senderId, senderName) => {
     const currentUserId = auth.currentUser?.uid;
     if (senderId === currentUserId || senderId === 'me') return { color: 'bg-primary', avatar: 'ME' };
     const friend = friends.find(f => f.id === senderId);
-    return friend ? { color: 'bg-gray-600', avatar: friend.avatar || friend.name.charAt(0) } : { color: 'bg-gray-500', avatar: '?' };
+    if (friend) return { color: 'bg-gray-600', avatar: friend.avatar || friend.name.charAt(0) };
+    
+    // Fallback for non-friend participants using their senderName
+    const initials = (senderName || '?').charAt(0).toUpperCase();
+    return { color: 'bg-gray-500', avatar: initials };
   };
 
   return (
@@ -94,7 +98,7 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
           return messages.map((msg, index) => {
             const currentUserId = auth.currentUser?.uid;
             const isMe = msg.senderId === currentUserId || msg.senderId === 'me';
-            const info = getFriendInfo(msg.senderId);
+            const info = getFriendInfo(msg.senderId, msg.senderName);
             
             // Check if this message is after the last seen point
             const isPostSeen = lastSeenId !== null && (
@@ -124,7 +128,11 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
                     </div>
                   )}
                   <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                    {!isMe && <span className="text-[10px] font-bold text-gray-500 mb-1 ml-1">{msg.senderName}</span>}
+                    {!isMe && (
+                      <span className="text-xs font-bold text-gray-400 mb-1 ml-1 tracking-tight">
+                        {msg.senderName}
+                      </span>
+                    )}
                     <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed relative
                       ${isMe ? 'bg-primary text-white rounded-tr-none shadow-lg shadow-primary/20' : 'bg-card-dark text-gray-200 rounded-tl-none border border-white/5'}
                       ${msg.status === 'sending' ? 'opacity-70 animate-pulse' : ''}
@@ -139,7 +147,7 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
                     </div>
                   </div>
                   <span className="text-[8px] font-bold text-gray-600 uppercase mb-1">
-                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                    {msg.timestamp?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) || ''}
                   </span>
                 </div>
               </React.Fragment>

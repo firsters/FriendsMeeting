@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDocs, query, where, updateDoc, serverTimestamp, collection } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
@@ -192,79 +192,8 @@ export const FriendsProvider = ({ children }) => {
     } catch (err) {
       console.error(`[FriendsContext] Message FAILURE for ${targetMeetingId}:`, err.message || err);
       
-      // Diagnostic Sanity Check using Query (since getDoc fails)
-      try {
-        const q = query(collection(db, 'meetings'), where('__name__', '==', targetMeetingId));
-        const snapshot = await getDocs(q);
-        
-        if (!snapshot.empty) {
-          const mDoc = snapshot.docs[0];
-          const mData = mDoc.data();
-          const pIds = mData.participantIds || [];
-          const hostId = mData.hostId || 'unknown';
-          const isRegistered = pIds.includes(effectiveSenderId);
-          
-          console.log(`[FriendsContext] Participation Check (via Query): Registered? ${isRegistered}. HostID: ${hostId}. List:`, pIds);
-          
-          if (!isRegistered) {
-            console.log("[FriendsContext] Self-Join Rescue initiated...");
-            try {
-              const groupCode = mData.groupCode;
-              if (groupCode) {
-                await joinMeetingByCode(groupCode, effectiveSenderId, { nickname: effectiveSenderName });
-                showAlert(`참여 정보 복구 완료! 다시 한번 메시지를 전송해 주세요.`, "권한 자동 복구");
-              } else {
-                showAlert(`권한 오류: 참가자 명단 미등록 및 복구 코드 부재.\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}`, "전송 권한 없음");
-              }
-            } catch (joinErr) {
-              showAlert(`권한 오류: 복구 시도 중 에러: ${joinErr.message}`, "복구 실패");
-            }
-          } else {
-            // THE PROBE: Can we write to the meeting document itself?
-            let probeResult = "Checking...";
-            let elevationResult = "Not attempted";
-            try {
-              // 1. Basic write check
-              await updateDoc(doc(db, 'meetings', targetMeetingId), { 
-                lastDiagnosticAt: serverTimestamp(),
-                diagnosticUser: effectiveSenderId 
-              });
-              probeResult = "SUCCESS (Meeting doc is writable)";
-
-              // 2. Role Elevation Attempt: Try to set self as 'host' in the participants list
-              // This tests if 'role' field in participants array governs access
-              const updatedParticipants = (mData.participants || []).map(p => 
-                p.id === effectiveSenderId ? { ...p, role: 'host' } : p
-              );
-              
-              await updateDoc(doc(db, 'meetings', targetMeetingId), {
-                participants: updatedParticipants
-              });
-              elevationResult = "SUCCESS (You are now 'host' in participants list)";
-            } catch (probeErr) {
-              probeResult = `FAILED (${probeErr.message})`;
-              elevationResult = "FAILED (Insufficient permissions to update participants)";
-            }
-
-            showAlert(
-              `보안 정책 오류 정밀 진단 결과:\n\n` +
-              `1. 하위 컬렉션(Chat) 쓰기: 실패\n` +
-              `2. 상위 문서(Meeting) 쓰기: ${probeResult}\n` +
-              `3. 역할 승격(Host Elevation): ${elevationResult}\n\n` +
-              `*참가자 명단 포함 여부: YES\n` +
-              `*방장(Host) ID: ${hostId}\n` +
-              `*내 UID: ${effectiveSenderId}\n\n` +
-              `준비가 끝났습니다. 역할을 승격했다면 다시 한번 채팅을 시도해 보세요. 성공한다면 '역할 기반 차단'이 원인입니다.`, 
-              "보안 및 역할 정밀 진단"
-            );
-          }
-        } else {
-          showAlert(`존재하지 않는 모임입니다 (ID: ${targetMeetingId}).`, "데이터 오류");
-        }
-      } catch (diagErr) {
-        console.error("[FriendsContext] Diagnostic query failed:", diagErr);
-        showAlert(`메시지 전송 실패: ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}`, "전송 오류 발생");
-      }
+      // Basic diagnostic alert for the user
+      showAlert(`메시지 전송 실패: ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}`, "전송 오류 발생");
       
       // Update the optimistic message to reflect failure
       setMessages(prev => prev.map(m => m.id === tempId ? { ...m, status: 'error' } : m));
