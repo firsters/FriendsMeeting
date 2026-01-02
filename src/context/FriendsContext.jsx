@@ -2,12 +2,14 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages } from '../utils/meetingService';
+import { useModal } from './ModalContext';
 
 const FriendsContext = createContext();
 
 export const useFriends = () => useContext(FriendsContext);
 
 export const FriendsProvider = ({ children }) => {
+  const { showAlert } = useModal();
   const [userLocation, setUserLocation] = useState({ x: 50, y: 50 });
   const [selectedFriendId, setSelectedFriendId] = useState(null);
   const [friends, setFriends] = useState([]);
@@ -161,24 +163,32 @@ export const FriendsProvider = ({ children }) => {
     setMessages(prev => [...prev, optimisticMsg]);
     console.log(`[FriendsContext] Optimistic message added (tempId: ${tempId}) to meeting: ${activeMeetingId}`);
 
-    if (!activeMeetingId) {
-      console.warn("[FriendsContext] Cannot persist: No activeMeetingId");
-      return;
+    let targetMeetingId = activeMeetingId;
+    
+    // Rescue: If we are on a guest ID but have real meetings, try to find a match or use a real one
+    if (targetMeetingId.toString().startsWith('guest-')) {
+      const realMeeting = guestMeetings.find(m => !m.id.startsWith('guest-'));
+      if (realMeeting) {
+        console.log(`[FriendsContext] Rescue: Redirecting message from ${targetMeetingId} to real meeting ${realMeeting.id}`);
+        targetMeetingId = realMeeting.id;
+      }
     }
 
-    console.log(`[FriendsContext] Finalizing send to meeting ID: ${activeMeetingId} (Type: ${activeMeetingId.toString().startsWith('guest-') ? 'GUEST/MOCK' : 'REAL/FIRESTORE'})`);
+    console.log(`[FriendsContext] Finalizing send to meeting ID: ${targetMeetingId} (Type: ${targetMeetingId.toString().startsWith('guest-') ? 'GUEST/MOCK' : 'REAL/FIRESTORE'})`);
 
     try {
-      await sendFirebaseMessage(activeMeetingId, {
+      await sendFirebaseMessage(targetMeetingId, {
         senderId,
         senderName,
         content,
         clientMsgId: tempId,
         avatar: auth.currentUser?.photoURL || (auth.currentUser?.displayName || '?').charAt(0)
       });
-      console.log(`[FriendsContext] Message SUCCESS for ${activeMeetingId} (tempId: ${tempId})`);
+      console.log(`[FriendsContext] Message SUCCESS for ${targetMeetingId} (tempId: ${tempId})`);
     } catch (err) {
-      console.error(`[FriendsContext] Message FAILURE for ${activeMeetingId} (tempId: ${tempId}):`, err.message || err);
+      console.error(`[FriendsContext] Message FAILURE for ${targetMeetingId} (tempId: ${tempId}):`, err.message || err);
+      // Show actual error to user for diagnostic purposes
+      showAlert(`메시지 전송 실패: ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}`, "전송 오류 발생");
       // Update the optimistic message to reflect failure
       setMessages(prev => prev.map(m => m.id === tempId ? { ...m, status: 'error' } : m));
     }
