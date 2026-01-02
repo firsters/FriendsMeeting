@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDocs, query, where, updateDoc, serverTimestamp, collection } from 'firebase/firestore';
 import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
@@ -192,14 +192,19 @@ export const FriendsProvider = ({ children }) => {
     } catch (err) {
       console.error(`[FriendsContext] Message FAILURE for ${targetMeetingId}:`, err.message || err);
       
-      // Diagnostic Sanity Check: Is the user actually on the participantIds list?
+      // Diagnostic Sanity Check using Query (since getDoc fails)
       try {
-        const mDoc = await getDoc(doc(db, 'meetings', targetMeetingId));
-        if (mDoc.exists()) {
+        const q = query(collection(db, 'meetings'), where('__name__', '==', targetMeetingId));
+        const snapshot = await getDocs(q);
+        
+        if (!snapshot.empty) {
+          const mDoc = snapshot.docs[0];
           const mData = mDoc.data();
           const pIds = mData.participantIds || [];
           const hostId = mData.hostId || 'unknown';
-          console.log(`[FriendsContext] Participation Check: Registered? ${isRegistered}. HostID: ${hostId}. List:`, pIds);
+          const isRegistered = pIds.includes(effectiveSenderId);
+          
+          console.log(`[FriendsContext] Participation Check (via Query): Registered? ${isRegistered}. HostID: ${hostId}. List:`, pIds);
           
           if (!isRegistered) {
             console.log("[FriendsContext] Self-Join Rescue initiated...");
@@ -228,7 +233,7 @@ export const FriendsProvider = ({ children }) => {
             }
 
             showAlert(
-              `보안 정책 오류 진단 결과:\n\n` +
+              `보안 정책 오류 정밀 진단 결과:\n\n` +
               `1. 하위 컬렉션(Chat) 쓰기: 실패\n` +
               `2. 상위 문서(Meeting) 쓰기: ${probeResult}\n` +
               `3. 참가자 명단 포함 여부: YES\n` +
@@ -239,10 +244,10 @@ export const FriendsProvider = ({ children }) => {
             );
           }
         } else {
-          showAlert(`존재하지 않는 모임입니다.\nMeeting ID: ${targetMeetingId}`, "데이터 오류");
+          showAlert(`존재하지 않는 모임입니다 (ID: ${targetMeetingId}).`, "데이터 오류");
         }
       } catch (diagErr) {
-        console.error("[FriendsContext] Diagnostic fetch failed:", diagErr);
+        console.error("[FriendsContext] Diagnostic query failed:", diagErr);
         showAlert(`메시지 전송 실패: ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}`, "전송 오류 발생");
       }
       
