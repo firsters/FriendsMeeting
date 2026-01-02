@@ -222,25 +222,40 @@ export const FriendsProvider = ({ children }) => {
           } else {
             // THE PROBE: Can we write to the meeting document itself?
             let probeResult = "Checking...";
+            let elevationResult = "Not attempted";
             try {
+              // 1. Basic write check
               await updateDoc(doc(db, 'meetings', targetMeetingId), { 
                 lastDiagnosticAt: serverTimestamp(),
                 diagnosticUser: effectiveSenderId 
               });
               probeResult = "SUCCESS (Meeting doc is writable)";
+
+              // 2. Role Elevation Attempt: Try to set self as 'host' in the participants list
+              // This tests if 'role' field in participants array governs access
+              const updatedParticipants = (mData.participants || []).map(p => 
+                p.id === effectiveSenderId ? { ...p, role: 'host' } : p
+              );
+              
+              await updateDoc(doc(db, 'meetings', targetMeetingId), {
+                participants: updatedParticipants
+              });
+              elevationResult = "SUCCESS (You are now 'host' in participants list)";
             } catch (probeErr) {
               probeResult = `FAILED (${probeErr.message})`;
+              elevationResult = "FAILED (Insufficient permissions to update participants)";
             }
 
             showAlert(
               `보안 정책 오류 정밀 진단 결과:\n\n` +
               `1. 하위 컬렉션(Chat) 쓰기: 실패\n` +
               `2. 상위 문서(Meeting) 쓰기: ${probeResult}\n` +
-              `3. 참가자 명단 포함 여부: YES\n` +
-              `4. 방장(Host) ID: ${hostId}\n` +
-              `5. 내 UID: ${effectiveSenderId}\n\n` +
-              `*위 내용을 저에게 알려주시면 오류를 즉시 해결하겠습니다.*`, 
-              "보안 규칙 상세 분석"
+              `3. 역할 승격(Host Elevation): ${elevationResult}\n\n` +
+              `*참가자 명단 포함 여부: YES\n` +
+              `*방장(Host) ID: ${hostId}\n` +
+              `*내 UID: ${effectiveSenderId}\n\n` +
+              `준비가 끝났습니다. 역할을 승격했다면 다시 한번 채팅을 시도해 보세요. 성공한다면 '역할 기반 차단'이 원인입니다.`, 
+              "보안 및 역할 정밀 진단"
             );
           }
         } else {
