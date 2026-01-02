@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
@@ -198,25 +198,45 @@ export const FriendsProvider = ({ children }) => {
         if (mDoc.exists()) {
           const mData = mDoc.data();
           const pIds = mData.participantIds || [];
-          const isRegistered = pIds.includes(effectiveSenderId);
-          console.log(`[FriendsContext] Participation Check: Registered? ${isRegistered}. List:`, pIds);
+          const hostId = mData.hostId || 'unknown';
+          console.log(`[FriendsContext] Participation Check: Registered? ${isRegistered}. HostID: ${hostId}. List:`, pIds);
           
           if (!isRegistered) {
             console.log("[FriendsContext] Self-Join Rescue initiated...");
             try {
-              // Try to find the group code for this meeting to re-join
               const groupCode = mData.groupCode;
               if (groupCode) {
                 await joinMeetingByCode(groupCode, effectiveSenderId, { nickname: effectiveSenderName });
-                showAlert(`참여 정보 복구 완료! 다시 한번 메시지를 전송해 주세요.\n(기록 누락으로 인한 권한 오류를 자동 수정했습니다)`, "권한 자동 복구");
+                showAlert(`참여 정보 복구 완료! 다시 한번 메시지를 전송해 주세요.`, "권한 자동 복구");
               } else {
-                showAlert(`권한 오류: 당신은 이 모임의 참가자 명단에 등록되어 있지 않으며, 자동 복구에 필요한 코드를 찾을 수 없습니다.`, "전송 권한 없음");
+                showAlert(`권한 오류: 참가자 명단 미등록 및 복구 코드 부재.\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}`, "전송 권한 없음");
               }
             } catch (joinErr) {
-              showAlert(`권한 오류: 명단 등록 시도 중 오류가 발생했습니다: ${joinErr.message}`, "복구 실패");
+              showAlert(`권한 오류: 복구 시도 중 에러: ${joinErr.message}`, "복구 실패");
             }
           } else {
-            showAlert(`메시지 전송 실패 (보안 정책): ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}\n*참가자 명단에는 포함되어 있으나 서버의 보안 규칙에 의해 쓰기가 거부되었습니다.*`, "보안 규칙 오류");
+            // THE PROBE: Can we write to the meeting document itself?
+            let probeResult = "Checking...";
+            try {
+              await updateDoc(doc(db, 'meetings', targetMeetingId), { 
+                lastDiagnosticAt: serverTimestamp(),
+                diagnosticUser: effectiveSenderId 
+              });
+              probeResult = "SUCCESS (Meeting doc is writable)";
+            } catch (probeErr) {
+              probeResult = `FAILED (${probeErr.message})`;
+            }
+
+            showAlert(
+              `보안 정책 오류 진단 결과:\n\n` +
+              `1. 하위 컬렉션(Chat) 쓰기: 실패\n` +
+              `2. 상위 문서(Meeting) 쓰기: ${probeResult}\n` +
+              `3. 참가자 명단 포함 여부: YES\n` +
+              `4. 방장(Host) ID: ${hostId}\n` +
+              `5. 내 UID: ${effectiveSenderId}\n\n` +
+              `*위 내용을 저에게 알려주시면 오류를 즉시 해결하겠습니다.*`, 
+              "보안 규칙 상세 분석"
+            );
           }
         } else {
           showAlert(`존재하지 않는 모임입니다.\nMeeting ID: ${targetMeetingId}`, "데이터 오류");
