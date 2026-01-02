@@ -14,55 +14,79 @@ export const FriendsProvider = ({ children }) => {
   const [friends, setFriends] = useState([]);
   const [guestMeetings, setGuestMeetings] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [activeMeetingId, setActiveMeetingId] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-  // Firebase Subscription for real friends (participants)
+  // 1. Auth Subscription
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, user => {
-      if (user) {
-        const unsubMeetings = subscribeToMeetings(user.uid, (meetings) => {
-          const participantMap = new Map();
-
-          meetings.forEach(meeting => {
-            if (meeting.participants) {
-              meeting.participants.forEach(p => {
-                if (p.id !== user.uid && !participantMap.has(p.id)) {
-                  participantMap.set(p.id, {
-                    id: p.id,
-                    name: p.nickname || p.name || 'Unknown',
-                    lat: p.lat,
-                    lng: p.lng,
-                    status: p.status || 'online',
-                    avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
-                    address: p.address || ''
-                  });
-                }
-              });
-            }
-          });
-
-          setFriends(Array.from(participantMap.values()));
-          setGuestMeetings(meetings);
-        });
-        return () => unsubMeetings();
-      } else {
+      setCurrentUserId(user?.uid || null);
+      if (!user) {
         setFriends([]);
         setGuestMeetings([]);
+        setActiveMeetingId(null);
       }
     });
-
     return () => unsubscribeAuth();
   }, []);
 
-  // Message Subscription for the first/active meeting
+  // 2. Meeting Subscription
   useEffect(() => {
-    if (guestMeetings.length > 0) {
-      const activeMeeting = guestMeetings[0];
-      const unsubMessages = subscribeToMessages(activeMeeting.id, (msgs) => {
-        setMessages(msgs);
+    if (!currentUserId) return;
+
+    console.log("[FriendsContext] Subscribing to meetings for:", currentUserId);
+    const unsubMeetings = subscribeToMeetings(currentUserId, (meetings) => {
+      console.log("[FriendsContext] Meetings updated:", meetings.length);
+      const participantMap = new Map();
+
+      meetings.forEach(meeting => {
+        if (meeting.participants) {
+          meeting.participants.forEach(p => {
+            if (p.id !== currentUserId && !participantMap.has(p.id)) {
+              participantMap.set(p.id, {
+                id: p.id,
+                name: p.nickname || p.name || 'Unknown',
+                lat: p.lat,
+                lng: p.lng,
+                status: p.status || 'online',
+                avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
+                address: p.address || ''
+              });
+            }
+          });
+        }
       });
-      return () => unsubMessages();
-    }
-  }, [guestMeetings]);
+
+      setFriends(Array.from(participantMap.values()));
+      setGuestMeetings(meetings);
+      
+      // Update active meeting ID if changed
+      if (meetings.length > 0 && meetings[0].id !== activeMeetingId) {
+        setActiveMeetingId(meetings[0].id);
+      }
+    });
+
+    return () => {
+      console.log("[FriendsContext] Cleaning up meeting subscription");
+      unsubMeetings();
+    };
+  }, [currentUserId, activeMeetingId]);
+
+  // 3. Message Subscription
+  useEffect(() => {
+    if (!activeMeetingId) return;
+
+    console.log("[FriendsContext] Subscribing to messages for meeting:", activeMeetingId);
+    const unsubMessages = subscribeToMessages(activeMeetingId, (msgs) => {
+      console.log(`[FriendsContext] Messages updated for ${activeMeetingId}:`, msgs.length);
+      setMessages(msgs);
+    });
+
+    return () => {
+      console.log("[FriendsContext] Cleaning up message subscription for:", activeMeetingId);
+      unsubMessages();
+    };
+  }, [activeMeetingId]);
 
   // Function to update a friend's address (local-only demo)
   const updateFriendAddress = (id, address) => {
@@ -86,8 +110,10 @@ export const FriendsProvider = ({ children }) => {
   };
 
   const sendMessage = async (content, senderId = auth.currentUser?.uid || 'me', senderName = auth.currentUser?.displayName || '나') => {
-    if (guestMeetings.length === 0) {
-      // Fallback for local-only/unauthenticated state
+    console.log("[FriendsContext] Sending message:", content);
+    
+    if (!activeMeetingId) {
+      console.warn("[FriendsContext] No active meeting ID, using local fallback");
       const newMessage = {
         id: `m-${Date.now()}`,
         senderId,
@@ -99,16 +125,16 @@ export const FriendsProvider = ({ children }) => {
       return;
     }
 
-    const activeMeeting = guestMeetings[0];
     try {
-      await sendFirebaseMessage(activeMeeting.id, {
+      await sendFirebaseMessage(activeMeetingId, {
         senderId,
         senderName,
         content,
         avatar: auth.currentUser?.photoURL || (auth.currentUser?.displayName || '?').charAt(0)
       });
+      console.log("[FriendsContext] Message sent successfully to Firebase");
     } catch (err) {
-      console.error("Failed to send message:", err);
+      console.error("[FriendsContext] Failed to send message:", err);
     }
   };
 

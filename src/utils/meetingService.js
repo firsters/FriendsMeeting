@@ -101,6 +101,8 @@ export const subscribeToMeetings = (userId, callback) => {
   return onSnapshot(q, (snapshot) => {
     const meetings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     callback(meetings);
+  }, (err) => {
+    console.error("Meeting subscription error:", err);
   });
 };
 
@@ -135,6 +137,8 @@ export const subscribeToMeetingDetails = (meetingId, callback) => {
     if (doc.exists()) {
       callback({ id: doc.id, ...doc.data() });
     }
+  }, (err) => {
+    console.error("Meeting details subscription error:", err);
   });
 };
 
@@ -151,15 +155,17 @@ export const subscribeToMessages = (meetingId, callback) => {
   const q = query(messagesRef, orderBy('timestamp', 'asc'));
   
   return onSnapshot(q, (snapshot) => {
+    console.log(`[Firebase] New messages received for ${meetingId}: ${snapshot.docs.length}`);
     const messages = snapshot.docs.map(doc => {
       const data = doc.data();
       return {
         id: doc.id,
         ...data,
-        // Fallback for timestamp if it's still being written (locally)
         timestamp: data.timestamp?.toDate() || new Date()
       };
     });
     callback(messages);
+  }, (err) => {
+    console.error("Chat subscription error:", err);
   });
 };

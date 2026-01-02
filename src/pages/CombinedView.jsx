@@ -79,28 +79,36 @@ const CombinedView = ({ onNavigate }) => {
     }
   }, [selectedFriendId, friends]);
 
-  // Auth Check and Meeting Subscription
+  // 1. Auth Subscription
   useEffect(() => {
      const unsubscribe = onAuthStateChanged(auth, user => {
          setIsHost(!!user);
-         setCurrentUserId(user?.uid);
-         if (user) {
-             // For demo purposes, we'll just subscribe to any meetings the user is in
-             const unsubMeetings = subscribeToMeetings(user.uid, (meetings) => {
-                 if (meetings.length > 0) {
-                     const meeting = meetings[0]; // Take the first one for current view
-                     setActiveMeetingId(meeting.id);
-                     if (meeting.meetingLocation) {
-                         setMeetingLocation(meeting.meetingLocation);
-                         setMeetingStatus('confirmed');
-                     }
-                 }
-             });
-             return () => unsubMeetings();
-         }
+         setCurrentUserId(user?.uid || null);
      });
      return () => unsubscribe();
   }, []);
+
+  // 2. Meeting Subscription for Location Sharing
+  useEffect(() => {
+    if (!currentUserId) {
+        setActiveMeetingId(null);
+        setMeetingLocation(null);
+        setMeetingStatus('unconfirmed');
+        return;
+    }
+
+    const unsubMeetings = subscribeToMeetings(currentUserId, (meetings) => {
+        if (meetings.length > 0) {
+            const meeting = meetings[0];
+            setActiveMeetingId(meeting.id);
+            if (meeting.meetingLocation) {
+                setMeetingLocation(meeting.meetingLocation);
+                setMeetingStatus('confirmed');
+            }
+        }
+    });
+    return () => unsubMeetings();
+  }, [currentUserId]);
 
   // Geolocation & Live Status
   useEffect(() => {
