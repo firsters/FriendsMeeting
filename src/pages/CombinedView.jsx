@@ -10,7 +10,15 @@ import { useFriends } from '../context/FriendsContext';
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
-  const { friends, updateFriendAddress, selectedFriendId, setSelectedFriendId } = useFriends();
+  const { 
+    friends, 
+    updateFriendAddress, 
+    selectedFriendId, 
+    setSelectedFriendId,
+    activeMeetingId,
+    setActiveMeetingId,
+    currentUserId
+  } = useFriends();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
@@ -20,11 +28,8 @@ const CombinedView = ({ onNavigate }) => {
   const [meetingStatus, setMeetingStatus] = useState('unconfirmed'); // unconfirmed, confirmed, temporary
   const [liveStatus, setLiveStatus] = useState('offline'); // online, offline
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isHost, setIsHost] = useState(false);
   const [notificationCount, setNotificationCount] = useState(3);
   const [pendingLocationName, setPendingLocationName] = useState(null);
-  const [activeMeetingId, setActiveMeetingId] = useState(null);
-  const [currentUserId, setCurrentUserId] = useState(null);
   const [userAddress, setUserAddress] = useState("");
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
 
@@ -79,14 +84,10 @@ const CombinedView = ({ onNavigate }) => {
     }
   }, [selectedFriendId, friends]);
 
-  // 1. Auth Subscription
+  // ROW 1 Logic: Auth & Meeting ID sync is now handled by FriendsContext
   useEffect(() => {
-     const unsubscribe = onAuthStateChanged(auth, user => {
-         setIsHost(!!user);
-         setCurrentUserId(user?.uid || null);
-     });
-     return () => unsubscribe();
-  }, []);
+     setIsHost(!!currentUserId);
+  }, [currentUserId]);
 
   // 2. Meeting Subscription for Location Sharing
   useEffect(() => {
@@ -100,7 +101,6 @@ const CombinedView = ({ onNavigate }) => {
     const unsubMeetings = subscribeToMeetings(currentUserId, (meetings) => {
         if (meetings.length > 0) {
             const meeting = meetings[0];
-            setActiveMeetingId(meeting.id);
             if (meeting.meetingLocation) {
                 setMeetingLocation(meeting.meetingLocation);
                 setMeetingStatus('confirmed');

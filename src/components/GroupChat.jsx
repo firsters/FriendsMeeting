@@ -100,10 +100,17 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
                 )}
                 <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                   {!isMe && <span className="text-[10px] font-bold text-gray-500 mb-1 ml-1">{msg.senderName}</span>}
-                  <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed
+                  <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed relative
                     ${isMe ? 'bg-primary text-white rounded-tr-none shadow-lg shadow-primary/20' : 'bg-card-dark text-gray-200 rounded-tl-none border border-white/5'}
+                    ${msg.status === 'sending' ? 'opacity-70 animate-pulse' : ''}
+                    ${msg.status === 'error' ? 'bg-red-500/50 border-red-500 shadow-none' : ''}
                   `}>
                     {msg.content}
+                    {msg.status === 'error' && (
+                      <span className="absolute -bottom-5 right-0 text-[8px] font-bold text-red-500 uppercase tracking-tighter">
+                        {t('error_send_failed') || '전송 실패'}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <span className="text-[8px] font-bold text-gray-600 uppercase mb-1">

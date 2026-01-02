@@ -60,13 +60,10 @@ export const FriendsProvider = ({ children }) => {
       setFriends(Array.from(participantMap.values()));
       setGuestMeetings(meetings);
       
-      // Update active meeting ID if changed, prioritizing the first meeting
-      if (meetings.length > 0) {
-        const foundId = meetings[0].id;
-        if (foundId !== activeMeetingId) {
-          console.log("[FriendsContext] Setting activeMeetingId to:", foundId);
-          setActiveMeetingId(foundId);
-        }
+      // Auto-set active meeting if none is selected
+      if (meetings.length > 0 && !activeMeetingId) {
+        console.log("[FriendsContext] Auto-selecting first meeting:", meetings[0].id);
+        setActiveMeetingId(meetings[0].id);
       }
     });
 
@@ -74,21 +71,36 @@ export const FriendsProvider = ({ children }) => {
       console.log("[FriendsContext] Cleaning up meeting subscription");
       unsubMeetings();
     };
-  }, [currentUserId, activeMeetingId]);
+  }, [currentUserId]); // Removed activeMeetingId from dependencies to avoid loop
 
   // 3. Message Subscription
   useEffect(() => {
     if (!activeMeetingId) {
       console.log("[FriendsContext] Skipping message subscription: No activeMeetingId");
+      setMessages([]);
       return;
     }
 
     console.log("[FriendsContext] Subscribing to messages for meeting:", activeMeetingId);
-    const unsubMessages = subscribeToMessages(activeMeetingId, (msgs) => {
-      console.log(`[FriendsContext] Messages updated for ${activeMeetingId}:`, msgs.length);
-      // We overwrite but we should ideally merge if we have local pending messages.
-      // For this demo, we'll rely on Firestore's speed and onSnapshot metadata if we had it.
-      setMessages(msgs);
+    const unsubMessages = subscribeToMessages(activeMeetingId, (remoteMsgs) => {
+      console.log(`[FriendsContext] Remote messages received for ${activeMeetingId}:`, remoteMsgs.length);
+      
+      setMessages(prev => {
+        // Keep local messages that are still "sending" and not yet in the remote list
+        const localPending = prev.filter(m => m.status === 'sending');
+        
+        // Match remote messages with local pending ones to avoid duplicates if we had a match key
+        // For simplicity now, we just prepend/append. ideally use a client-side generated ID.
+        const remoteIds = new Set(remoteMsgs.map(m => m.id));
+        const filteredPending = localPending.filter(m => !remoteIds.has(m.id));
+        
+        const finalMessages = [...remoteMsgs, ...filteredPending].sort((a, b) => 
+          (a.timestamp?.getTime?.() || 0) - (b.timestamp?.getTime?.() || 0)
+        );
+        
+        console.log(`[FriendsContext] Merged message count: ${finalMessages.length} (Remote: ${remoteMsgs.length}, Pending: ${filteredPending.length})`);
+        return finalMessages;
+      });
     });
 
     return () => {
@@ -119,9 +131,9 @@ export const FriendsProvider = ({ children }) => {
   };
 
   const sendMessage = async (content, senderId = auth.currentUser?.uid || 'me', senderName = auth.currentUser?.displayName || '나') => {
-    console.log("[FriendsContext] Attempting to send message:", content);
+    console.log("[FriendsContext] sendMessage triggered:", content);
     
-    // Optimistic update for immediate feedback
+    // Always create an optimistic message
     const tempId = `temp-${Date.now()}`;
     const optimisticMsg = {
       id: tempId,
@@ -132,11 +144,11 @@ export const FriendsProvider = ({ children }) => {
       status: 'sending'
     };
     
-    // Only add to local state if we don't have an active meeting yet
-    // because if we do, the Firestore listener will pick it up eventually
+    // Add to local state immediately
+    setMessages(prev => [...prev, optimisticMsg]);
+
     if (!activeMeetingId) {
-      console.warn("[FriendsContext] No active meeting, using local state only");
-      setMessages(prev => [...prev, optimisticMsg]);
+      console.warn("[FriendsContext] Cannot persist: No activeMeetingId");
       return;
     }
 
@@ -147,10 +159,11 @@ export const FriendsProvider = ({ children }) => {
         content,
         avatar: auth.currentUser?.photoURL || (auth.currentUser?.displayName || '?').charAt(0)
       });
-      console.log("[FriendsContext] Message sent to Firebase");
+      console.log("[FriendsContext] Message successfully sent to Firebase");
     } catch (err) {
-      console.error("[FriendsContext] Failed to send message:", err);
-      // Mark optimistic message as failed if possible (future enhancement)
+      console.error("[FriendsContext] Firebase send failed:", err);
+      // Update the optimistic message to reflect failure
+      setMessages(prev => prev.map(m => m.id === tempId ? { ...m, status: 'error' } : m));
     }
   };
 
@@ -167,7 +180,10 @@ export const FriendsProvider = ({ children }) => {
       setLastSeenId,
       updateFriendAddress,
       selectedFriendId,
-      setSelectedFriendId
+      setSelectedFriendId,
+      activeMeetingId,
+      setActiveMeetingId,
+      currentUserId
     }}>
       {children}
     </FriendsContext.Provider>

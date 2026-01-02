@@ -195,42 +195,33 @@ const CreateScreen = ({ onNavigate, t }) => (
 
 const MeetingScreens = ({ currentScreen, onNavigate }) => {
   const { t } = useTranslation();
-  const { guestMeetings } = useFriends();
+  const { guestMeetings, activeMeetingId } = useFriends();
+  const activeMeeting = guestMeetings.find(m => m.id === activeMeetingId) || guestMeetings[0];
 
   switch (currentScreen) {
     case ScreenType.MEETINGS: 
       {
-        const latestMeeting = guestMeetings[0];
-        const locationName = latestMeeting?.meetingLocation?.name || latestMeeting?.meetingLocation?.address || latestMeeting?.location;
-        return (
           <div className="flex flex-col h-full bg-background-dark animate-fade-in">
             <div className="flex-1 overflow-hidden pb-20">
-              <GroupChat onBack={null} meetingTitle="Friday Night Dinner" meetingLocation={locationName} />
+              <GroupChat onBack={null} meetingTitle={activeMeeting?.title || "Friday Night Dinner"} meetingLocation={activeMeeting?.meetingLocation?.name || activeMeeting?.meetingLocation?.address || activeMeeting?.location} />
             </div>
             <RenderBottomNav onNavigate={onNavigate} t={t} currentScreen={ScreenType.MEETINGS} />
           </div>
-        );
       }
     case ScreenType.MEETING_DETAILS: 
       {
-        const latestMeeting = guestMeetings[0];
-        const locationName = latestMeeting?.meetingLocation?.name || latestMeeting?.meetingLocation?.address || latestMeeting?.location;
-        return <GroupChat onBack={() => onNavigate(ScreenType.MAP)} meetingTitle="Friday Night Dinner" meetingLocation={locationName} />;
+        return <GroupChat onBack={() => onNavigate(ScreenType.MAP)} meetingTitle={activeMeeting?.title || "Friday Night Dinner"} meetingLocation={activeMeeting?.meetingLocation?.name || activeMeeting?.meetingLocation?.address || activeMeeting?.location} />;
       }
     case ScreenType.CREATE_MEETING: 
       return <CreateScreen onNavigate={onNavigate} t={t} />;
     default: 
       {
-        const latestMeeting = guestMeetings[0];
-        const locationName = latestMeeting?.meetingLocation?.name || latestMeeting?.meetingLocation?.address || latestMeeting?.location;
-        return (
           <div className="flex flex-col h-full bg-background-dark">
             <div className="flex-1 overflow-hidden pb-20">
-              <GroupChat onBack={null} meetingTitle="Friday Night Dinner" meetingLocation={locationName} />
+              <GroupChat onBack={null} meetingTitle={activeMeeting?.title || "Friday Night Dinner"} meetingLocation={activeMeeting?.meetingLocation?.name || activeMeeting?.meetingLocation?.address || activeMeeting?.location} />
             </div>
             <RenderBottomNav onNavigate={onNavigate} t={t} currentScreen={ScreenType.MEETINGS} />
           </div>
-        );
       }
   }
 };
