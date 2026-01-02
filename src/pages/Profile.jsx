@@ -92,8 +92,12 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           <div className="w-28 h-28 rounded-full bg-card-dark flex items-center justify-center border-4 border-white/5 shadow-2xl ring-2 ring-primary/20">
             <span className="material-symbols-outlined text-gray-700 text-5xl">person</span>
           </div>
-          <h2 className="mt-5 text-2xl font-extrabold text-white font-display">Alex Doe</h2>
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1 opacity-60">@alexdoe</p>
+          <h2 className="mt-5 text-2xl font-extrabold text-white font-display">
+            {auth.currentUser?.displayName || t('user_default_name') || 'Guest User'}
+          </h2>
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1 opacity-60">
+            @{auth.currentUser?.displayName?.toLowerCase().replace(/\s+/g, '') || auth.currentUser?.email?.split('@')[0] || 'guest'}
+          </p>
         </div>
 
         {meetings.length > 0 && (
