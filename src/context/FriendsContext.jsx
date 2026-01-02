@@ -148,12 +148,15 @@ export const FriendsProvider = ({ children }) => {
   const sendMessage = async (content, senderId = auth.currentUser?.uid || 'me', senderName = auth.currentUser?.displayName || '나') => {
     console.log("[FriendsContext] sendMessage triggered:", content);
     
+    const effectiveSenderId = auth.currentUser?.uid || senderId;
+    const effectiveSenderName = auth.currentUser?.displayName || senderName;
+
     // Always create an optimistic message
     const tempId = `temp-${Date.now()}`;
     const optimisticMsg = {
       id: tempId,
-      senderId,
-      senderName,
+      senderId: effectiveSenderId,
+      senderName: effectiveSenderName,
       content,
       timestamp: new Date(),
       status: 'sending'
@@ -178,17 +181,17 @@ export const FriendsProvider = ({ children }) => {
 
     try {
       await sendFirebaseMessage(targetMeetingId, {
-        senderId,
-        senderName,
+        senderId: effectiveSenderId,
+        senderName: effectiveSenderName,
         content,
         clientMsgId: tempId,
-        avatar: auth.currentUser?.photoURL || (auth.currentUser?.displayName || '?').charAt(0)
+        avatar: auth.currentUser?.photoURL || (effectiveSenderName || '?').charAt(0)
       });
       console.log(`[FriendsContext] Message SUCCESS for ${targetMeetingId} (tempId: ${tempId})`);
     } catch (err) {
       console.error(`[FriendsContext] Message FAILURE for ${targetMeetingId} (tempId: ${tempId}):`, err.message || err);
-      // Show actual error to user for diagnostic purposes
-      showAlert(`메시지 전송 실패: ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}`, "전송 오류 발생");
+      // Show actual error and UID to user for diagnostic purposes
+      showAlert(`메시지 전송 실패: ${err.message || 'Unknown error'}\nMeeting ID: ${targetMeetingId}\nYour UID: ${effectiveSenderId}`, "전송 오류 발생");
       // Update the optimistic message to reflect failure
       setMessages(prev => prev.map(m => m.id === tempId ? { ...m, status: 'error' } : m));
     }

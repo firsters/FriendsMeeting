@@ -97,8 +97,10 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
             const info = getFriendInfo(msg.senderId);
             
             // Check if this message is after the last seen point
-            const isPostSeen = lastSeenId !== null && 
-                               messages.slice(0, index).some(m => m.id === lastSeenId || m.clientMsgId === lastSeenId);
+            const isPostSeen = lastSeenId !== null && (
+              messages.slice(0, index).some(m => m.id === lastSeenId || m.clientMsgId === lastSeenId) ||
+              lastSeenId.startsWith('sentinel-')
+            );
             
             // Only show the marker above the VERY FIRST message from SOMEONE ELSE that appears after the seen point
             const shouldShowMarker = isPostSeen && !isMe && !markerShown;
