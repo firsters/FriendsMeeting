@@ -9,7 +9,8 @@ import { useModal } from '../context/ModalContext';
 const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
   const { showAlert } = useModal();
-  const { friends, messages, lastSeenId, setSelectedFriendId } = useFriends();
+  const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId } = useFriends();
+  const lastSeenId = lastSeenMap[activeMeetingId] || null;
 
   const handleFriendProfileClick = (friendId) => {
     setSelectedFriendId(friendId);

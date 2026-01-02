@@ -9,7 +9,6 @@ export const useFriends = () => useContext(FriendsContext);
 
 export const FriendsProvider = ({ children }) => {
   const [userLocation, setUserLocation] = useState({ x: 50, y: 50 });
-  const [lastSeenId, setLastSeenId] = useState(null);
   const [selectedFriendId, setSelectedFriendId] = useState(null);
   const [friends, setFriends] = useState([]);
   const [guestMeetings, setGuestMeetings] = useState([]);
