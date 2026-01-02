@@ -40,28 +40,6 @@ export const FriendsProvider = ({ children }) => {
     console.log("[FriendsContext] Subscribing to meetings for:", currentUserId);
     const unsubMeetings = subscribeToMeetings(currentUserId, (meetings) => {
       console.log("[FriendsContext] Meetings updated:", meetings.length);
-      const participantMap = new Map();
-
-      meetings.forEach(meeting => {
-        if (meeting.participants) {
-          meeting.participants.forEach(p => {
-            if (p.id !== currentUserId && !participantMap.has(p.id)) {
-              participantMap.set(p.id, {
-                id: p.id,
-                name: p.nickname || p.name || 'Unknown',
-                lat: p.lat,
-                lng: p.lng,
-                status: p.status || 'online',
-                avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
-                address: p.address || ''
-              });
-            }
-          });
-        }
-      });
-
-      setFriends(Array.from(participantMap.values()));
-      
       setGuestMeetings(prev => {
         const remoteIds = new Set(meetings.map(m => m.id));
         const localOnly = prev.filter(m => m.id.startsWith('guest-') && !remoteIds.has(m.id));
@@ -82,7 +60,35 @@ export const FriendsProvider = ({ children }) => {
       console.log("[FriendsContext] Cleaning up meeting subscription");
       unsubMeetings();
     };
-  }, [currentUserId]); // Removed activeMeetingId from dependencies to avoid loop
+  }, [currentUserId]);
+
+  // 2.1 Dynamic Friends Derivation (Meeting-centric)
+  useEffect(() => {
+    if (!currentUserId || !activeMeetingId) {
+      setFriends([]);
+      return;
+    }
+
+    const currentMeeting = guestMeetings.find(m => m.id === activeMeetingId);
+    if (currentMeeting && currentMeeting.participants) {
+      const otherParticipants = currentMeeting.participants
+        .filter(p => p.id !== currentUserId && p.id !== 'me') // Exclude self
+        .map(p => ({
+          id: p.id,
+          name: p.nickname || p.name || 'Unknown',
+          lat: p.lat,
+          lng: p.lng,
+          status: p.status || 'online',
+          avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
+          address: p.address || ''
+        }));
+      
+      console.log(`[FriendsContext] Syncing friends for meeting ${activeMeetingId}:`, otherParticipants.length);
+      setFriends(otherParticipants);
+    } else {
+      setFriends([]);
+    }
+  }, [activeMeetingId, guestMeetings, currentUserId]);
 
   // 3. Message Subscription
   useEffect(() => {
@@ -134,8 +140,8 @@ export const FriendsProvider = ({ children }) => {
       startTime: new Date(),
       status: 'active',
       participants: [
-        { id: 'host', name: 'Host (' + groupCode + ')', role: 'host', avatar: 'host' },
-        { id: 'guest', name: guestNickname, role: 'guest', avatar: 'guest' } // You
+        { id: 'host', name: 'Host (' + groupCode + ')', nickname: 'Host (' + groupCode + ')', role: 'host', avatar: 'host' },
+        { id: 'me', name: guestNickname, nickname: guestNickname, role: 'guest', avatar: 'guest' } // You
       ]
     };
     setGuestMeetings(prev => [newMeeting, ...prev]);
