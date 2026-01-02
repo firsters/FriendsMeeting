@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import { useModal } from '../context/ModalContext';
+import { useFriends } from '../context/FriendsContext';
 import { signInAsGuest, joinMeetingByCode } from '../utils/meetingService';
 
 const GroupJoin = ({ onNavigate, groupCode }) => {
