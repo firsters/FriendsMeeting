@@ -22,11 +22,17 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
   useEffect(() => {
     // Mark the last message currently in the list as "seen" before this session
     // Only if we haven't set a marker for this meeting yet
-    if (messages.length > 0 && lastSeenId === null && activeMeetingId) {
-      console.log(`[GroupChat] Setting initial lastSeenId for ${activeMeetingId}:`, messages[messages.length - 1].id);
-      setLastSeenId(activeMeetingId, messages[messages.length - 1].id);
+    if (lastSeenId === null && activeMeetingId) {
+      if (messages.length > 0) {
+        console.log(`[GroupChat] Setting initial lastSeenId for ${activeMeetingId}:`, messages[messages.length - 1].id);
+        setLastSeenId(activeMeetingId, messages[messages.length - 1].id);
+      } else {
+        // If the chat is empty, set a sentinel so the marker doesn't appear for our first message
+        console.log(`[GroupChat] Setting sentinel for empty chat: ${activeMeetingId}`);
+        setLastSeenId(activeMeetingId, 'sentinel-session-start-' + Date.now());
+      }
     }
-  }, [messages, lastSeenId, setLastSeenId, activeMeetingId]);
+  }, [messages.length, lastSeenId, setLastSeenId, activeMeetingId]);
 
   useEffect(() => {
     if (scrollRef.current) {

@@ -7,6 +7,7 @@ import { signInAsGuest, joinMeetingByCode } from '../utils/meetingService';
 const GroupJoin = ({ onNavigate, groupCode }) => {
   const { t } = useTranslation();
   const { showAlert } = useModal();
+  const { setActiveMeetingId } = useFriends();
   const [nickname, setNickname] = useState('');
   const [code, setCode] = useState(groupCode || '');
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,9 @@ const GroupJoin = ({ onNavigate, groupCode }) => {
             nickname: nickname,
             avatar: nickname.charAt(0)
         };
-        await joinMeetingByCode(code, user.uid, userProfile);
+        const meeting = await joinMeetingByCode(code, user.uid, userProfile);
+        setActiveMeetingId(meeting.id);
+        console.log("[GroupJoin] Successfully joined meeting and set active ID:", meeting.id);
         
         setLoading(false);
         // Redirect to meeting list or map

@@ -58,7 +58,14 @@ export const FriendsProvider = ({ children }) => {
       });
 
       setFriends(Array.from(participantMap.values()));
-      setGuestMeetings(meetings);
+      
+      setGuestMeetings(prev => {
+        const remoteIds = new Set(meetings.map(m => m.id));
+        const localOnly = prev.filter(m => m.id.startsWith('guest-') && !remoteIds.has(m.id));
+        const merged = [...meetings, ...localOnly];
+        console.log(`[FriendsContext] Merged meetings: remote=${meetings.length}, localGuest=${localOnly.length}`);
+        return merged;
+      });
       
       // Auto-set active meeting if none is selected OR if currently on a guest placeholder
       const isPlaceholder = !activeMeetingId || activeMeetingId.toString().startsWith('guest-');
@@ -159,6 +166,8 @@ export const FriendsProvider = ({ children }) => {
       return;
     }
 
+    console.log(`[FriendsContext] Finalizing send to meeting ID: ${activeMeetingId} (Type: ${activeMeetingId.toString().startsWith('guest-') ? 'GUEST/MOCK' : 'REAL/FIRESTORE'})`);
+
     try {
       await sendFirebaseMessage(activeMeetingId, {
         senderId,
@@ -167,9 +176,9 @@ export const FriendsProvider = ({ children }) => {
         clientMsgId: tempId,
         avatar: auth.currentUser?.photoURL || (auth.currentUser?.displayName || '?').charAt(0)
       });
-      console.log("[FriendsContext] Message successfully sent to Firebase");
+      console.log(`[FriendsContext] Message SUCCESS for ${activeMeetingId} (tempId: ${tempId})`);
     } catch (err) {
-      console.error("[FriendsContext] Firebase send failed:", err);
+      console.error(`[FriendsContext] Message FAILURE for ${activeMeetingId} (tempId: ${tempId}):`, err.message || err);
       // Update the optimistic message to reflect failure
       setMessages(prev => prev.map(m => m.id === tempId ? { ...m, status: 'error' } : m));
     }
