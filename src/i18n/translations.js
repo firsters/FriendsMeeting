@@ -267,6 +267,7 @@ export const translations = {
     
     // Friend Screens Additional
     friends_nearby_distance: "m 근처",
+    distance_to_meeting: "모임까지",
     friends_location_sample: "대한민국 서울",
     invite_title: "친구 그룹 초대",
     invite_text: "친구야! 내 그룹에 들어와서 같이 놀자!",
@@ -537,6 +538,7 @@ export const translations = {
     
     // Friend Screens Additional
     friends_nearby_distance: "away",
+    distance_to_meeting: "To Meeting",
     friends_location_sample: "Seoul, Korea",
     invite_title: "Join my Friend Group",
     invite_text: "Hey! Join my group on Ya-WhereAreYou?!",
