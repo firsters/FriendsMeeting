@@ -17,18 +17,48 @@ const CombinedView = ({ onNavigate }) => {
     setSelectedFriendId,
     activeMeetingId,
     setActiveMeetingId,
-    currentUserId
+    currentUserId,
+    messages,
+    serverLastReadId
   } = useFriends();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
+
+  // Unread Calculation
+  const notificationCount = useMemo(() => {
+    if (!messages || messages.length === 0) return 0;
+
+    // Determine the split point
+    let startIndex = 0;
+    if (serverLastReadId) {
+      const foundIndex = messages.findIndex(m => m.id === serverLastReadId);
+      if (foundIndex !== -1) {
+        startIndex = foundIndex + 1;
+      } else {
+        // serverLastReadId is set but not found in current list.
+        // Assuming the list is chronological and recent, this implies the last read message is older than the start of the list.
+        // Thus, all visible messages are unread.
+        startIndex = 0;
+      }
+    } else {
+      // No read status recorded (e.g. first time user or joined new meeting)
+      // All messages from others are unread.
+      startIndex = 0;
+    }
+
+    const unreadMessages = messages.slice(startIndex).filter(m =>
+      m.senderId !== currentUserId && m.senderId !== 'me'
+    );
+    return unreadMessages.length;
+  }, [messages, serverLastReadId, currentUserId]);
 
   // New Header State
   const [meetingLocation, setMeetingLocation] = useState(null); // { name, address, lat, lng }
   const [meetingStatus, setMeetingStatus] = useState('unconfirmed'); // unconfirmed, confirmed, temporary
   const [liveStatus, setLiveStatus] = useState('offline'); // online, offline
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(3);
+  // Removed hardcoded notificationCount state
   const [pendingLocationName, setPendingLocationName] = useState(null);
   const [userAddress, setUserAddress] = useState("");
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
