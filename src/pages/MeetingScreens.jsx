@@ -6,22 +6,22 @@ import GroupChat from '../components/GroupChat';
 
 const RenderBottomNav = ({ onNavigate, t, currentScreen }) => (
   <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 z-50">
-     <button onClick={() => onNavigate(ScreenType.MAP)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
-       <span className="material-symbols-outlined">map</span>
-       <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_map')}</span>
-     </button>
-     <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
-       <span className="material-symbols-outlined">group</span>
-       <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends')}</span>
-     </button>
-      <button onClick={() => onNavigate(ScreenType.MEETINGS)} className={`flex flex-col items-center gap-1 ${currentScreen === ScreenType.MEETINGS || currentScreen === ScreenType.MEETING_DETAILS ? 'text-primary' : 'text-gray-600 hover:text-white transition-colors'}`}>
-        <span className="material-symbols-outlined">forum</span>
-        <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings')}</span>
-      </button>
-     <button onClick={() => onNavigate(ScreenType.SETTINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
-       <span className="material-symbols-outlined">person</span>
-       <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_profile')}</span>
-     </button>
+    <button onClick={() => onNavigate(ScreenType.MAP)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+      <span className="material-symbols-outlined">map</span>
+      <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_map')}</span>
+    </button>
+    <button onClick={() => onNavigate(ScreenType.MEETINGS)} className={`flex flex-col items-center gap-1 ${currentScreen === ScreenType.MEETINGS || currentScreen === ScreenType.MEETING_DETAILS ? 'text-primary' : 'text-gray-600 hover:text-white transition-colors'}`}>
+      <span className="material-symbols-outlined">forum</span>
+      <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings')}</span>
+    </button>
+    <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+      <span className="material-symbols-outlined">group</span>
+      <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends')}</span>
+    </button>
+    <button onClick={() => onNavigate(ScreenType.SETTINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+      <span className="material-symbols-outlined">person</span>
+      <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_profile')}</span>
+    </button>
   </nav>
 );
 

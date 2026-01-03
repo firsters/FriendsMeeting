@@ -222,13 +222,13 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           <span className="material-symbols-outlined">map</span>
           <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_map')}</span>
         </button>
-        <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
-          <span className="material-symbols-outlined">group</span>
-          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends')}</span>
-        </button>
         <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
           <span className="material-symbols-outlined">forum</span>
           <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings')}</span>
+        </button>
+        <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
+          <span className="material-symbols-outlined">group</span>
+          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends')}</span>
         </button>
         <button className="flex flex-col items-center gap-1 text-primary">
           <span className="material-symbols-outlined">person</span>
