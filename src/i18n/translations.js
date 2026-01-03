@@ -97,6 +97,7 @@ export const translations = {
     nav_map: "지도",
     nav_friends: "친구",
     nav_meetings: "모임",
+    nav_chat: "채팅",
     nav_alerts: "알림",
     nav_profile: "프로필",
 

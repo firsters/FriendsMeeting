@@ -895,9 +895,18 @@ const CombinedView = ({ onNavigate }) => {
               onClick={() => onNavigate(ScreenType.MEETINGS)}
               className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"
             >
-              <span className="material-symbols-outlined text-2xl">forum</span>
+              <span className="material-symbols-outlined text-2xl">diversity_3</span>
               <span className="text-[9px] font-black uppercase tracking-[0.15em]">
                 {t("nav_meetings")}
+              </span>
+            </button>
+            <button
+              onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
+              className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"
+            >
+              <span className="material-symbols-outlined text-2xl">forum</span>
+              <span className="text-[9px] font-black uppercase tracking-[0.15em]">
+                {t("nav_chat")}
               </span>
             </button>
             <button
