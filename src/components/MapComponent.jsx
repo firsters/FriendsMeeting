@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Map, AdvancedMarker, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 import { useTranslation } from '../context/LanguageContext';
+import { calculateDistance, formatDistance } from '../utils/distanceUtils';
 
 const MapUpdater = ({ 
     center, 
@@ -607,6 +608,13 @@ const MapComponent = ({
                     };
                     const isSelected = selectedFriend?.id === friend.id;
 
+                    // Calculate distance to meeting point if available
+                    let distanceToMeeting = null;
+                    if (meetingLocation && meetingLocation.lat && meetingLocation.lng && friend.lat && friend.lng) {
+                        const distMeters = calculateDistance(friend.lat, friend.lng, meetingLocation.lat, meetingLocation.lng);
+                        distanceToMeeting = formatDistance(distMeters);
+                    }
+
                     return (
                         <AdvancedMarker
                             key={friend.id}
@@ -629,6 +637,11 @@ const MapComponent = ({
                                             <p className="text-[9px] text-primary font-bold uppercase tracking-widest opacity-90">
                                                 {friend.status} • {friend.distance || 'nearby'}
                                             </p>
+                                            {distanceToMeeting && (
+                                                <p className="text-[9px] text-white/80 font-bold tracking-wider">
+                                                    {t('distance_to_meeting')} {distanceToMeeting}
+                                                </p>
+                                            )}
                                         </div>
                                         {/* Tooltip Arrow */}
                                         <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card-dark/95 border-r border-b border-white/10 rotate-45"></div>
