@@ -109,19 +109,19 @@ const CombinedView = ({ onNavigate }) => {
 
   // Sync selection from context (e.g. from FriendScreens)
   useEffect(() => {
-    if (selectedFriendId) {
+    if (selectedFriendId && friends.length > 0) {
       const friend = friends.find(f => f.id === selectedFriendId);
       if (friend) {
         setSelectedFriend(friend);
-        // Pan map to friend
+        // Pan map to friend - this increments trigger which MapUpdater watches
         setCenterTrigger(prev => prev + 1);
         setIsExpanded(false); // Collapse bottom sheet to show map
+
+        // Clear the global ID so we don't re-trigger, BUT only after we successfully found and set the friend
+        setSelectedFriendId(null);
       }
-      // RESET it so that navigating back to Friends and clicking AGAIN triggers it
-      // But we might want to keep the highlight. The highlight is controlled by 'selectedFriend' local state.
-      setSelectedFriendId(null);
     }
-  }, [selectedFriendId, friends]);
+  }, [selectedFriendId, friends, setSelectedFriendId]);
 
   // ROW 1 Logic: Auth & Meeting ID sync is now handled by FriendsContext
   const isHost = !!currentUserId;

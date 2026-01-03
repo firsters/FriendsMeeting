@@ -436,13 +436,20 @@ const MapComponent = ({
 
     // Initial Center only
     useEffect(() => {
+        // If we have a pending center trigger (from selecting a friend), we SKIP the auto-center on user
+        // This allows the "Pan to Friend" logic to win
+        if (centerTrigger > 0) {
+            setHasCenteredInitially(true); // Mark as centered so we don't snap back later
+            return;
+        }
+
         if (userLocation && !hasCenteredInitially && mapInstance) {
             const newCenter = { lat: userLocation[0], lng: userLocation[1] };
             setCurrentCenter(newCenter);
             mapInstance.setCenter(newCenter);
             setHasCenteredInitially(true);
         }
-    }, [userLocation, mapInstance, hasCenteredInitially]);
+    }, [userLocation, mapInstance, hasCenteredInitially, centerTrigger]);
 
     const handlePlaceSelected = (location) => {
         setCurrentCenter(location);
