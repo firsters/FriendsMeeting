@@ -86,9 +86,6 @@ const FriendScreens = ({ onNavigate }) => {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('nav_friends')}</h1>
           <div className="flex gap-2">
-            <button className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-white hover:bg-white/10 transition-colors">
-              <span className="material-symbols-outlined">qr_code_scanner</span>
-            </button>
             <button
               onClick={handleShareInvite}
               className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
@@ -131,7 +128,7 @@ const FriendScreens = ({ onNavigate }) => {
                         <h4 className="text-base font-bold text-white">{friend.name}</h4>
                         <span className="text-[10px] font-bold text-gray-700 uppercase tracking-widest italic font-sans">{friend.status === 'nearby' ? '9m' : friend.status === 'driving' ? '2.5km' : 'far'} {t('friends_nearby_distance')}</span>
                       </div>
-                      <p className="text-xs text-gray-500 font-medium truncate max-w-[180px]">{friend.address || t('friends_location_sample')}</p>
+                      <p className="text-xs text-gray-500 font-medium">{friend.address || t('friends_location_sample')}</p>
                     </div>
                     <div className="flex gap-1">
                       {hasNew ? (
