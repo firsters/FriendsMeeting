@@ -144,6 +144,27 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
                 markerShown = true;
             }
 
+            if (msg.type === 'system') {
+              return (
+                <React.Fragment key={msg.id}>
+                  {shouldShowMarker && (
+                    <div className="flex items-center gap-4 py-4 px-2">
+                      <div className="h-px flex-1 bg-primary/30"></div>
+                      <span className="text-[10px] font-bold text-primary uppercase tracking-widest whitespace-nowrap">
+                        {t('chat_new_messages') || '여기까지 읽으셨습니다'}
+                      </span>
+                      <div className="h-px flex-1 bg-primary/30"></div>
+                    </div>
+                  )}
+                  <div className="flex justify-center my-4">
+                    <span className="bg-white/5 text-gray-400 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                      {msg.content}
+                    </span>
+                  </div>
+                </React.Fragment>
+              );
+            }
+
             return (
               <React.Fragment key={msg.id}>
                 {shouldShowMarker && (
