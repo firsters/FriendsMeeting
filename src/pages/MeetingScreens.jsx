@@ -200,16 +200,7 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
 
   switch (currentScreen) {
     case ScreenType.MEETINGS: 
-      {
-        return (
-          <div className="flex flex-col h-full bg-background-dark animate-fade-in">
-            <div className="flex-1 overflow-hidden pb-20">
-              <GroupChat onBack={null} meetingTitle={activeMeeting?.title || "Friday Night Dinner"} meetingLocation={activeMeeting?.meetingLocation?.name || activeMeeting?.meetingLocation?.address || activeMeeting?.location} />
-            </div>
-            <RenderBottomNav onNavigate={onNavigate} t={t} currentScreen={ScreenType.MEETINGS} />
-          </div>
-        );
-      }
+      return <ListScreen onNavigate={onNavigate} t={t} guestMeetings={guestMeetings} />;
     case ScreenType.MEETING_DETAILS: 
       {
         return <GroupChat onBack={() => onNavigate(ScreenType.MAP)} meetingTitle={activeMeeting?.title || "Friday Night Dinner"} meetingLocation={activeMeeting?.meetingLocation?.name || activeMeeting?.meetingLocation?.address || activeMeeting?.location} />;
