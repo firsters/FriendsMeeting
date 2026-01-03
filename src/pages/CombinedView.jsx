@@ -29,6 +29,13 @@ const CombinedView = ({ onNavigate }) => {
   const notificationCount = useMemo(() => {
     if (!messages || messages.length === 0) return 0;
 
+    // If serverLastReadId matches the LAST message, we are up to date.
+    // This is a quick check to handle cases where optimistic updates
+    // set the ID to the last one, even if the list has changed or re-ordered slightly.
+    if (serverLastReadId && messages[messages.length - 1].id === serverLastReadId) {
+      return 0;
+    }
+
     // Determine the split point
     let startIndex = 0;
     if (serverLastReadId) {
@@ -37,8 +44,10 @@ const CombinedView = ({ onNavigate }) => {
         startIndex = foundIndex + 1;
       } else {
         // serverLastReadId is set but not found in current list.
-        // Assuming the list is chronological and recent, this implies the last read message is older than the start of the list.
-        // Thus, all visible messages are unread.
+        // This could mean the message is older (so all new ones are unread)
+        // OR the message ID is from a different context/optimistic mismatch.
+        // However, if we can't find it, we default to showing everything as unread
+        // unless we have specific logic to say otherwise.
         startIndex = 0;
       }
     } else {

@@ -149,6 +149,8 @@ export const FriendsProvider = ({ children }) => {
 
   const markMeetingAsRead = (messageId) => {
     if (activeMeetingId && currentUserId && messageId && messageId !== serverLastReadId) {
+      // Optimistic update
+      setServerLastReadId(messageId);
       updateLastReadMessage(activeMeetingId, currentUserId, messageId);
     }
   };
