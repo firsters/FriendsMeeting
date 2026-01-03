@@ -80,9 +80,6 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
   return (
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
       <header className="px-6 pt-10 pb-6 flex items-center justify-between sticky top-0 bg-background-dark/95 backdrop-blur-md z-20 font-display">
-        <button onClick={() => onNavigate(ScreenType.MAP)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-all active:scale-95">
-          <span className="material-symbols-outlined text-white">arrow_back_ios_new</span>
-        </button>
         <h1 className="text-lg font-extrabold text-white">{t('settings_title')}</h1>
         <div className="w-10"></div>
       </header>
