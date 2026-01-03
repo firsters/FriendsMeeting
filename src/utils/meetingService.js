@@ -12,7 +12,9 @@ import {
   arrayUnion, 
   onSnapshot,
   serverTimestamp,
-  setDoc
+  setDoc,
+  deleteDoc,
+  limit
 } from 'firebase/firestore';
 
 // Helper to generate a random 6-character group code
@@ -222,5 +224,45 @@ export const subscribeToReadStatus = (meetingId, userId, callback) => {
     } else {
       callback(null);
     }
+  });
+};
+
+export const getUserActiveMeeting = async (userId) => {
+  const q = query(
+    collection(db, 'meetings'),
+    where('participantIds', 'array-contains', userId),
+    limit(1)
+  );
+  const snapshot = await getDocs(q);
+  if (!snapshot.empty) {
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() };
+  }
+  return null;
+};
+
+export const deleteMeeting = async (meetingId) => {
+  if (!meetingId) return;
+  // Note: Subcollections (messages) are not automatically deleted.
+  // For this implementation, we rely on the client ignoring orphaned data.
+  // In a real app, use a Cloud Function to recursive delete.
+  await deleteDoc(doc(db, 'meetings', meetingId));
+};
+
+export const leaveMeeting = async (meetingId, userId) => {
+  if (!meetingId || !userId) return;
+
+  const meetingRef = doc(db, 'meetings', meetingId);
+  const snapshot = await getDocs(query(collection(db, 'meetings'), where('__name__', '==', meetingId)));
+
+  if (snapshot.empty) return;
+
+  const meetingData = snapshot.docs[0].data();
+  const updatedParticipants = meetingData.participants.filter(p => p.id !== userId);
+  const updatedParticipantIds = meetingData.participantIds.filter(id => id !== userId);
+
+  await updateDoc(meetingRef, {
+    participants: updatedParticipants,
+    participantIds: updatedParticipantIds
   });
 };
