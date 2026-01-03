@@ -3,12 +3,12 @@ import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import { useModal } from '../context/ModalContext';
 import { useFriends } from '../context/FriendsContext';
-import { signInAsGuest, joinMeetingByCode } from '../utils/meetingService';
+import { signInAsGuest, joinMeetingByCode, getUserActiveMeeting } from '../utils/meetingService';
 
 const GroupJoin = ({ onNavigate, groupCode }) => {
   const { t } = useTranslation();
-  const { showAlert } = useModal();
-  const { setActiveMeetingId } = useFriends();
+  const { showAlert, showConfirm } = useModal();
+  const { setActiveMeetingId, leaveCurrentMeeting } = useFriends();
   const [nickname, setNickname] = useState('');
   const [code, setCode] = useState(groupCode || '');
   const [loading, setLoading] = useState(false);
@@ -27,6 +27,24 @@ const GroupJoin = ({ onNavigate, groupCode }) => {
         // 1. Sign in anonymously with the nickname
         const user = await signInAsGuest(nickname);
         
+        // Check active meeting
+        const activeMeeting = await getUserActiveMeeting(user.uid);
+        if (activeMeeting && activeMeeting.groupCode !== code) {
+           const confirmed = await new Promise(resolve => {
+             showConfirm(
+               "이미 참여 중인 모임이 있습니다. 기존 모임에서 나가고 새로운 모임에 참여하시겠습니까?",
+               "모임 변경",
+               () => resolve(true),
+               () => resolve(false)
+             );
+           });
+           if (!confirmed) {
+             setLoading(false);
+             return;
+           }
+           await leaveCurrentMeeting(activeMeeting.id, user.uid);
+        }
+
         // 2. Join the actual meeting in Firestore
         const userProfile = {
             nickname: nickname,

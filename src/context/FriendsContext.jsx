@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode, updateLastReadMessage, subscribeToReadStatus } from '../utils/meetingService';
+import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode, updateLastReadMessage, subscribeToReadStatus, leaveMeeting, deleteMeeting } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
 const FriendsContext = createContext();
@@ -21,6 +21,8 @@ export const FriendsProvider = ({ children }) => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [serverLastReadId, setServerLastReadId] = useState(null);
   const [isReadStatusLoaded, setIsReadStatusLoaded] = useState(false);
+
+  const isSwitchingMeeting = useRef(false);
 
   // 1. Auth Subscription
   useEffect(() => {
@@ -51,10 +53,30 @@ export const FriendsProvider = ({ children }) => {
       });
       
       // Auto-set active meeting if none is selected OR if currently on a guest placeholder
+      // Also handle case where the active meeting was DELETED or LEAVED
       const isPlaceholder = !activeMeetingId || activeMeetingId.toString().startsWith('guest-');
-      if (meetings.length > 0 && isPlaceholder) {
-        console.log("[FriendsContext] Auto-selecting real meeting over placeholder:", meetings[0].id);
-        setActiveMeetingId(meetings[0].id);
+      const activeIsStillValid = meetings.some(m => m.id === activeMeetingId);
+
+      if (meetings.length > 0) {
+          if (isPlaceholder || (!isPlaceholder && !activeIsStillValid)) {
+             // If we lost our meeting, pick the first available
+             console.log("[FriendsContext] Active meeting invalid or placeholder, switching to:", meetings[0].id);
+             setActiveMeetingId(meetings[0].id);
+          }
+      } else {
+         // No meetings left
+         if (activeMeetingId && !activeMeetingId.toString().startsWith('guest-')) {
+             if (!isSwitchingMeeting.current) {
+                // If we didn't initiate a leave/switch, then the meeting was deleted by host (or we were kicked, though logic is same).
+                console.log("[FriendsContext] Meeting disappeared unexpectedly. Triggering alert.");
+                showAlert("호스트가 모임을 종료했습니다.", "모임 종료");
+             } else {
+                 console.log("[FriendsContext] Meeting disappeared due to intentional switch/leave.");
+             }
+             setActiveMeetingId(null);
+             // Note: isSwitchingMeeting.current will be reset by the action that set it,
+             // but strictly speaking, if it was true, we are done with the old meeting.
+         }
       }
     });
 
@@ -153,6 +175,29 @@ export const FriendsProvider = ({ children }) => {
       setServerLastReadId(messageId);
       updateLastReadMessage(activeMeetingId, currentUserId, messageId);
     }
+  };
+
+  const leaveCurrentMeeting = async (meetingId, userId) => {
+      isSwitchingMeeting.current = true;
+      try {
+          await leaveMeeting(meetingId, userId);
+      } finally {
+          // We keep it true for a moment to allow subscription to fire
+          setTimeout(() => {
+              isSwitchingMeeting.current = false;
+          }, 2000);
+      }
+  };
+
+  const deleteCurrentMeeting = async (meetingId) => {
+      isSwitchingMeeting.current = true;
+      try {
+          await deleteMeeting(meetingId);
+      } finally {
+          setTimeout(() => {
+              isSwitchingMeeting.current = false;
+          }, 2000);
+      }
   };
 
   // Function to update a friend's address (local-only demo)
@@ -254,7 +299,9 @@ export const FriendsProvider = ({ children }) => {
       currentUserId,
       serverLastReadId,
       markMeetingAsRead,
-      isReadStatusLoaded
+      isReadStatusLoaded,
+      leaveCurrentMeeting,
+      deleteCurrentMeeting
     }}>
       {children}
     </FriendsContext.Provider>

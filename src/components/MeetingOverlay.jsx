@@ -4,11 +4,15 @@ import { X, Calendar, Clock, MapPin, Users, Hash, ChevronRight, Plus, CheckCircl
 import { Input, Button } from '../components/UI';
 import LocationPicker from '../pages/LocationPicker';
 import { useTranslation } from '../context/LanguageContext';
+import { useModal } from '../context/ModalContext';
+import { useFriends } from '../context/FriendsContext';
 import { auth } from '../firebase';
-import { createMeeting, joinMeetingByCode } from '../utils/meetingService';
+import { createMeeting, joinMeetingByCode, getUserActiveMeeting } from '../utils/meetingService';
 
 const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
   const { t } = useTranslation();
+  const { showConfirm, showAlert } = useModal();
+  const { leaveCurrentMeeting, deleteCurrentMeeting } = useFriends();
   const [showLocationPicker, setShowLocationPicker] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -38,10 +42,81 @@ const MeetingOverlay = ({ type = 'create', onClose, onCreate, onJoin }) => {
 
     setLoading(true);
     try {
+        // Check for existing meeting
+        const activeMeeting = await getUserActiveMeeting(user.uid);
+
         if (type === 'create') {
+            if (activeMeeting) {
+              // If user is the host of the active meeting
+              if (activeMeeting.hostId === user.uid) {
+                const confirmed = await new Promise(resolve => {
+                  showConfirm(
+                    "새로운 모임을 만들면 기존 모임과 참가자 정보가 모두 삭제됩니다. 계속하시겠습니까?",
+                    "기존 모임 삭제 알림",
+                    () => resolve(true),
+                    () => resolve(false)
+                  );
+                });
+                if (!confirmed) {
+                  setLoading(false);
+                  return;
+                }
+                await deleteCurrentMeeting(activeMeeting.id);
+              } else {
+                // User is a guest in another meeting but wants to CREATE a new one
+                const confirmed = await new Promise(resolve => {
+                  showConfirm(
+                    "현재 참여 중인 모임에서 나가고 새로운 모임을 만드시겠습니까?",
+                    "모임 나가기",
+                    () => resolve(true),
+                    () => resolve(false)
+                  );
+                });
+                if (!confirmed) {
+                  setLoading(false);
+                  return;
+                }
+                await leaveCurrentMeeting(activeMeeting.id, user.uid);
+              }
+            }
+
             const meeting = await createMeeting(formData, user.uid, userProfile);
             onCreate(meeting);
         } else {
+            // JOIN Flow
+            if (activeMeeting) {
+              // If trying to join the SAME meeting, just proceed (handled by joinMeetingByCode mostly, but good to check)
+              // But here we rely on code match. If we don't know the code of activeMeeting, we assume it's different.
+              // Actually, simpler: Warn if ANY active meeting exists.
+
+              if (activeMeeting.groupCode === formData.code) {
+                 // Already in this meeting, just proceed to return the object
+              } else {
+                const confirmed = await new Promise(resolve => {
+                  showConfirm(
+                    "참여 중인 모임이 있습니다. 기존 모임에서 나가고 새로운 모임에 참여하시겠습니까?",
+                    "모임 변경",
+                    () => resolve(true),
+                    () => resolve(false)
+                  );
+                });
+                if (!confirmed) {
+                  setLoading(false);
+                  return;
+                }
+
+                if (activeMeeting.hostId === user.uid) {
+                  // If I am host, creating a new one deletes it. But JOINING a new one?
+                  // Prompt implies host creating new one deletes it.
+                  // If host joins another, he effectively leaves his own.
+                  // We will just leave.
+                  await leaveCurrentMeeting(activeMeeting.id, user.uid);
+                } else {
+                  await leaveCurrentMeeting(activeMeeting.id, user.uid);
+                }
+              }
+            }
+
             const meeting = await joinMeetingByCode(formData.code, user.uid, userProfile);
             onJoin(meeting);
         }
