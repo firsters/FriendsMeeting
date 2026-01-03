@@ -8,31 +8,47 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
     messages, 
     sendMessage, 
     friends, 
-    lastSeenMap, 
-    setLastSeenId, 
-    activeMeetingId 
+    activeMeetingId,
+    serverLastReadId,
+    markMeetingAsRead,
+    isReadStatusLoaded
   } = useFriends();
   const { t } = useTranslation();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef(null);
+  const [frozenLastReadId, setFrozenLastReadId] = useState(null);
+  const [hasFrozen, setHasFrozen] = useState(false);
 
-  // Derive the last seen ID for THIS specific meeting
-  const lastSeenId = lastSeenMap[activeMeetingId] || null;
-
+  // 1. FREEZE the read state ONLY ONCE when mounting (or when serverId becomes available for the first time)
+  // This ensures the "unread line" stays fixed for the session
   useEffect(() => {
-    // Mark the last message currently in the list as "seen" before this session
-    // Only if we haven't set a marker for this meeting yet
-    if (lastSeenId === null && activeMeetingId) {
-      if (messages.length > 0) {
-        console.log(`[GroupChat] Setting initial lastSeenId for ${activeMeetingId}:`, messages[messages.length - 1].id);
-        setLastSeenId(activeMeetingId, messages[messages.length - 1].id);
-      } else {
-        // If the chat is empty, set a sentinel so the marker doesn't appear for our first message
-        console.log(`[GroupChat] Setting sentinel for empty chat: ${activeMeetingId}`);
-        setLastSeenId(activeMeetingId, 'sentinel-session-start-' + Date.now());
-      }
+    // If we haven't frozen yet, and we are connected to a meeting, AND the read status is loaded
+    if (!hasFrozen && activeMeetingId && isReadStatusLoaded) {
+      // We accept null as a valid state (meaning "read nothing")
+      console.log(`[GroupChat] Freezing last read ID: ${serverLastReadId}`);
+      setFrozenLastReadId(serverLastReadId);
+      setHasFrozen(true);
     }
-  }, [messages.length, lastSeenId, setLastSeenId, activeMeetingId]);
+  }, [activeMeetingId, serverLastReadId, hasFrozen, isReadStatusLoaded]);
+
+  // 2. UPDATE SERVER: Whenever messages change (meaning we see new ones), or on unmount
+  useEffect(() => {
+    if (messages.length > 0 && activeMeetingId) {
+      const latestMsg = messages[messages.length - 1];
+      // Only update if it's different/newer (logic handled by backend typically, but good to be explicit)
+      // We blindly update to latest because "we are in the chat"
+      // Use a timeout to avoid spamming if messages flood in? No, standard debounce or just update is fine.
+      // Actually, updating on every message receive is fine for "I am reading now"
+      markMeetingAsRead(latestMsg.id);
+    }
+
+    return () => {
+      // Also update on unmount to be safe (e.g. if we leave the screen)
+      if (messages.length > 0) {
+        markMeetingAsRead(messages[messages.length - 1].id);
+      }
+    };
+  }, [messages, activeMeetingId]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -95,20 +111,38 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
 
         {(() => {
           let markerShown = false;
+          // Find the index of the frozen message
+          const frozenIndex = frozenLastReadId ? messages.findIndex(m => m.id === frozenLastReadId) : -1;
+
           return messages.map((msg, index) => {
             const currentUserId = auth.currentUser?.uid;
             const isMe = msg.senderId === currentUserId || msg.senderId === 'me';
             const info = getFriendInfo(msg.senderId, msg.senderName);
             
-            // Check if this message is after the last seen point
-            const isPostSeen = lastSeenId !== null && (
-              messages.slice(0, index).some(m => m.id === lastSeenId || m.clientMsgId === lastSeenId) ||
-              lastSeenId.startsWith('sentinel-')
-            );
+            // Divider Logic:
+            // Show divider if:
+            // 1. We haven't shown it yet
+            // 2. We have a frozen read point (frozenLastReadId)
+            // 3. This message is AFTER the frozen read point (index > frozenIndex)
+            //    OR frozenIndex is -1 (we read nothing/invalid ID) and this is the start?
+            //    (If frozenLastReadId is null, it means we read nothing. So divider should be at top?
+            //     Or does null mean "new user"? Let's assume null = read nothing = show divider at top)
+            //    Actually, if frozenLastReadId is null, we show divider before the first message (index 0).
             
-            // Only show the marker above the VERY FIRST message from SOMEONE ELSE that appears after the seen point
-            const shouldShowMarker = isPostSeen && !isMe && !markerShown;
-            if (shouldShowMarker) markerShown = true;
+            let shouldShowMarker = false;
+
+            if (!markerShown) {
+               if (frozenLastReadId === null && index === 0) {
+                 shouldShowMarker = true;
+               } else if (frozenIndex !== -1 && index === frozenIndex + 1) {
+                 shouldShowMarker = true;
+               }
+            }
+
+            // Only show marker if we have messages and it's not the very end (though logical to show at end? no, separator is 'unread' start)
+            if (shouldShowMarker) {
+                markerShown = true;
+            }
 
             return (
               <React.Fragment key={msg.id}>

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode } from '../utils/meetingService';
+import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode, updateLastReadMessage, subscribeToReadStatus } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
 const FriendsContext = createContext();
@@ -19,6 +19,8 @@ export const FriendsProvider = ({ children }) => {
   const [activeMeetingId, setActiveMeetingId] = useState(null);
   const [lastSeenMap, setLastSeenMap] = useState({}); // { meetingId: lastSeenId }
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [serverLastReadId, setServerLastReadId] = useState(null);
+  const [isReadStatusLoaded, setIsReadStatusLoaded] = useState(false);
 
   // 1. Auth Subscription
   useEffect(() => {
@@ -126,6 +128,31 @@ export const FriendsProvider = ({ children }) => {
     };
   }, [activeMeetingId]);
 
+  // 4. Read Status Subscription
+  useEffect(() => {
+    if (!activeMeetingId || !currentUserId) {
+      setServerLastReadId(null);
+      setIsReadStatusLoaded(false);
+      return;
+    }
+
+    // Reset loaded state when switching meetings
+    setIsReadStatusLoaded(false);
+
+    const unsubRead = subscribeToReadStatus(activeMeetingId, currentUserId, (readId) => {
+      console.log(`[FriendsContext] Read status updated for ${activeMeetingId}: ${readId}`);
+      setServerLastReadId(readId);
+      setIsReadStatusLoaded(true);
+    });
+    return () => unsubRead();
+  }, [activeMeetingId, currentUserId]);
+
+  const markMeetingAsRead = (messageId) => {
+    if (activeMeetingId && currentUserId && messageId && messageId !== serverLastReadId) {
+      updateLastReadMessage(activeMeetingId, currentUserId, messageId);
+    }
+  };
+
   // Function to update a friend's address (local-only demo)
   const updateFriendAddress = (id, address) => {
     setFriends(prev => prev.map(f => f.id === id ? { ...f, address } : f));
@@ -222,7 +249,10 @@ export const FriendsProvider = ({ children }) => {
       setActiveMeetingId,
       lastSeenMap,
       setLastSeenId,
-      currentUserId
+      currentUserId,
+      serverLastReadId,
+      markMeetingAsRead,
+      isReadStatusLoaded
     }}>
       {children}
     </FriendsContext.Provider>

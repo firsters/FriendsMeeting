@@ -11,7 +11,8 @@ import {
   orderBy,
   arrayUnion, 
   onSnapshot,
-  serverTimestamp 
+  serverTimestamp,
+  setDoc
 } from 'firebase/firestore';
 
 // Helper to generate a random 6-character group code
@@ -200,5 +201,26 @@ export const subscribeToMessages = (meetingId, callback) => {
     callback(messages);
   }, (err) => {
     console.error(`[Firebase] Chat subscription error for ${meetingId}:`, err);
+  });
+};
+
+export const updateLastReadMessage = async (meetingId, userId, messageId) => {
+  if (!meetingId || !userId) return;
+  const readRef = doc(db, 'meetings', meetingId, 'reads', userId);
+  await setDoc(readRef, {
+    lastReadMessageId: messageId,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+};
+
+export const subscribeToReadStatus = (meetingId, userId, callback) => {
+  if (!meetingId || !userId) return () => {};
+  const readRef = doc(db, 'meetings', meetingId, 'reads', userId);
+  return onSnapshot(readRef, (doc) => {
+    if (doc.exists()) {
+      callback(doc.data().lastReadMessageId);
+    } else {
+      callback(null);
+    }
   });
 };
