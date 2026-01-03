@@ -9,7 +9,7 @@ import { useModal } from '../context/ModalContext';
 const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
   const { showAlert } = useModal();
-  const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId } = useFriends();
+  const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId, guestMeetings } = useFriends();
   const lastSeenId = lastSeenMap[activeMeetingId] || null;
 
   const handleFriendProfileClick = (friendId) => {
@@ -21,13 +21,23 @@ const FriendScreens = ({ onNavigate }) => {
     if (!auth.currentUser) return;
 
     try {
-      let groupCode = '';
-      const docRef = doc(db, "users", auth.currentUser.uid);
-      const docSnap = await getDoc(docRef);
+      // Find the active meeting to get its group code
+      const currentMeeting = guestMeetings.find(m => m.id === activeMeetingId);
 
-      if (docSnap.exists()) {
-        groupCode = docSnap.data().groupCode;
+      let groupCode = '';
+      if (currentMeeting && currentMeeting.groupCode) {
+        groupCode = currentMeeting.groupCode;
       } else {
+        // Fallback: Fetch from user profile if not found in active meeting context
+        // This handles cases where state might not be fully synced or single-user scenarios
+        const docRef = doc(db, "users", auth.currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          groupCode = docSnap.data().groupCode;
+        }
+      }
+
+      if (!groupCode) {
         groupCode = auth.currentUser.uid.substring(0, 6).toUpperCase();
       }
 
@@ -46,6 +56,7 @@ const FriendScreens = ({ onNavigate }) => {
       }
     } catch (err) {
       console.error("Error sharing:", err);
+      showAlert("Error sharing invite link", "Error");
     }
   };
 
