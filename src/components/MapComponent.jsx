@@ -621,9 +621,6 @@ const MapComponent = ({
                             position={friendPos}
                             onClick={() => {
                                 const nextFriend = isSelected ? null : friend;
-                                if (nextFriend) {
-                                    handleCenterOnMarker(friendPos);
-                                }
                                 onFriendClick?.(nextFriend);
                             }}
                             zIndex={isSelected ? 100 : 1}
