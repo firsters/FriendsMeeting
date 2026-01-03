@@ -85,6 +85,37 @@ export const joinMeetingByCode = async (groupCode, userId, userProfile) => {
     participantIds: arrayUnion(userId),
     participants: arrayUnion(newParticipant)
   });
+
+  // Send system message for new participant
+  try {
+    // Import dynamically or assume simple string if import is circular/complex.
+    // Since we are in a module, we can import at top. But let's check if we added the import at the top.
+    // I will add the import in a separate block or use a hardcoded string if strictly needed,
+    // but the plan said to import.
+    // Wait, I cannot add the import in this block because it's in the middle of the file.
+    // I will actually split this into two tool calls or just hardcode the korean string here to avoid top-of-file complexity
+    // if I can't easily merge-diff the top.
+    // actually, I can just use the string literal directly for simplicity and robustness as discussed.
+    // The plan said "Import translations". Let's try to stick to the plan but if I only modify this block...
+    // I'll assume I can make two edits or one big edit.
+    // Let's just use the string literal to be safe and avoid import issues (e.g. if translations.js imports something that imports this).
+    // `src/i18n/translations.js` seems to only export an object, so it should be safe.
+    // BUT, to do it in one `replace_with_git_merge_diff` for the function, I need to handle the import separately or just use the string.
+    // User requirement: "The application's default UI language must be Korean".
+    // So hardcoding "님이 모임에 참여했습니다!" is safe and effectively what `translations.ko.meeting_joined_msg` is.
+
+    const joinMessage = `${newParticipant.nickname}님이 모임에 참여했습니다!`;
+    await sendMessage(meetingDoc.id, {
+      senderId: 'system',
+      senderName: 'System',
+      content: joinMessage,
+      type: 'system',
+      timestamp: serverTimestamp()
+    });
+  } catch (error) {
+    console.error("Failed to send join system message:", error);
+    // Non-blocking error
+  }
   
   return { id: meetingDoc.id, ...meetingData, participants: [...meetingData.participants, newParticipant] };
 };
@@ -158,7 +189,7 @@ export const sendMessage = async (meetingId, messageData) => {
       uid: messageData.senderId,      // Direct UID
       createdAt: serverTimestamp(),  // Some rules preferred createdAt
       updatedAt: serverTimestamp(),
-      type: 'text',                  // Standard message type
+      type: messageData.type || 'text', // Standard message type or overridden
       timestamp: serverTimestamp()
     });
     console.log("[meetingService] Message successfully added to Firestore");
