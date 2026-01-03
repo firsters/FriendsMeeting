@@ -109,8 +109,8 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
                   icon: "group",
                   label: meeting.groupCode,
                   color: "bg-pink-600",
-                  value: t('settings_copy_code') || "복사",
-                  onClick: () => handleCopyCode(meeting.groupCode),
+                  value: t('settings_copy_link') || "링크 복사",
+                  onClick: () => handleCopyCode(`${window.location.origin}/?group_code=${meeting.groupCode}`),
                   isLast: index === meetings.length - 1
                 })
               ))}

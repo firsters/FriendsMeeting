@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import { useModal } from '../context/ModalContext';
@@ -12,6 +12,12 @@ const GroupJoin = ({ onNavigate, groupCode }) => {
   const [nickname, setNickname] = useState('');
   const [code, setCode] = useState(groupCode || '');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (groupCode) {
+      setCode(groupCode);
+    }
+  }, [groupCode]);
 
   const handleJoin = async () => {
     if (!nickname || !code) return;

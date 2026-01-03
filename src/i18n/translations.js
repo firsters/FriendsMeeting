@@ -263,6 +263,7 @@ export const translations = {
     settings_who_find_value: "친구만",
     settings_my_groups: "참여 중인 그룹",
     settings_copy_code: "코드 복사",
+    settings_copy_link: "링크 복사",
     settings_code_copied: "그룹 코드가 복사되었습니다!",
     
     // Friend Screens Additional
@@ -535,6 +536,8 @@ export const translations = {
     settings_edit_profile: "Edit Profile",
     settings_language_value: "English",
     settings_who_find_value: "Friends",
+    settings_my_groups: "My Groups",
+    settings_copy_link: "Copy Link",
     
     // Friend Screens Additional
     friends_nearby_distance: "away",
