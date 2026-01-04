@@ -7,7 +7,7 @@ const Navigation = ({ activeTab, onTabChange }) => {
   const tabs = [
     { id: 'map', icon: 'map', label: t('nav_map') },
     { id: 'friends', icon: 'group', label: t('nav_friends') },
-    { id: 'chat', icon: 'forum', label: t('nav_meetings') },
+    // { id: 'chat', icon: 'forum', label: t('nav_meetings') },
     { id: 'notifications', icon: 'notifications', label: t('nav_alerts') },
     { id: 'profile', icon: 'person', label: t('nav_profile') },
   ];

@@ -472,8 +472,8 @@ const CombinedView = ({ onNavigate }) => {
           {/* ROW 1: Meeting Status & Host Location (Always Visible) */}
           <div className="flex items-center min-h-[4.5rem] w-full border-b border-white/5 last:border-none">
             {/* Left Section: Indicators (Order swapped and emphasized) */}
+            {/* 
             <div className="flex flex-col justify-center px-5 py-3 border-r border-white/10 gap-1 shrink-0 min-w-[170px]">
-              {/* Meeting Status (Higher Priority) */}
               <div className="flex items-center gap-2">
                 <span
                   className={`w-2.5 h-2.5 rounded-full ${meetingInfo.color} shadow-[0_0_10px_rgba(0,0,0,0.5)]`}
@@ -482,7 +482,6 @@ const CombinedView = ({ onNavigate }) => {
                   {meetingInfo.text}
                 </span>
               </div>
-              {/* Live Status */}
               <div className="flex items-center gap-2 opacity-50 pl-0.5">
                 <span
                   className={`w-1.5 h-1.5 rounded-full ${liveInfo.color} ${
@@ -494,6 +493,7 @@ const CombinedView = ({ onNavigate }) => {
                 </span>
               </div>
             </div>
+            */}
 
             {/* Center Section: Info or Search (Host) */}
             <div className="flex-1 px-5 py-2 relative flex items-center h-16">
@@ -628,6 +628,7 @@ const CombinedView = ({ onNavigate }) => {
                 </span>
               </button>
 
+              {/* 
               <button
                 onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
                 className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-90 relative"
@@ -641,6 +642,7 @@ const CombinedView = ({ onNavigate }) => {
                   </span>
                 )}
               </button>
+              */}
             </div>
           </div>
 
@@ -783,7 +785,7 @@ const CombinedView = ({ onNavigate }) => {
 
           {isExpanded && (
             <div className="px-6 pb-24 h-full flex flex-col pt-4 overflow-y-auto scrollbar-hide animate-fade-in-up">
-              {/* Meeting Card */}
+              {/* 
               <div className="bg-primary/10 border border-primary/20 rounded-[2rem] p-6 mb-8 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 bg-primary/20 p-4 rounded-bl-[2rem]">
                   <span className="material-symbols-outlined text-primary text-3xl">
@@ -814,6 +816,7 @@ const CombinedView = ({ onNavigate }) => {
                   {t("meeting_enter_chat") || "채팅 참여하기"}
                 </button>
               </div>
+              */}
 
               {/* Friends Horizontal List */}
               <div className="mb-10">
@@ -853,8 +856,8 @@ const CombinedView = ({ onNavigate }) => {
                 </div>
               </div>
 
-              {/* Recent Chats */}
-              <div className="flex-1">
+               {/* 
+               <div className="flex-1">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-white font-black text-lg">
                     {t("map_recent_chats")}
@@ -898,6 +901,7 @@ const CombinedView = ({ onNavigate }) => {
                   ))}
                 </div>
               </div>
+              */}
             </div>
           )}
 
@@ -910,6 +914,7 @@ const CombinedView = ({ onNavigate }) => {
                 {t("nav_map")}
               </span>
             </button>
+            {/* 
             <button
               onClick={() => onNavigate(ScreenType.MEETINGS)}
               className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"
@@ -928,6 +933,7 @@ const CombinedView = ({ onNavigate }) => {
                 {t("nav_chat")}
               </span>
             </button>
+            */}
             <button
               onClick={() => onNavigate(ScreenType.FRIENDS)}
               className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"
