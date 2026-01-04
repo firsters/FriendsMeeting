@@ -38,13 +38,6 @@ const MapUpdater = ({
             map.panTo(center);
             setLastInternalTrigger(internalPanTrigger);
         } 
-        
-        // 4. Auto-tracking (Removed to prevent unwanted snapping)
-        /*
-        else if (shouldPan && center) {
-            map.panTo(center);
-        }
-        */
     }, [map, center, userLocation, centerTrigger, lastTrigger, internalPanTrigger, lastInternalTrigger, centerOnMeTrigger, lastCenterOnMeTrigger]);
     
     return null;
@@ -99,8 +92,6 @@ const FriendGeocodingHandler = ({ friends, onFriendAddressResolved }) => {
         if (!geocoder || !friends || !onFriendAddressResolved) return;
 
         friends.forEach(friend => {
-            // Only resolve if address is missing or coordinates changed significantly
-            // For simplicity in this demo, we'll just resolve if address is empty
             if (!friend.address && friend.lat && friend.lng) {
                 geocoder.geocode({ location: { lat: friend.lat, lng: friend.lng } }, (results, status) => {
                     if (status === 'OK' && results[0]) {
@@ -123,7 +114,6 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, 
         const listener = map.addListener('bounds_changed', () => {
             setBounds(map.getBounds());
         });
-        // Initial bounds
         setBounds(map.getBounds());
         return () => listener.remove();
     }, [map]);
@@ -141,11 +131,9 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, 
         const dLat = target.lat - center.lat;
         const dLng = target.lng - center.lng;
 
-        // Apply a very small margin (1%) to sit exactly on the edge
         const latMargin = (ne.lat - sw.lat) * 0.01;
         const lngMargin = (ne.lng - sw.lng) * 0.01;
 
-        // Bottom Safe Area Calculation (convert pixels to lat/lng)
         const mapContainer = map.getDiv();
         const heightInPixels = mapContainer.offsetHeight;
         const latRange = ne.lat - sw.lat;
@@ -159,7 +147,7 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, 
         const east = ne.lng - lngMargin;
         const west = sw.lng + lngMargin;
 
-        let t = 2; // Start with a value > 1
+        let t = 2;
 
         if (dLat > 0) t = Math.min(t, (north - center.lat) / dLat);
         else if (dLat < 0) t = Math.min(t, (south - center.lat) / dLat);
@@ -209,7 +197,6 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, 
                     onClick={() => onCenterMarker(pt.original || pt.pos)}
                 >
                     <div className="relative group cursor-pointer transition-all hover:scale-110">
-                        {/* Virtual Marker Container: Larger, more vibrant */}
                         <div className={`w-9 h-9 rounded-full bg-[#1a1a1a]/95 backdrop-blur-md border-[2.5px] flex items-center justify-center shadow-2xl overflow-hidden
                             ${pt.type === 'meeting' ? 'border-primary shadow-primary/30' : 
                               pt.type === 'general' ? 'border-red-500 shadow-red-500/30' : 
@@ -231,7 +218,6 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, 
                             )}
                         </div>
                         
-                        {/* Directional Wave Overlay */}
                         <div className="absolute -inset-3 flex items-center justify-center pointer-events-none">
                              <div 
                                 className={`w-full h-full border-2 rounded-full animate-ping opacity-60
@@ -242,7 +228,6 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, 
                              ></div>
                         </div>
                         
-                        {/* Status Indicator Dot (Directional Marker) */}
                         <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-[#1a1a1a] shadow-lg
                             ${pt.type === 'meeting' ? 'bg-primary' : 
                               pt.type === 'general' ? 'bg-red-500' : 
@@ -270,7 +255,6 @@ const PlacesHandler = ({ searchQuery, searchTrigger = 0, onSearchResults, select
         setGeocoder(new geocodingLib.Geocoder());
     }, [placesLib, geocodingLib]);
 
-    // Handle Search Query
     useEffect(() => {
         if (!autocompleteService || !searchQuery || searchQuery.length < 2) return;
 
@@ -284,7 +268,6 @@ const PlacesHandler = ({ searchQuery, searchTrigger = 0, onSearchResults, select
         });
     }, [autocompleteService, searchQuery, placesLib, searchTrigger]);
 
-    // Handle Place Selection
     useEffect(() => {
         if (!geocoder || !selectedPlaceId) return;
 
@@ -305,12 +288,40 @@ const PlacesHandler = ({ searchQuery, searchTrigger = 0, onSearchResults, select
     return null;
 };
 
+// UI Component for User Marker (Reusable for Real Map and Debug View)
+const UserMarkerContent = ({ showMeTooltip, myDistanceToMeeting, meetingLocation, t }) => (
+    <div className="relative flex flex-col items-center justify-center">
+         {/* Anchored Tooltip for Me */}
+         {showMeTooltip && (
+            <div className="absolute bottom-[calc(100%+8px)] bg-card-dark/95 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/10 shadow-2xl animate-fade-in-up whitespace-nowrap z-50">
+                <div className="flex flex-col items-center gap-0.5">
+                    <p className="text-[13px] font-black text-white leading-none tracking-tight">{t('chat_me') || "나"}</p>
+                    <p className="text-[9px] text-white/80 font-bold tracking-wider">
+                        {meetingLocation && meetingLocation.lat
+                            ? `${t('distance_to_meeting')} ${myDistanceToMeeting}`
+                            : t('header_no_location')}
+                    </p>
+                </div>
+                {/* Tooltip Arrow */}
+                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card-dark/95 border-r border-b border-white/10 rotate-45"></div>
+            </div>
+        )}
+
+        <div className="relative flex items-center justify-center w-12 h-12 cursor-pointer">
+            <div className="absolute inset-0 bg-blue-500/30 rounded-full animate-ping"></div>
+            <div className="w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-lg relative z-10 flex items-center justify-center">
+                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+            </div>
+        </div>
+    </div>
+);
+
 const MapComponent = ({
     friends,
     selectedFriend,
     onFriendClick,
     userLocation,
-    center, // Add this
+    center,
     onAddressResolved,
     searchQuery,
     searchTrigger = 0,
@@ -319,41 +330,42 @@ const MapComponent = ({
     onPlaceSelected,
     onMarkerDrag,
     onMarkerDragEnd,
-    // General Search Props
     generalSearchQuery,
     generalSearchTrigger = 0,
     onGeneralSearchResults,
     generalSelectedPlaceId,
     onGeneralPlaceSelected,
-
     centerTrigger = 0,
     centerOnMeTrigger = 0,
     mapType = 'roadmap',
     meetingLocation = null,
     generalLocation = null,
     onCenterRequest,
-    onFriendAddressResolved, // Add this
+    onFriendAddressResolved,
     bottomOffset = 100,
     topOffset = 80
 }) => {
     const { t } = useTranslation();
-    // Initial center state only for defaultCenter
-    const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 }); // Add setter
+    const [initialCenter, setInitialCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [currentCenter, setCurrentCenter] = useState({ lat: 37.5665, lng: 126.9780 });
     const [hasCenteredInitially, setHasCenteredInitially] = useState(false);
     const [internalPanTrigger, setInternalPanTrigger] = useState(0);
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
     const [mapInstance, setMapInstance] = useState(null);
+    const [showMeTooltip, setShowMeTooltip] = useState(false);
 
-    // Sync external center prop
     useEffect(() => {
         if (center) {
             setCurrentCenter(center);
         }
     }, [center]);
 
-    // Dark Mode Map Style
-    const mapId = "DEMO_MAP_ID"; // In production, use a real Map ID from Google Cloud Console for advanced markers
+    useEffect(() => {
+        if (selectedFriend) {
+            setShowMeTooltip(false);
+        }
+    }, [selectedFriend]);
+
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -435,12 +447,9 @@ const MapComponent = ({
         },
     ];
 
-    // Initial Center only
     useEffect(() => {
-        // If we have a pending center trigger (from selecting a friend), we SKIP the auto-center on user
-        // This allows the "Pan to Friend" logic to win
         if (centerTrigger > 0) {
-            setHasCenteredInitially(true); // Mark as centered so we don't snap back later
+            setHasCenteredInitially(true);
             return;
         }
 
@@ -481,7 +490,13 @@ const MapComponent = ({
         if (onCenterRequest) onCenterRequest(pos);
     };
 
-    // Fallback geolocation
+    const handleMeClick = () => {
+        setShowMeTooltip(prev => !prev);
+        if (!showMeTooltip && selectedFriend && onFriendClick) {
+            onFriendClick(null);
+        }
+    };
+
     useEffect(() => {
         if (!userLocation && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -500,12 +515,43 @@ const MapComponent = ({
         }
     }, [userLocation, mapInstance, hasCenteredInitially]);
 
+    let myDistanceToMeeting = null;
+    if (meetingLocation && meetingLocation.lat && meetingLocation.lng && userLocation) {
+        const distMeters = calculateDistance(userLocation[0], userLocation[1], meetingLocation.lat, meetingLocation.lng);
+        myDistanceToMeeting = formatDistance(distMeters);
+    }
+
+    // DEBUG MODE: Fallback for Dev without API Key to prevent crash and allow testing
+    if (!apiKey) {
+        return (
+             <div className="relative w-full h-full bg-[#1a1a1a] flex items-center justify-center overflow-hidden">
+                <div className="absolute top-4 left-4 text-white/50 text-xs z-50">Dev Mode: No API Key</div>
+
+                {/* Mock User Marker (Centered) */}
+                {userLocation && (
+                    <div
+                        className="absolute flex items-center justify-center"
+                        style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+                        onClick={handleMeClick}
+                    >
+                        <UserMarkerContent
+                            showMeTooltip={showMeTooltip}
+                            myDistanceToMeeting={myDistanceToMeeting}
+                            meetingLocation={meetingLocation}
+                            t={t}
+                        />
+                    </div>
+                )}
+            </div>
+        );
+    }
+
     return (
         <div className="relative w-full h-full">
             <Map
                 defaultCenter={initialCenter}
                 defaultZoom={15}
-                mapId={mapId}
+                mapId="DEMO_MAP_ID"
                 gestureHandling={'greedy'}
                 mapTypeId={mapType}
                 disableDefaultUI={true}
@@ -533,7 +579,6 @@ const MapComponent = ({
                     topOffset={topOffset}
                 />
 
-                {/* Primary Search (Meeting Location) */}
                 <PlacesHandler
                     searchQuery={searchQuery}
                     searchTrigger={searchTrigger}
@@ -542,7 +587,6 @@ const MapComponent = ({
                     onPlaceSelected={handlePlaceSelected}
                 />
 
-                {/* Secondary Search (General) */}
                 <PlacesHandler
                     searchQuery={generalSearchQuery}
                     searchTrigger={generalSearchTrigger}
@@ -551,7 +595,6 @@ const MapComponent = ({
                     onPlaceSelected={handleGeneralPlaceSelected}
                 />
 
-                {/* Meeting Location Marker */}
                 {meetingLocation && meetingLocation.lat && (
                     <AdvancedMarker
                         position={{ lat: meetingLocation.lat, lng: meetingLocation.lng }}
@@ -571,7 +614,6 @@ const MapComponent = ({
                     </AdvancedMarker>
                 )}
 
-                {/* General Search Marker (Red Pin) */}
                 {generalLocation && (
                     <AdvancedMarker
                         position={generalLocation}
@@ -588,19 +630,21 @@ const MapComponent = ({
                     </AdvancedMarker>
                 )}
 
-                {/* User Location Marker (Real GPS position) */}
                 {userLocation && (
-                    <AdvancedMarker position={{ lat: userLocation[0], lng: userLocation[1] }}>
-                        <div className="relative flex items-center justify-center w-12 h-12">
-                            <div className="absolute inset-0 bg-blue-500/30 rounded-full animate-ping"></div>
-                            <div className="w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-lg relative z-10 flex items-center justify-center">
-                                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                            </div>
-                        </div>
+                    <AdvancedMarker
+                        position={{ lat: userLocation[0], lng: userLocation[1] }}
+                        onClick={handleMeClick}
+                        zIndex={showMeTooltip ? 100 : 1}
+                    >
+                         <UserMarkerContent
+                            showMeTooltip={showMeTooltip}
+                            myDistanceToMeeting={myDistanceToMeeting}
+                            meetingLocation={meetingLocation}
+                            t={t}
+                        />
                     </AdvancedMarker>
                 )}
 
-                {/* Friend Markers */}
                 {friends.map((friend) => {
                     const friendPos = {
                         lat: friend.lat,
@@ -608,7 +652,6 @@ const MapComponent = ({
                     };
                     const isSelected = selectedFriend?.id === friend.id;
 
-                    // Calculate distance to meeting point if available
                     let distanceToMeeting = null;
                     if (meetingLocation && meetingLocation.lat && meetingLocation.lng && friend.lat && friend.lng) {
                         const distMeters = calculateDistance(friend.lat, friend.lng, meetingLocation.lat, meetingLocation.lng);
@@ -626,7 +669,6 @@ const MapComponent = ({
                             zIndex={isSelected ? 100 : 1}
                         >
                             <div className="relative flex flex-col items-center">
-                                {/* Anchored Tooltip */}
                                 {isSelected && (
                                     <div className="absolute bottom-[calc(100%+8px)] bg-card-dark/95 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/10 shadow-2xl animate-fade-in-up whitespace-nowrap z-50">
                                         <div className="flex flex-col items-center gap-0.5">
@@ -634,18 +676,16 @@ const MapComponent = ({
                                             <p className="text-[9px] text-primary font-bold uppercase tracking-widest opacity-90">
                                                 {friend.status} • {friend.distance || 'nearby'}
                                             </p>
-                                            {distanceToMeeting && (
-                                                <p className="text-[9px] text-white/80 font-bold tracking-wider">
-                                                    {t('distance_to_meeting')} {distanceToMeeting}
-                                                </p>
-                                            )}
+                                            <p className="text-[9px] text-white/80 font-bold tracking-wider">
+                                                {meetingLocation && meetingLocation.lat
+                                                    ? `${t('distance_to_meeting')} ${distanceToMeeting}`
+                                                    : t('header_no_location')}
+                                            </p>
                                         </div>
-                                        {/* Tooltip Arrow */}
                                         <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card-dark/95 border-r border-b border-white/10 rotate-45"></div>
                                     </div>
                                 )}
 
-                                {/* Minimalist Marker */}
                                 <div className="relative group cursor-pointer transition-transform hover:scale-110">
                                     <div
                                         className={`w-10 h-10 rounded-full border-[2.5px] bg-[#1a1a1a] shadow-xl flex items-center justify-center transition-colors
@@ -657,8 +697,6 @@ const MapComponent = ({
                                             {friend.name.substring(0, 2)}
                                         </span>
                                     </div>
-                                    
-                                    {/* Status Indicator Dot Removed (Border color handles status info) */}
                                 </div>
                             </div>
                         </AdvancedMarker>
