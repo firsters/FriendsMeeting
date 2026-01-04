@@ -167,7 +167,7 @@ const FriendScreens = ({ onNavigate }) => {
                     <div className="flex gap-1 items-center">
                       {hasNew ? (
                         <button 
-                          onClick={() => onNavigate(ScreenType.MEETINGS)}
+                          onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
                           className="w-12 px-3 h-10 rounded-xl bg-primary text-white flex flex-col items-center justify-center animate-pulse shadow-lg shadow-primary/30"
                         >
                           <span className="material-symbols-outlined text-sm">chat_bubble</span>
@@ -175,7 +175,7 @@ const FriendScreens = ({ onNavigate }) => {
                         </button>
                       ) : (
                         <button 
-                          onClick={() => onNavigate(ScreenType.MEETINGS)}
+                          onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
                           className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-500 hover:bg-white/10 hover:text-white transition-all"
                         >
                           <span className="material-symbols-outlined text-lg">chat_bubble</span>
