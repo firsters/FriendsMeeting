@@ -22,6 +22,16 @@ export const FriendsProvider = ({ children }) => {
   const [serverLastReadId, setServerLastReadId] = useState(null);
   const [isReadStatusLoaded, setIsReadStatusLoaded] = useState(false);
   const [blockedIds, setBlockedIds] = useState([]);
+  
+  const activeMeeting = useMemo(() => 
+    guestMeetings.find(m => m.id === activeMeetingId),
+    [guestMeetings, activeMeetingId]
+  );
+
+  const isHost = useMemo(() => 
+    activeMeeting?.hostId === currentUserId,
+    [activeMeeting, currentUserId]
+  );
 
   const isSwitchingMeeting = useRef(false);
 
@@ -334,6 +344,7 @@ export const FriendsProvider = ({ children }) => {
       setSelectedFriendId,
       activeMeetingId,
       setActiveMeetingId,
+      isHost,
       lastSeenMap,
       setLastSeenId,
       currentUserId,

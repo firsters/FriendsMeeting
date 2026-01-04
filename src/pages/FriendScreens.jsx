@@ -9,7 +9,7 @@ import { useModal } from '../context/ModalContext';
 const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
   const { showAlert } = useModal();
-  const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId, guestMeetings, kickFriend, blockFriend } = useFriends();
+  const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId, guestMeetings, kickFriend, blockFriend, isHost } = useFriends();
   const [activeMenuId, setActiveMenuId] = useState(null);
   const lastSeenId = lastSeenMap[activeMeetingId] || null;
 
@@ -182,34 +182,37 @@ const FriendScreens = ({ onNavigate }) => {
                         </button>
                       )}
                       
-                      <div className="relative">
-                        <button 
-                          onClick={(e) => handleMenuClick(e, friend.id)}
-                          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${activeMenuId === friend.id ? 'bg-primary text-white' : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white'}`}
-                        >
-                          <span className="material-symbols-outlined text-lg">more_horiz</span>
-                        </button>
+                      {isHost && (
+                        <div className="relative">
+                          <button 
+                            onClick={(e) => handleMenuClick(e, friend.id)}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${activeMenuId === friend.id ? 'bg-primary text-white' : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white'}`}
+                          >
+                            <span className="material-symbols-outlined text-lg">more_horiz</span>
+                          </button>
 
-                        {activeMenuId === friend.id && (
-                          <div className="absolute right-0 top-12 w-32 bg-card-dark border border-white/10 rounded-2xl shadow-2xl z-20 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                             <button 
-                               onClick={() => handleAction(friend.id, 'kick')}
-                               className="w-full px-4 py-3 text-left text-sm font-bold text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
-                             >
-                               <span className="material-symbols-outlined text-lg text-orange-500">logout</span>
-                               {t('meeting_leave') || '삭제하기'}
-                             </button>
-                             <div className="h-[1px] bg-white/5 mx-2" />
-                             <button 
-                               onClick={() => handleAction(friend.id, 'block')}
-                               className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
-                             >
-                               <span className="material-symbols-outlined text-lg">block</span>
-                               {t('settings_blocked') || '차단하기'}
-                             </button>
-                          </div>
-                        )}
-                      </div>
+                          {activeMenuId === friend.id && (
+                            <div className="absolute right-0 top-12 w-32 bg-card-dark border border-white/10 rounded-2xl shadow-2xl z-20 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                               <button 
+                                 onClick={() => handleAction(friend.id, 'kick')}
+                                 className="w-full px-4 py-3 text-left text-sm font-bold text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
+                               >
+                                 <span className="material-symbols-outlined text-lg text-orange-500">logout</span>
+                                 {t('meeting_leave') || '삭제하기'}
+                               </button>
+                               <div className="h-[1px] bg-white/5 mx-2" />
+                               <button 
+                                 onClick={() => handleAction(friend.id, 'block')}
+                                 className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
+                               >
+                                 <span className="material-symbols-outlined text-lg">block</span>
+                                 {t('settings_blocked') || '차단하기'}
+                               </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                     </div>
                   </div>
                 );
