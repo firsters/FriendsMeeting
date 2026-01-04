@@ -76,16 +76,10 @@ const FriendScreens = ({ onNavigate }) => {
          <span className="material-symbols-outlined">map</span>
          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_map')}</span>
        </button>
-       {/* 
-       <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
-         <span className="material-symbols-outlined">diversity_3</span>
-         <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_meetings')}</span>
-       </button>
        <button onClick={() => onNavigate(ScreenType.MEETING_DETAILS)} className="flex flex-col items-center gap-1 text-gray-600 hover:text-white transition-colors">
          <span className="material-symbols-outlined">forum</span>
          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_chat')}</span>
        </button>
-       */}
        <button onClick={() => onNavigate(ScreenType.FRIENDS)} className="flex flex-col items-center gap-1 text-primary">
          <span className="material-symbols-outlined">group</span>
          <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_friends')}</span>
@@ -148,7 +142,6 @@ const FriendScreens = ({ onNavigate }) => {
                       <p className="text-xs text-gray-500 font-medium">{friend.address || t('friends_location_sample')}</p>
                     </div>
                     <div className="flex gap-1">
-                      {/* 
                       {hasNew ? (
                         <button 
                           onClick={() => onNavigate(ScreenType.MEETINGS)}
@@ -165,7 +158,6 @@ const FriendScreens = ({ onNavigate }) => {
                           <span className="material-symbols-outlined text-lg">chat_bubble</span>
                         </button>
                       )}
-                      */}
                       <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-500 hover:bg-white/10 hover:text-white transition-all"><span className="material-symbols-outlined text-lg">more_horiz</span></button>
                     </div>
                   </div>

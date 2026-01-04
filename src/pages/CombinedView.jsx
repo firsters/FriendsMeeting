@@ -628,7 +628,6 @@ const CombinedView = ({ onNavigate }) => {
                 </span>
               </button>
 
-              {/* 
               <button
                 onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
                 className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-90 relative"
@@ -642,7 +641,6 @@ const CombinedView = ({ onNavigate }) => {
                   </span>
                 )}
               </button>
-              */}
             </div>
           </div>
 
@@ -856,7 +854,6 @@ const CombinedView = ({ onNavigate }) => {
                 </div>
               </div>
 
-               {/* 
                <div className="flex-1">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-white font-black text-lg">
@@ -901,7 +898,6 @@ const CombinedView = ({ onNavigate }) => {
                   ))}
                 </div>
               </div>
-              */}
             </div>
           )}
 
@@ -914,16 +910,6 @@ const CombinedView = ({ onNavigate }) => {
                 {t("nav_map")}
               </span>
             </button>
-            {/* 
-            <button
-              onClick={() => onNavigate(ScreenType.MEETINGS)}
-              className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"
-            >
-              <span className="material-symbols-outlined text-2xl">diversity_3</span>
-              <span className="text-[9px] font-black uppercase tracking-[0.15em]">
-                {t("nav_meetings")}
-              </span>
-            </button>
             <button
               onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
               className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"
@@ -933,7 +919,6 @@ const CombinedView = ({ onNavigate }) => {
                 {t("nav_chat")}
               </span>
             </button>
-            */}
             <button
               onClick={() => onNavigate(ScreenType.FRIENDS)}
               className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"

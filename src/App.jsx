@@ -131,12 +131,12 @@ function App() {
       case ScreenType.MAP:
         return <CombinedView onNavigate={navigate} />;
 
-{/* 
       case ScreenType.MEETINGS:
       case ScreenType.MEETING_DETAILS:
+      {/* 
       case ScreenType.CREATE_MEETING:
-        return <MeetingScreens currentScreen={currentScreen} onNavigate={navigate} />;
       */}
+        return <MeetingScreens currentScreen={currentScreen} onNavigate={navigate} />;
 
       case ScreenType.FRIENDS:
       case ScreenType.FRIEND_REQUESTS:
