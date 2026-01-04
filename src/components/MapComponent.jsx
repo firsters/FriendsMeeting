@@ -342,6 +342,7 @@ const MapComponent = ({
     generalLocation = null,
     onCenterRequest,
     onFriendAddressResolved,
+    isMeetingHost = false,
     bottomOffset = 100,
     topOffset = 80
 }) => {
@@ -598,12 +599,13 @@ const MapComponent = ({
                 {meetingLocation && meetingLocation.lat && (
                     <AdvancedMarker
                         position={{ lat: meetingLocation.lat, lng: meetingLocation.lng }}
-                        draggable={true}
-                        onDrag={(e) => onMarkerDrag && onMarkerDrag('meeting', e.latLng.toJSON())}
-                        onDragEnd={(e) => onMarkerDragEnd && onMarkerDragEnd('meeting', e.latLng.toJSON())}
+                        draggable={isMeetingHost}
+                        onDrag={(e) => isMeetingHost && onMarkerDrag && onMarkerDrag('meeting', e.latLng.toJSON())}
+                        onDragEnd={(e) => isMeetingHost && onMarkerDragEnd && onMarkerDragEnd('meeting', e.latLng.toJSON())}
+                        className={!isMeetingHost ? "cursor-default" : "cursor-grab"}
                     >
-                        <div className="relative flex flex-col items-center animate-bounce-short cursor-grab active:cursor-grabbing">
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-blue-400 border-4 border-white shadow-2xl flex items-center justify-center relative z-10">
+                        <div className={`relative flex flex-col items-center animate-bounce-short ${isMeetingHost ? 'cursor-grab active:cursor-grabbing' : ''}`}>
+                            <div className={`w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-blue-400 border-4 border-white shadow-2xl flex items-center justify-center relative z-10 ${!isMeetingHost ? 'opacity-90' : ''}`}>
                                 <span className="material-symbols-outlined text-white text-2xl drop-shadow-md">star</span>
                             </div>
                             <div className="absolute -bottom-1 w-4 h-2 bg-black/50 blur-sm rounded-full"></div>
