@@ -720,7 +720,7 @@ const CombinedView = ({ onNavigate }) => {
         >
           <span className="material-symbols-outlined">layers</span>
         </button>
-        <button
+        {/* <button
           onClick={() => onNavigate(ScreenType.CREATE_MEETING)}
           className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary/30 hover:bg-blue-600 transition-all active:scale-95 group relative"
         >
@@ -728,7 +728,7 @@ const CombinedView = ({ onNavigate }) => {
           <div className="absolute right-16 px-3 py-1 bg-card-dark text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-2xl border border-white/10">
             {t("meeting_create")}
           </div>
-        </button>
+        </button> */}
       </div>
 
       {/* Dashboard Expandable Sheet */}
