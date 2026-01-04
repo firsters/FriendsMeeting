@@ -79,6 +79,7 @@ const CombinedView = ({ onNavigate }) => {
   const [pendingLocationName, setPendingLocationName] = useState(null);
   const [userAddress, setUserAddress] = useState("");
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
+  const [meetingHostId, setMeetingHostId] = useState(null);
 
   // General Search State (Row 2)
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -134,7 +135,7 @@ const CombinedView = ({ onNavigate }) => {
   }, [selectedFriendId, friends, setSelectedFriendId]);
 
   // ROW 1 Logic: Auth & Meeting ID sync is now handled by FriendsContext
-  const isHost = !!currentUserId;
+  const isHost = currentUserId && meetingHostId && currentUserId === meetingHostId;
 
   // 2. Meeting Subscription for Location Sharing
   useEffect(() => {
@@ -142,16 +143,22 @@ const CombinedView = ({ onNavigate }) => {
       setActiveMeetingId(null);
       setMeetingLocation(null);
       setMeetingStatus("unconfirmed");
+      setMeetingHostId(null);
       return;
     }
 
     const unsubMeetings = subscribeToMeetings(currentUserId, (meetings) => {
       if (meetings.length > 0) {
         const meeting = meetings[0];
+        if (meeting.hostId) {
+          setMeetingHostId(meeting.hostId);
+        }
         if (meeting.meetingLocation) {
           setMeetingLocation(meeting.meetingLocation);
           setMeetingStatus("confirmed");
         }
+      } else {
+        setMeetingHostId(null);
       }
     });
     return () => unsubMeetings();
@@ -167,18 +174,6 @@ const CombinedView = ({ onNavigate }) => {
         const newPos = [latitude, longitude];
         setUserLocation(newPos);
         setLiveStatus("online");
-
-        // Resolve user address (Geocoding)
-        if (geocoder) {
-          geocoder.geocode(
-            { location: { lat: latitude, lng: longitude } },
-            (results, status) => {
-              if (status === "OK" && results[0]) {
-                setUserAddress(results[0].formatted_address);
-              }
-            }
-          );
-        }
       };
 
       const error = (err) => {
@@ -201,7 +196,21 @@ const CombinedView = ({ onNavigate }) => {
         navigator.geolocation.clearWatch(watchId);
       }
     };
-  }, [geocoder]);
+  }, []); // Stable watcher
+
+  // Address Resolution Effect (Separated to avoid stale closure)
+  useEffect(() => {
+    if (userLocation && geocoder) {
+      geocoder.geocode(
+        { location: { lat: userLocation[0], lng: userLocation[1] } },
+        (results, status) => {
+          if (status === "OK" && results[0]) {
+            setUserAddress(results[0].formatted_address);
+          }
+        }
+      );
+    }
+  }, [userLocation, geocoder]);
 
   // Sync personal location to Firebase
   useEffect(() => {
@@ -436,6 +445,7 @@ const CombinedView = ({ onNavigate }) => {
           mapType={mapType}
           meetingLocation={meetingLocation}
           generalLocation={generalLocation}
+          isMeetingHost={isHost}
           onMarkerDrag={handleMarkerDrag}
           onMarkerDragEnd={handleMarkerDragEnd}
           onCenterRequest={(pos) => setCenterTrigger((prev) => prev + 1)}
