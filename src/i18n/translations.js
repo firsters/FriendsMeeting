@@ -119,7 +119,8 @@ export const translations = {
     radar_live: "실시간 레이더",
     radar_move_map: "지도를 움직여 위치를 조정하세요",
     map_location_unavailable: "상세 주소 확인 불가",
-    
+    map_location_mock: "위치 미확인 (기본값)",
+
     // Meetings
     meeting_list_title: "모임 목록",
     meeting_join: "참여하기",
@@ -397,6 +398,7 @@ export const translations = {
     radar_live: "Live Radar",
     radar_move_map: "Move map to adjust",
     map_location_unavailable: "Detailed location unavailable",
+    map_location_mock: "Unconfirmed Location (Default)",
 
     // Meetings
     meeting_list_title: "Meetings",

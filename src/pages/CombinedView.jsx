@@ -29,6 +29,7 @@ const CombinedView = ({ onNavigate }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
+  const [isLocationMocked, setIsLocationMocked] = useState(false);
 
   // Unread Calculation
   const notificationCount = useMemo(() => {
@@ -167,18 +168,23 @@ const CombinedView = ({ onNavigate }) => {
   // Geolocation & Live Status
   useEffect(() => {
     let watchId = null;
+    const fallbackLocation = [37.5665, 126.9780]; // Seoul City Hall
 
     if (navigator.geolocation) {
       const success = (position) => {
         const { latitude, longitude } = position.coords;
         const newPos = [latitude, longitude];
         setUserLocation(newPos);
+        setIsLocationMocked(false);
         setLiveStatus("online");
       };
 
       const error = (err) => {
         console.error("Location permission denied or error:", err);
         setLiveStatus("offline");
+        // Fallback if no location yet
+        setUserLocation((prev) => prev || fallbackLocation);
+        setIsLocationMocked((prev) => prev || true);
       };
 
       // Watch position for real-time updates
@@ -189,6 +195,8 @@ const CombinedView = ({ onNavigate }) => {
       });
     } else {
       setLiveStatus("offline");
+      setUserLocation(fallbackLocation);
+      setIsLocationMocked(true);
     }
 
     return () => {
@@ -427,6 +435,7 @@ const CombinedView = ({ onNavigate }) => {
           selectedFriend={selectedFriend}
           onFriendClick={setSelectedFriend}
           userLocation={userLocation}
+          isLocationMocked={isLocationMocked}
           center={mapCenter}
           // Primary Search (Host)
           searchQuery={searchQuery}

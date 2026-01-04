@@ -289,13 +289,15 @@ const PlacesHandler = ({ searchQuery, searchTrigger = 0, onSearchResults, select
 };
 
 // UI Component for User Marker (Reusable for Real Map and Debug View)
-const UserMarkerContent = ({ showMeTooltip, myDistanceToMeeting, meetingLocation, t }) => (
+const UserMarkerContent = ({ showMeTooltip, myDistanceToMeeting, meetingLocation, t, isLocationMocked }) => (
     <div className="relative flex flex-col items-center justify-center">
          {/* Anchored Tooltip for Me */}
          {showMeTooltip && (
             <div className="absolute bottom-[calc(100%+8px)] bg-card-dark/95 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/10 shadow-2xl animate-fade-in-up whitespace-nowrap z-50">
                 <div className="flex flex-col items-center gap-0.5">
-                    <p className="text-[13px] font-black text-white leading-none tracking-tight">{t('chat_me') || "나"}</p>
+                    <p className="text-[13px] font-black text-white leading-none tracking-tight">
+                        {isLocationMocked ? (t('map_location_mock') || "위치 미확인 (기본값)") : (t('chat_me') || "나")}
+                    </p>
                     <p className="text-[9px] text-white/80 font-bold tracking-wider">
                         {meetingLocation && meetingLocation.lat
                             ? `${t('distance_to_meeting')} ${myDistanceToMeeting}`
@@ -308,9 +310,13 @@ const UserMarkerContent = ({ showMeTooltip, myDistanceToMeeting, meetingLocation
         )}
 
         <div className="relative flex items-center justify-center w-12 h-12 cursor-pointer">
-            <div className="absolute inset-0 bg-blue-500/30 rounded-full animate-ping"></div>
-            <div className="w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-lg relative z-10 flex items-center justify-center">
-                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div className={`absolute inset-0 rounded-full animate-ping ${isLocationMocked ? 'bg-gray-500/30' : 'bg-blue-500/30'}`}></div>
+            <div className={`w-6 h-6 rounded-full border-2 border-white shadow-lg relative z-10 flex items-center justify-center ${isLocationMocked ? 'bg-gray-500' : 'bg-blue-500'}`}>
+                {isLocationMocked ? (
+                    <span className="material-symbols-outlined text-[10px] text-white font-bold">question_mark</span>
+                ) : (
+                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                )}
             </div>
         </div>
     </div>
@@ -321,6 +327,7 @@ const MapComponent = ({
     selectedFriend,
     onFriendClick,
     userLocation,
+    isLocationMocked = false,
     center,
     onAddressResolved,
     searchQuery,
@@ -643,6 +650,7 @@ const MapComponent = ({
                             myDistanceToMeeting={myDistanceToMeeting}
                             meetingLocation={meetingLocation}
                             t={t}
+                            isLocationMocked={isLocationMocked}
                         />
                     </AdvancedMarker>
                 )}

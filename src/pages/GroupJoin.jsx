@@ -55,8 +55,8 @@ const GroupJoin = ({ onNavigate, groupCode }) => {
         console.log("[GroupJoin] Successfully joined meeting and set active ID:", meeting.id);
         
         setLoading(false);
-        // Redirect to meeting list or map
-        onNavigate(ScreenType.MEETINGS);
+        // Redirect to map as requested
+        onNavigate(ScreenType.MAP);
     } catch (err) {
         console.error("Guest join failed:", err);
         if (err.code === 'auth/admin-restricted-operation') {
