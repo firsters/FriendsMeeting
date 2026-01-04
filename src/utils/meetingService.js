@@ -69,7 +69,44 @@ export const joinMeetingByCode = async (groupCode, userId, userProfile) => {
   const meetingData = meetingDoc.data();
   
   // Check if already in participants
-  if (meetingData.participants.some(p => p.id === userId)) {
+  const existingParticipantIndex = meetingData.participants.findIndex(p => p.id === userId);
+  if (existingParticipantIndex !== -1) {
+    const existingParticipant = meetingData.participants[existingParticipantIndex];
+
+    // If nickname changed, update it
+    if (existingParticipant.nickname !== userProfile.nickname) {
+      const oldNickname = existingParticipant.nickname;
+      const newNickname = userProfile.nickname;
+
+      const updatedParticipant = {
+        ...existingParticipant,
+        nickname: newNickname,
+        avatar: userProfile.avatar || newNickname.charAt(0)
+      };
+
+      const updatedParticipants = [...meetingData.participants];
+      updatedParticipants[existingParticipantIndex] = updatedParticipant;
+
+      await updateDoc(doc(db, 'meetings', meetingDoc.id), {
+        participants: updatedParticipants
+      });
+
+      try {
+        const updateMessage = `${oldNickname}님이 닉네임을 ${newNickname}(으)로 변경했습니다.`;
+        await sendMessage(meetingDoc.id, {
+          senderId: 'system',
+          senderName: 'System',
+          content: updateMessage,
+          type: 'system',
+          timestamp: serverTimestamp()
+        });
+      } catch (error) {
+        console.error("Failed to send nickname update system message:", error);
+      }
+
+      return { id: meetingDoc.id, ...meetingData, participants: updatedParticipants };
+    }
+
     return { id: meetingDoc.id, ...meetingData };
   }
   
