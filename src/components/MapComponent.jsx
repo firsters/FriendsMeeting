@@ -683,29 +683,37 @@ const MapComponent = ({
                                     <div className="absolute bottom-[calc(100%+8px)] bg-card-dark/95 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/10 shadow-2xl animate-fade-in-up whitespace-nowrap z-50">
                                         <div className="flex flex-col items-center gap-0.5">
                                             <p className="text-[13px] font-black text-white leading-none tracking-tight">{friend.name}</p>
-                                            <p className="text-[9px] text-primary font-bold uppercase tracking-widest opacity-90">
-                                                {friend.status} • {friend.distance || 'nearby'}
+                                            <p className={`text-[9px] font-bold uppercase tracking-widest opacity-90 ${friend.status === 'paused' ? 'text-gray-400' : 'text-primary'}`}>
+                                                {friend.status === 'paused' ? 'Paused' : `${friend.status} • ${friend.distance || 'nearby'}`}
                                             </p>
-                                            <p className="text-[9px] text-white/80 font-bold tracking-wider">
-                                                {meetingLocation && meetingLocation.lat
-                                                    ? `${t('distance_to_meeting')} ${distanceToMeeting}`
-                                                    : t('header_no_location')}
-                                            </p>
+                                            {friend.status !== 'paused' && (
+                                              <p className="text-[9px] text-white/80 font-bold tracking-wider">
+                                                  {meetingLocation && meetingLocation.lat
+                                                      ? `${t('distance_to_meeting')} ${distanceToMeeting}`
+                                                      : t('header_no_location')}
+                                              </p>
+                                            )}
                                         </div>
                                         <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card-dark/95 border-r border-b border-white/10 rotate-45"></div>
                                     </div>
                                 )}
 
-                                <div className="relative group cursor-pointer transition-transform hover:scale-110">
+                                <div className={`relative group cursor-pointer transition-transform hover:scale-110 ${friend.status === 'paused' ? 'opacity-50' : ''}`}>
                                     <div
                                         className={`w-10 h-10 rounded-full border-[2.5px] bg-[#1a1a1a] shadow-xl flex items-center justify-center transition-colors
                                             ${isSelected ? 'border-primary ring-4 ring-primary/20' : 'border-white/20'}`}
                                         style={!isSelected && friend.status === 'nearby' ? { borderColor: '#4285F4' } : 
-                                               !isSelected && friend.status === 'driving' ? { borderColor: '#F97316' } : {}}
+                                               !isSelected && friend.status === 'driving' ? { borderColor: '#F97316' } :
+                                               friend.status === 'paused' ? { borderColor: '#9CA3AF' } : {}}
                                     >
                                         <span className="text-[15px] font-black text-white uppercase tracking-tighter">
                                             {friend.name.substring(0, 2)}
                                         </span>
+                                        {friend.status === 'paused' && (
+                                          <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full">
+                                            <span className="material-symbols-outlined text-[10px] text-white">pause</span>
+                                          </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
