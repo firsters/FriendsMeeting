@@ -334,3 +334,27 @@ export const leaveMeeting = async (meetingId, userId) => {
     participantIds: updatedParticipantIds
   });
 };
+
+export const toggleParticipantBlock = async (meetingId, userId, isBlocked) => {
+  const meetingRef = doc(db, 'meetings', meetingId);
+  // Fetch current participants to update the specific user
+  const snapshot = await getDocs(query(collection(db, 'meetings'), where('__name__', '==', meetingId)));
+
+  if (snapshot.empty) return;
+
+  const meetingData = snapshot.docs[0].data();
+  const updatedParticipants = meetingData.participants.map(p => {
+    if (p.id === userId) {
+      return {
+        ...p,
+        isBlocked: isBlocked,
+        updatedAt: new Date().toISOString()
+      };
+    }
+    return p;
+  });
+
+  await updateDoc(meetingRef, {
+    participants: updatedParticipants
+  });
+};
