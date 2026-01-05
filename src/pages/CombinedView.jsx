@@ -472,7 +472,6 @@ const CombinedView = ({ onNavigate }) => {
           {/* ROW 1: Meeting Status & Host Location (Always Visible) */}
           <div className="flex items-center min-h-[4.5rem] w-full border-b border-white/5 last:border-none">
             {/* Left Section: Indicators (Order swapped and emphasized) */}
-            {/* 
             <div className="flex flex-col justify-center px-5 py-3 border-r border-white/10 gap-1 shrink-0 min-w-[170px]">
               <div className="flex items-center gap-2">
                 <span
@@ -493,7 +492,6 @@ const CombinedView = ({ onNavigate }) => {
                 </span>
               </div>
             </div>
-            */}
 
             {/* Center Section: Info or Search (Host) */}
             <div className="flex-1 px-5 py-2 relative flex items-center h-16">
