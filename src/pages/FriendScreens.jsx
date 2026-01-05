@@ -10,28 +10,15 @@ const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
   const { showAlert } = useModal();
   const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId, guestMeetings, blockFriend, unblockFriend, isHost } = useFriends();
-  const [activeMenuId, setActiveMenuId] = useState(null);
   const lastSeenId = lastSeenMap[activeMeetingId] || null;
 
-  const handleMenuClick = (e, friendId) => {
-    e.stopPropagation();
-    setActiveMenuId(activeMenuId === friendId ? null : friendId);
-  };
-
   const handleAction = async (friendId, action) => {
-    setActiveMenuId(null);
     if (action === 'block') {
       await blockFriend(friendId);
     } else if (action === 'unblock') {
       await unblockFriend(friendId);
     }
   };
-
-  useEffect(() => {
-    const handleClickOutside = () => setActiveMenuId(null);
-    window.addEventListener('click', handleClickOutside);
-    return () => window.removeEventListener('click', handleClickOutside);
-  }, []);
 
   const handleFriendProfileClick = (friendId) => {
     setSelectedFriendId(friendId);
@@ -185,36 +172,23 @@ const FriendScreens = ({ onNavigate }) => {
                       )}
                       
                       {isHost && (
-                        <div className="relative">
-                          <button 
-                            onClick={(e) => handleMenuClick(e, friend.id)}
-                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${activeMenuId === friend.id ? 'bg-primary text-white' : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white'}`}
+                        friend.isBlocked ? (
+                          <button
+                            onClick={() => handleAction(friend.id, 'unblock')}
+                            className="px-3 h-10 rounded-xl bg-white/5 border border-white/10 text-green-500 font-bold text-xs flex items-center gap-1 hover:bg-white/10 transition-all ml-1"
                           >
-                            <span className="material-symbols-outlined text-lg">more_horiz</span>
+                            <span className="material-symbols-outlined text-base">check_circle</span>
+                            {t('action_unblock')}
                           </button>
-
-                          {activeMenuId === friend.id && (
-                            <div className="absolute right-0 top-12 w-32 bg-card-dark border border-white/10 rounded-2xl shadow-2xl z-20 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                               {friend.isBlocked ? (
-                                 <button
-                                   onClick={() => handleAction(friend.id, 'unblock')}
-                                   className="w-full px-4 py-3 text-left text-sm font-bold text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
-                                 >
-                                   <span className="material-symbols-outlined text-lg text-green-500">check_circle</span>
-                                   {t('settings_unblock') || '차단해제'}
-                                 </button>
-                               ) : (
-                                 <button
-                                   onClick={() => handleAction(friend.id, 'block')}
-                                   className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
-                                 >
-                                   <span className="material-symbols-outlined text-lg">block</span>
-                                   {t('settings_blocked') || '차단하기'}
-                                 </button>
-                               )}
-                            </div>
-                          )}
-                        </div>
+                        ) : (
+                          <button
+                            onClick={() => handleAction(friend.id, 'block')}
+                            className="px-3 h-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-xs flex items-center gap-1 hover:bg-red-500/20 transition-all ml-1"
+                          >
+                            <span className="material-symbols-outlined text-base">block</span>
+                            {t('action_block')}
+                          </button>
+                        )
                       )}
 
                     </div>

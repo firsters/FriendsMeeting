@@ -269,6 +269,8 @@ export const translations = {
     settings_code_copied: "그룹 코드가 복사되었습니다!",
     
     // Friend Screens Additional
+    action_block: "차단",
+    action_unblock: "차단해제",
     friends_nearby_distance: "m 근처",
     distance_to_meeting: "모임까지",
     friends_location_sample: "대한민국 서울",
@@ -543,6 +545,8 @@ export const translations = {
     settings_copy_link: "Copy Link",
     
     // Friend Screens Additional
+    action_block: "Block",
+    action_unblock: "Unblock",
     friends_nearby_distance: "away",
     distance_to_meeting: "To Meeting",
     friends_location_sample: "Seoul, Korea",
