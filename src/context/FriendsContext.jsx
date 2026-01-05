@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useMemo } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, updateDoc, serverTimestamp, arrayUnion, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, serverTimestamp, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
 import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode, updateLastReadMessage, subscribeToReadStatus, leaveMeeting, deleteMeeting } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
@@ -109,7 +109,6 @@ export const FriendsProvider = ({ children }) => {
     if (currentMeeting && currentMeeting.participants) {
       const otherParticipants = currentMeeting.participants
         .filter(p => p.id !== currentUserId && p.id !== 'me') // Exclude self
-        .filter(p => !blockedIds.includes(p.id)) // Exclude blocked users
         .map(p => ({
           id: p.id,
           name: p.nickname || p.name || 'Unknown',
@@ -117,7 +116,8 @@ export const FriendsProvider = ({ children }) => {
           lng: p.lng,
           status: p.status || 'online',
           avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
-          address: p.address || ''
+          address: p.address || '',
+          isBlocked: (currentMeeting.blockedParticipants || []).includes(p.id)
         }));
       
       console.log(`[FriendsContext] Syncing friends for meeting ${activeMeetingId}:`, otherParticipants.length);
@@ -125,21 +125,7 @@ export const FriendsProvider = ({ children }) => {
     } else {
       setFriends([]);
     }
-  }, [activeMeetingId, guestMeetings, currentUserId, blockedIds]);
-
-  // 2.2 Subscription to User's Blocked List
-  useEffect(() => {
-    if (!currentUserId) return;
-    
-    const userRef = doc(db, 'users', currentUserId);
-    const unsubUser = onSnapshot(userRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.data();
-        setBlockedIds(data.blockedUsers || []);
-      }
-    });
-    return () => unsubUser();
-  }, [currentUserId]);
+  }, [activeMeetingId, guestMeetings, currentUserId]);
 
   // 3. Message Subscription
   useEffect(() => {
@@ -238,15 +224,30 @@ export const FriendsProvider = ({ children }) => {
   };
 
   const blockFriend = async (friendId) => {
-    if (!currentUserId || !friendId) return;
+    if (!activeMeetingId || !friendId) return;
     try {
-      const userRef = doc(db, 'users', currentUserId);
-      await updateDoc(userRef, {
-        blockedUsers: arrayUnion(friendId)
+      const meetingRef = doc(db, 'meetings', activeMeetingId);
+      await updateDoc(meetingRef, {
+        blockedParticipants: arrayUnion(friendId)
       });
       showAlert("해당 사용자를 차단했습니다.", "사용자 차단");
     } catch (err) {
+      console.error(err);
       showAlert("차단 중 오류가 발생했습니다.", "오류");
+    }
+  };
+
+  const unblockFriend = async (friendId) => {
+    if (!activeMeetingId || !friendId) return;
+    try {
+      const meetingRef = doc(db, 'meetings', activeMeetingId);
+      await updateDoc(meetingRef, {
+        blockedParticipants: arrayRemove(friendId)
+      });
+      showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");
+    } catch (err) {
+      console.error(err);
+      showAlert("차단 해제 중 오류가 발생했습니다.", "오류");
     }
   };
 
@@ -354,7 +355,8 @@ export const FriendsProvider = ({ children }) => {
       leaveCurrentMeeting,
       deleteCurrentMeeting,
       kickFriend,
-      blockFriend
+      blockFriend,
+      unblockFriend
     }}>
       {children}
     </FriendsContext.Provider>

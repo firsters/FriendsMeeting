@@ -9,7 +9,7 @@ import { useModal } from '../context/ModalContext';
 const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
   const { showAlert } = useModal();
-  const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId, guestMeetings, kickFriend, blockFriend, isHost } = useFriends();
+  const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId, guestMeetings, blockFriend, unblockFriend, isHost } = useFriends();
   const [activeMenuId, setActiveMenuId] = useState(null);
   const lastSeenId = lastSeenMap[activeMeetingId] || null;
 
@@ -20,10 +20,10 @@ const FriendScreens = ({ onNavigate }) => {
 
   const handleAction = async (friendId, action) => {
     setActiveMenuId(null);
-    if (action === 'kick') {
-      await kickFriend(friendId);
-    } else if (action === 'block') {
+    if (action === 'block') {
       await blockFriend(friendId);
+    } else if (action === 'unblock') {
+      await unblockFriend(friendId);
     }
   };
 
@@ -145,41 +145,43 @@ const FriendScreens = ({ onNavigate }) => {
            </div>
            
            <div className="space-y-4">
-              {friends.map((friend) => {
+              {[...friends].sort((a, b) => a.isBlocked - b.isBlocked).map((friend) => {
                 const hasNew = getHasNewMessage(friend.id);
                 return (
-                  <div key={friend.id} className="flex items-center gap-4 group cursor-pointer transition-all">
+                  <div key={friend.id} className={`flex items-center gap-4 group cursor-pointer transition-all ${friend.isBlocked ? 'opacity-50 grayscale' : ''}`}>
                     <div className="relative" onClick={() => handleFriendProfileClick(friend.id)}>
                       <div className="w-14 h-14 rounded-2xl bg-card-dark flex items-center justify-center border-2 border-white/5 shadow-xl group-hover:border-primary/50 transition-all">
                         <span className="text-[18px] font-black text-white uppercase tracking-tighter">
                           {friend.name.substring(0, 2)}
                         </span>
                       </div>
-                      <div className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-[3px] border-background-dark shadow-sm ${friend.status === 'nearby' ? 'bg-blue-500' : friend.status === 'driving' ? 'bg-orange-500' : 'bg-gray-500'}`}></div>
+                      <div className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-[3px] border-background-dark shadow-sm ${friend.isBlocked ? 'bg-red-500' : friend.status === 'nearby' ? 'bg-blue-500' : friend.status === 'driving' ? 'bg-orange-500' : 'bg-gray-500'}`}></div>
                     </div>
                     <div className="flex-1 border-b border-white/5 py-4 group-last:border-none" onClick={() => handleFriendProfileClick(friend.id)}>
                       <div className="flex justify-between items-center mb-0.5">
-                        <h4 className="text-base font-bold text-white">{friend.name}</h4>
+                        <h4 className="text-base font-bold text-white">{friend.name} {friend.isBlocked && <span className="text-red-500 text-xs ml-2">(Blocked)</span>}</h4>
                         <span className="text-[10px] font-bold text-gray-700 uppercase tracking-widest italic font-sans">{friend.status === 'nearby' ? '9m' : friend.status === 'driving' ? '2.5km' : 'far'} {t('friends_nearby_distance')}</span>
                       </div>
                       <p className="text-xs text-gray-500 font-medium">{friend.address || t('friends_location_sample')}</p>
                     </div>
                     <div className="flex gap-1 items-center">
-                      {hasNew ? (
-                        <button 
-                          onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
-                          className="w-12 px-3 h-10 rounded-xl bg-primary text-white flex flex-col items-center justify-center animate-pulse shadow-lg shadow-primary/30"
-                        >
-                          <span className="material-symbols-outlined text-sm">chat_bubble</span>
-                          <span className="text-[7px] font-black uppercase">NEW</span>
-                        </button>
-                      ) : (
-                        <button 
-                          onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
-                          className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-500 hover:bg-white/10 hover:text-white transition-all"
-                        >
-                          <span className="material-symbols-outlined text-lg">chat_bubble</span>
-                        </button>
+                      {!friend.isBlocked && (
+                        hasNew ? (
+                          <button
+                            onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
+                            className="w-12 px-3 h-10 rounded-xl bg-primary text-white flex flex-col items-center justify-center animate-pulse shadow-lg shadow-primary/30"
+                          >
+                            <span className="material-symbols-outlined text-sm">chat_bubble</span>
+                            <span className="text-[7px] font-black uppercase">NEW</span>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
+                            className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-500 hover:bg-white/10 hover:text-white transition-all"
+                          >
+                            <span className="material-symbols-outlined text-lg">chat_bubble</span>
+                          </button>
+                        )
                       )}
                       
                       {isHost && (
@@ -193,21 +195,23 @@ const FriendScreens = ({ onNavigate }) => {
 
                           {activeMenuId === friend.id && (
                             <div className="absolute right-0 top-12 w-32 bg-card-dark border border-white/10 rounded-2xl shadow-2xl z-20 py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                               <button 
-                                 onClick={() => handleAction(friend.id, 'kick')}
-                                 className="w-full px-4 py-3 text-left text-sm font-bold text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
-                               >
-                                 <span className="material-symbols-outlined text-lg text-orange-500">logout</span>
-                                 {t('meeting_leave') || '삭제하기'}
-                               </button>
-                               <div className="h-[1px] bg-white/5 mx-2" />
-                               <button 
-                                 onClick={() => handleAction(friend.id, 'block')}
-                                 className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
-                               >
-                                 <span className="material-symbols-outlined text-lg">block</span>
-                                 {t('settings_blocked') || '차단하기'}
-                               </button>
+                               {friend.isBlocked ? (
+                                 <button
+                                   onClick={() => handleAction(friend.id, 'unblock')}
+                                   className="w-full px-4 py-3 text-left text-sm font-bold text-white hover:bg-white/10 flex items-center gap-2 transition-colors"
+                                 >
+                                   <span className="material-symbols-outlined text-lg text-green-500">check_circle</span>
+                                   {t('settings_unblock') || '차단해제'}
+                                 </button>
+                               ) : (
+                                 <button
+                                   onClick={() => handleAction(friend.id, 'block')}
+                                   className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-500/10 flex items-center gap-2 transition-colors"
+                                 >
+                                   <span className="material-symbols-outlined text-lg">block</span>
+                                   {t('settings_blocked') || '차단하기'}
+                                 </button>
+                               )}
                             </div>
                           )}
                         </div>
