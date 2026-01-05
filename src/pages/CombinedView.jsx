@@ -25,6 +25,7 @@ const CombinedView = ({ onNavigate }) => {
     currentUserId,
     messages,
     serverLastReadId,
+    guestMeetings
   } = useFriends();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -221,15 +222,28 @@ const CombinedView = ({ onNavigate }) => {
   }, [userLocation, geocoder]);
 
   // Sync personal location to Firebase
+  const isPaused = useMemo(() => {
+    if (activeMeetingId && currentUserId && guestMeetings.length > 0) {
+      const meeting = guestMeetings.find(m => m.id === activeMeetingId);
+      if (meeting) {
+        const me = meeting.participants.find(p => p.id === currentUserId);
+        if (me && me.status === 'paused') {
+          return true;
+        }
+      }
+    }
+    return false;
+  }, [activeMeetingId, currentUserId, guestMeetings]);
+
   useEffect(() => {
-    if (activeMeetingId && currentUserId && userLocation) {
+    if (activeMeetingId && currentUserId && userLocation && !isPaused) {
       updateParticipantLocation(activeMeetingId, currentUserId, {
         lat: userLocation[0],
         lng: userLocation[1],
         status: liveStatus,
       });
     }
-  }, [userLocation, activeMeetingId, currentUserId, liveStatus]);
+  }, [userLocation, activeMeetingId, currentUserId, liveStatus, isPaused]);
 
   // Host Search State (Meeting Location)
   const [searchQuery, setSearchQuery] = useState("");

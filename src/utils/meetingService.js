@@ -203,6 +203,28 @@ export const updateParticipantLocation = async (meetingId, userId, locationData)
   });
 };
 
+export const updateParticipantStatus = async (meetingId, userId, status) => {
+  const meetingRef = doc(db, 'meetings', meetingId);
+  const snapshot = await getDocs(query(collection(db, 'meetings'), where('__name__', '==', meetingId)));
+  if (snapshot.empty) return;
+
+  const meetingData = snapshot.docs[0].data();
+  const updatedParticipants = meetingData.participants.map(p => {
+    if (p.id === userId) {
+      return {
+        ...p,
+        status: status,
+        updatedAt: new Date().toISOString()
+      };
+    }
+    return p;
+  });
+
+  await updateDoc(meetingRef, {
+    participants: updatedParticipants
+  });
+};
+
 export const subscribeToMeetingDetails = (meetingId, callback) => {
   return onSnapshot(doc(db, 'meetings', meetingId), (doc) => {
     if (doc.exists()) {

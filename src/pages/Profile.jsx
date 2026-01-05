@@ -1,13 +1,15 @@
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import { useModal } from '../context/ModalContext';
+import { useFriends } from '../context/FriendsContext';
 import { useState, useEffect } from 'react';
 import { auth } from '../firebase';
-import { subscribeToMeetings } from '../utils/meetingService';
+import { subscribeToMeetings, updateParticipantStatus } from '../utils/meetingService';
 
 const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => {
   const { t } = useTranslation();
   const { showAlert } = useModal();
+  const { guestMeetings, activeMeetingId, currentUserId } = useFriends();
   const [meetings, setMeetings] = useState([]);
 
   useEffect(() => {
@@ -75,7 +77,32 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
     online: true,
   });
 
-  const handleToggle = (key) => setToggles(prev => ({ ...prev, [key]: !prev[key] }));
+  useEffect(() => {
+    if (activeMeetingId && currentUserId && guestMeetings.length > 0) {
+      const meeting = guestMeetings.find(m => m.id === activeMeetingId);
+      if (meeting) {
+        const me = meeting.participants.find(p => p.id === currentUserId);
+        if (me) {
+          setToggles(prev => ({
+            ...prev,
+            online: me.status !== 'paused'
+          }));
+        }
+      }
+    }
+  }, [activeMeetingId, currentUserId, guestMeetings]);
+
+  const handleToggle = async (key) => {
+    if (key === 'online') {
+      const newStatus = !toggles.online;
+      setToggles(prev => ({ ...prev, online: newStatus }));
+      if (activeMeetingId && currentUserId) {
+        await updateParticipantStatus(activeMeetingId, currentUserId, newStatus ? 'online' : 'paused');
+      }
+    } else {
+      setToggles(prev => ({ ...prev, [key]: !prev[key] }));
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
