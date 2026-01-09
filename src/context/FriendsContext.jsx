@@ -38,6 +38,11 @@ export const FriendsProvider = ({ children }) => {
   }, [activeMeeting, currentUserId]);
 
   const isSwitchingMeeting = useRef(false);
+  const activeIdRef = useRef(activeMeetingId);
+
+  useEffect(() => {
+    activeIdRef.current = activeMeetingId;
+  }, [activeMeetingId]);
 
   // 1. Auth Subscription
   useEffect(() => {
@@ -70,8 +75,9 @@ export const FriendsProvider = ({ children }) => {
       
       // Auto-set active meeting if none is selected OR if currently on a guest placeholder
       // Also handle case where the active meeting was DELETED or LEAVED
-      const isPlaceholder = !activeMeetingId || activeMeetingId.toString().startsWith('guest-');
-      const activeIsStillValid = meetings.some(m => m.id === activeMeetingId);
+      const currentActiveId = activeIdRef.current;
+      const isPlaceholder = !currentActiveId || currentActiveId.toString().startsWith('guest-');
+      const activeIsStillValid = meetings.some(m => m.id === currentActiveId);
 
       if (meetings.length > 0) {
           if (isPlaceholder || (!isPlaceholder && !activeIsStillValid)) {
@@ -81,11 +87,11 @@ export const FriendsProvider = ({ children }) => {
           }
       } else {
          // No meetings left
-         if (activeMeetingId && !activeMeetingId.toString().startsWith('guest-')) {
+         if (currentActiveId && !currentActiveId.toString().startsWith('guest-')) {
              if (!isSwitchingMeeting.current) {
                 // If we didn't initiate a leave/switch, then the meeting was deleted by host (or we were kicked, though logic is same).
                 console.log("[FriendsContext] Meeting disappeared unexpectedly. Triggering alert.");
-                showAlert("호스트가 모임을 종료했습니다.", "모임 종료");
+                showAlert("호스트가 모임을 종료했거나 강퇴되었습니다.", "모임 종료/강퇴");
              } else {
                  console.log("[FriendsContext] Meeting disappeared due to intentional switch/leave.");
              }

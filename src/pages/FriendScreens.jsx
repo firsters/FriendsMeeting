@@ -172,23 +172,34 @@ const FriendScreens = ({ onNavigate }) => {
                       )}
                       
                       {isHost && (
-                        friend.isBlocked ? (
-                          <button
-                            onClick={() => handleAction(friend.id, 'unblock')}
-                            className="px-3 h-10 rounded-xl bg-white/5 border border-white/10 text-green-500 font-bold text-xs flex items-center gap-1 hover:bg-white/10 transition-all ml-1"
-                          >
-                            <span className="material-symbols-outlined text-base">check_circle</span>
-                            {t('action_unblock')}
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleAction(friend.id, 'block')}
-                            className="px-3 h-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-xs flex items-center gap-1 hover:bg-red-500/20 transition-all ml-1"
-                          >
-                            <span className="material-symbols-outlined text-base">block</span>
-                            {t('action_block')}
-                          </button>
-                        )
+                        <div className="flex gap-1 ml-1">
+                          {friend.isBlocked ? (
+                            <button
+                              onClick={() => handleAction(friend.id, 'unblock')}
+                              className="px-3 h-10 rounded-xl bg-white/5 border border-white/10 text-green-500 font-bold text-xs flex items-center gap-1 hover:bg-white/10 transition-all"
+                            >
+                              <span className="material-symbols-outlined text-base">check_circle</span>
+                              {t('action_unblock')}
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => handleAction(friend.id, 'block')}
+                                className="px-3 h-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-xs flex items-center gap-1 hover:bg-red-500/20 transition-all"
+                              >
+                                <span className="material-symbols-outlined text-base">block</span>
+                                {t('action_block')}
+                              </button>
+                              <button
+                                onClick={() => kickFriend(friend.id)}
+                                className="w-10 h-10 rounded-xl bg-red-600/10 border border-red-600/20 text-red-600 flex items-center justify-center hover:bg-red-600/20 transition-all"
+                                title="Kick participant"
+                              >
+                                <span className="material-symbols-outlined text-base">person_remove</span>
+                              </button>
+                            </>
+                          )}
+                        </div>
                       )}
 
                     </div>

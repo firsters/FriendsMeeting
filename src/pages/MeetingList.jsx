@@ -89,7 +89,7 @@ const MeetingList = () => {
           <MeetingDetails 
             meeting={selectedMeeting} 
             onBack={() => setSelectedMeeting(null)} 
-            isHost={selectedMeeting.hostId === auth.currentUser?.uid}
+            isHost={selectedMeeting.hostId === currentUserId || selectedMeeting.participants?.find(p => p.id === currentUserId)?.role === 'host'}
           />
         )}
         {overlayType && (
