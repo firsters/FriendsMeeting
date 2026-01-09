@@ -144,10 +144,12 @@ const FriendScreens = ({ onNavigate }) => {
                     </div>
                     <div className="flex-1 border-b border-white/5 py-4 group-last:border-none" onClick={() => handleFriendProfileClick(friend.id)}>
                       <div className="flex justify-between items-center mb-0.5">
-                        <h4 className="text-base font-bold text-white">{friend.name} {friend.isBlocked && <span className="text-red-500 text-xs ml-2">(Blocked)</span>}</h4>
-                        <span className="text-[10px] font-bold text-gray-700 uppercase tracking-widest italic font-sans">{friend.status === 'nearby' ? '9m' : friend.status === 'driving' ? '2.5km' : 'far'} {t('friends_nearby_distance')}</span>
+                        <h4 className="text-base font-bold text-white">{friend.name} {friend.isBlocked && <span className="text-red-500 text-[10px] font-black uppercase ml-2 tracking-widest italic">{t('action_block')}</span>}</h4>
+                        {!friend.isBlocked && (
+                          <span className="text-[10px] font-bold text-gray-700 uppercase tracking-widest italic font-sans">{friend.status === 'nearby' ? '9m' : friend.status === 'driving' ? '2.5km' : 'far'} {t('friends_nearby_distance')}</span>
+                        )}
                       </div>
-                      <p className="text-xs text-gray-500 font-medium">{friend.address || t('friends_location_sample')}</p>
+                      <p className="text-xs text-gray-500 font-medium">{friend.isBlocked ? t('restricted_content') || 'Blocked User' : (friend.address || t('friends_location_sample'))}</p>
                     </div>
                     <div className="flex gap-1 items-center">
                       {!friend.isBlocked && (

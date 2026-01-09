@@ -137,16 +137,19 @@ export const FriendsProvider = ({ children }) => {
     if (currentMeeting && currentMeeting.participants) {
       const otherParticipants = currentMeeting.participants
         .filter(p => p.id !== currentUserId && p.id !== 'me') // Exclude self
-        .map(p => ({
-          id: p.id,
-          name: p.nickname || p.name || 'Unknown',
-          lat: p.lat,
-          lng: p.lng,
-          status: p.status || 'online',
-          avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
-          address: p.address || '',
-          isBlocked: blockedIds.includes(p.id) || (currentMeeting.blockedParticipants || []).includes(p.id)
-        }));
+        .map(p => {
+          const isBlocked = blockedIds.includes(p.id) || (currentMeeting.blockedParticipants || []).includes(p.id);
+          return {
+            id: p.id,
+            name: p.nickname || p.name || 'Unknown',
+            lat: isBlocked ? null : p.lat,
+            lng: isBlocked ? null : p.lng,
+            status: isBlocked ? 'blocked' : (p.status || 'online'),
+            avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
+            address: isBlocked ? '' : (p.address || ''),
+            isBlocked
+          };
+        });
       
       console.log(`[FriendsContext] Syncing friends for meeting ${activeMeetingId}:`, otherParticipants.length);
       setFriends(otherParticipants);
@@ -190,6 +193,10 @@ export const FriendsProvider = ({ children }) => {
       unsubMessages();
     };
   }, [activeMeetingId]);
+
+  const filteredMessages = useMemo(() => {
+    return messages.filter(m => !blockedIds.includes(m.senderId));
+  }, [messages, blockedIds]);
 
   // 4. Read Status Subscription
   useEffect(() => {
@@ -385,7 +392,8 @@ export const FriendsProvider = ({ children }) => {
       setUserLocation, 
       guestMeetings, 
       joinGuestMeeting, 
-      messages, 
+      messages: filteredMessages, // Use filtered messages by default
+      rawMessages: messages,      // Provide raw if needed
       sendMessage,
       updateFriendAddress,
       selectedFriendId,
@@ -403,7 +411,8 @@ export const FriendsProvider = ({ children }) => {
       deleteCurrentMeeting,
       kickFriend,
       blockFriend,
-      unblockFriend
+      unblockFriend,
+      blockedIds
     }}>
       {children}
     </FriendsContext.Provider>

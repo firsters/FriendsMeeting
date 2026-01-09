@@ -472,7 +472,7 @@ const CombinedView = ({ onNavigate }) => {
       {/* MAIN MAP AREA */}
       <div className="absolute inset-0 z-0">
         <MapComponent
-          friends={friends}
+          friends={friends.filter(f => !f.isBlocked)}
           selectedFriend={selectedFriend}
           onFriendClick={setSelectedFriend}
           userLocation={userLocation}
@@ -814,7 +814,7 @@ const CombinedView = ({ onNavigate }) => {
                 </div>
                 <div>
                   <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                    {friends.length} {t("dashboard_friends_online")}
+                    {friends.filter(f => !f.isBlocked).length} {t("dashboard_friends_online")}
                   </p>
                   <p className="text-white text-xs font-bold">
                     {notificationCount} {t("dashboard_new_messages")}
