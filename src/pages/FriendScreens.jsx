@@ -104,16 +104,14 @@ const FriendScreens = ({ onNavigate }) => {
       <header className="px-6 pt-10 pb-6 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('nav_friends')}</h1>
-          {isHost && (
-            <div className="flex gap-2">
-              <button
-                onClick={handleShareInvite}
-                className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
-              >
-                <span className="material-symbols-outlined">person_add</span>
-              </button>
-            </div>
-          )}
+          <div className="flex gap-2">
+            <button
+              onClick={handleShareInvite}
+              className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
+            >
+              <span className="material-symbols-outlined">person_add</span>
+            </button>
+          </div>
         </div>
 
         <div className="relative group">
@@ -171,25 +169,25 @@ const FriendScreens = ({ onNavigate }) => {
                         )
                       )}
                       
-                      {isHost && (
-                        <div className="flex gap-1 ml-1">
-                          {friend.isBlocked ? (
+                      <div className="flex gap-1 ml-1">
+                        {friend.isBlocked ? (
+                          <button
+                            onClick={() => handleAction(friend.id, 'unblock')}
+                            className="px-3 h-10 rounded-xl bg-white/5 border border-white/10 text-green-500 font-bold text-xs flex items-center gap-1 hover:bg-white/10 transition-all"
+                          >
+                            <span className="material-symbols-outlined text-base">check_circle</span>
+                            {t('action_unblock')}
+                          </button>
+                        ) : (
+                          <>
                             <button
-                              onClick={() => handleAction(friend.id, 'unblock')}
-                              className="px-3 h-10 rounded-xl bg-white/5 border border-white/10 text-green-500 font-bold text-xs flex items-center gap-1 hover:bg-white/10 transition-all"
+                              onClick={() => handleAction(friend.id, 'block')}
+                              className="px-3 h-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-xs flex items-center gap-1 hover:bg-red-500/20 transition-all"
                             >
-                              <span className="material-symbols-outlined text-base">check_circle</span>
-                              {t('action_unblock')}
+                              <span className="material-symbols-outlined text-base">block</span>
+                              {t('action_block')}
                             </button>
-                          ) : (
-                            <>
-                              <button
-                                onClick={() => handleAction(friend.id, 'block')}
-                                className="px-3 h-10 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-xs flex items-center gap-1 hover:bg-red-500/20 transition-all"
-                              >
-                                <span className="material-symbols-outlined text-base">block</span>
-                                {t('action_block')}
-                              </button>
+                            {isHost && (
                               <button
                                 onClick={() => kickFriend(friend.id)}
                                 className="w-10 h-10 rounded-xl bg-red-600/10 border border-red-600/20 text-red-600 flex items-center justify-center hover:bg-red-600/20 transition-all"
@@ -197,10 +195,10 @@ const FriendScreens = ({ onNavigate }) => {
                               >
                                 <span className="material-symbols-outlined text-base">person_remove</span>
                               </button>
-                            </>
-                          )}
-                        </div>
-                      )}
+                            )}
+                          </>
+                        )}
+                      </div>
 
                     </div>
                   </div>

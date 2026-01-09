@@ -58,6 +58,24 @@ export const FriendsProvider = ({ children }) => {
     return () => unsubscribeAuth();
   }, []);
 
+  // 1.1 Personal Block List Subscription
+  useEffect(() => {
+    if (!currentUserId || currentUserId === 'me') return;
+    
+    console.log("[FriendsContext] Subscribing to personal block list for:", currentUserId);
+    const userRef = doc(db, 'users', currentUserId);
+    const unsubUser = onSnapshot(userRef, (doc) => {
+      if (doc.exists()) {
+        const data = doc.data();
+        console.log("[FriendsContext] Personal block list updated:", data.blockedUsers?.length || 0);
+        setBlockedIds(data.blockedUsers || []);
+      }
+    }, (err) => {
+      console.warn("[FriendsContext] User profile/block subscription failed (expected for guests):", err.message);
+    });
+    return () => unsubUser();
+  }, [currentUserId]);
+
   // 2. Meeting Subscription
   useEffect(() => {
     if (!currentUserId) return;
@@ -127,7 +145,7 @@ export const FriendsProvider = ({ children }) => {
           status: p.status || 'online',
           avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
           address: p.address || '',
-          isBlocked: (currentMeeting.blockedParticipants || []).includes(p.id)
+          isBlocked: blockedIds.includes(p.id) || (currentMeeting.blockedParticipants || []).includes(p.id)
         }));
       
       console.log(`[FriendsContext] Syncing friends for meeting ${activeMeetingId}:`, otherParticipants.length);
@@ -135,7 +153,7 @@ export const FriendsProvider = ({ children }) => {
     } else {
       setFriends([]);
     }
-  }, [activeMeetingId, guestMeetings, currentUserId]);
+  }, [activeMeetingId, guestMeetings, currentUserId, blockedIds]);
 
   // 3. Message Subscription
   useEffect(() => {
@@ -234,12 +252,22 @@ export const FriendsProvider = ({ children }) => {
   };
 
   const blockFriend = async (friendId) => {
-    if (!activeMeetingId || !friendId) return;
+    if (!currentUserId || !friendId) return;
     try {
-      const meetingRef = doc(db, 'meetings', activeMeetingId);
-      await updateDoc(meetingRef, {
-        blockedParticipants: arrayUnion(friendId)
+      // Personal block (multi-user safe)
+      const userRef = doc(db, 'users', currentUserId);
+      await updateDoc(userRef, {
+        blockedUsers: arrayUnion(friendId)
       });
+      
+      // If host, also block at meeting level for everyone's safety
+      if (isHost && !activeMeetingId.toString().startsWith('guest-')) {
+        const meetingRef = doc(db, 'meetings', activeMeetingId);
+        await updateDoc(meetingRef, {
+          blockedParticipants: arrayUnion(friendId)
+        });
+      }
+      
       showAlert("해당 사용자를 차단했습니다.", "사용자 차단");
     } catch (err) {
       console.error(err);
@@ -248,12 +276,21 @@ export const FriendsProvider = ({ children }) => {
   };
 
   const unblockFriend = async (friendId) => {
-    if (!activeMeetingId || !friendId) return;
+    if (!currentUserId || !friendId) return;
     try {
-      const meetingRef = doc(db, 'meetings', activeMeetingId);
-      await updateDoc(meetingRef, {
-        blockedParticipants: arrayRemove(friendId)
+      const userRef = doc(db, 'users', currentUserId);
+      await updateDoc(userRef, {
+        blockedUsers: arrayRemove(friendId)
       });
+
+      // If host, also unblock at meeting level
+      if (isHost && !activeMeetingId.toString().startsWith('guest-')) {
+        const meetingRef = doc(db, 'meetings', activeMeetingId);
+        await updateDoc(meetingRef, {
+          blockedParticipants: arrayRemove(friendId)
+        });
+      }
+
       showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");
     } catch (err) {
       console.error(err);

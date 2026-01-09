@@ -12,9 +12,12 @@ import {
   updateParticipantLocation,
 } from "../utils/meetingService";
 import { useFriends } from "../context/FriendsContext";
+import { useModal } from "../context/ModalContext";
+import { doc, getDoc } from "firebase/firestore";
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
+  const { showAlert } = useModal();
   const {
     friends,
     updateFriendAddress,
@@ -421,6 +424,45 @@ const CombinedView = ({ onNavigate }) => {
     }
   };
 
+  const handleShareInvite = async () => {
+    if (!auth.currentUser) return;
+
+    try {
+      const currentMeeting = guestMeetings.find(m => m.id === activeMeetingId);
+
+      let groupCode = '';
+      if (currentMeeting && currentMeeting.groupCode) {
+        groupCode = currentMeeting.groupCode;
+      } else {
+        const docRef = doc(db, "users", auth.currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          groupCode = docSnap.data().groupCode;
+        }
+      }
+
+      if (!groupCode) {
+        groupCode = auth.currentUser.uid.substring(0, 6).toUpperCase();
+      }
+
+      const link = `${window.location.origin}/?group_code=${groupCode}`;
+      const shareData = {
+        title: t('invite_title') || 'Join my Friend Group!',
+        text: t('invite_text') || 'Join my group on FriendsMeeting!',
+        url: link
+      };
+
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(link);
+        showAlert(t('modal_info_title') || "Notice", t('settings_code_copied') || 'Link copied to clipboard: ' + link);
+      }
+    } catch (err) {
+      console.error("Error sharing:", err);
+    }
+  };
+
   const liveInfo = getLiveStatusInfo();
   const meetingInfo = getMeetingStatusInfo();
 
@@ -622,6 +664,15 @@ const CombinedView = ({ onNavigate }) => {
               >
                 <span className="material-symbols-outlined text-lg">
                   {isSearchExpanded ? "expand_less" : "expand_more"}
+                </span>
+              </button>
+
+              <button
+                onClick={handleShareInvite}
+                className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-90"
+              >
+                <span className="material-symbols-outlined text-lg">
+                  person_add
                 </span>
               </button>
 
