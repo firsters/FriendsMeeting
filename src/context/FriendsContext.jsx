@@ -144,7 +144,8 @@ export const FriendsProvider = ({ children }) => {
         .map(p => {
           const pid = p.id.toString();
           const isPersonallyBlocked = blockedIds.includes(pid);
-          const isMeetingBlocked = (currentMeeting.blockedParticipants || []).map(id => id.toString()).includes(pid);
+          const meetingBlockedIds = (currentMeeting.blockedParticipants || []).map(id => id.toString());
+          const isMeetingBlocked = meetingBlockedIds.includes(pid);
           const isBlocked = isPersonallyBlocked || isMeetingBlocked;
           
           return {
@@ -160,7 +161,7 @@ export const FriendsProvider = ({ children }) => {
           };
         });
       
-      console.log(`[FriendsContext] Syncing participants for ${activeMeetingId}: total=${otherParticipants.length}, blocked=${otherParticipants.filter(p => p.isBlocked).length}`);
+      console.log(`[FriendsContext] Syncing participants for ${activeMeetingId}: total=${otherParticipants.length}, blocked=${otherParticipants.filter(p => p.isBlocked).length}, personallyBlockedIds=[${blockedIds}], meetingBlockedIds=[${(currentMeeting.blockedParticipants || [])}]`);
       setFriends(otherParticipants);
     } else {
       setFriends([]);
@@ -271,19 +272,19 @@ export const FriendsProvider = ({ children }) => {
 
   const blockFriend = async (friendId) => {
     if (!currentUserId || !friendId) return;
+    const fid = friendId.toString();
     try {
       // Personal block (multi-user safe)
       const userRef = doc(db, 'users', currentUserId);
-      // Use setDoc with merge instead of updateDoc in case user document doesn't exist yet
       await setDoc(userRef, {
-        blockedUsers: arrayUnion(friendId)
+        blockedUsers: arrayUnion(fid)
       }, { merge: true });
       
       // If host, also block at meeting level for everyone's safety
       if (isHost && activeMeetingId && !activeMeetingId.toString().startsWith('guest-')) {
         const meetingRef = doc(db, 'meetings', activeMeetingId);
         await updateDoc(meetingRef, {
-          blockedParticipants: arrayUnion(friendId)
+          blockedParticipants: arrayUnion(fid)
         });
       }
       
@@ -297,12 +298,14 @@ export const FriendsProvider = ({ children }) => {
   const unblockFriend = async (friendId) => {
     if (!currentUserId || !friendId) return;
     const fid = friendId.toString();
-    console.log("[FriendsContext] Attempting to unblock:", fid);
+    const originalId = friendId;
+    console.log("[FriendsContext] Attempting to unblock friendId:", friendId, "( fid:", fid, ")");
     
     try {
       const userRef = doc(db, 'users', currentUserId);
+      // Remove both for resilience against previous type mismatches
       await setDoc(userRef, {
-        blockedUsers: arrayRemove(fid)
+        blockedUsers: arrayRemove(fid, originalId)
       }, { merge: true });
 
       // If host, also unblock at meeting level
@@ -310,15 +313,16 @@ export const FriendsProvider = ({ children }) => {
         console.log("[FriendsContext] Host detected, removing from meeting-wide blocks:", activeMeetingId);
         const meetingRef = doc(db, 'meetings', activeMeetingId);
         await updateDoc(meetingRef, {
-          blockedParticipants: arrayRemove(fid)
+          blockedParticipants: arrayRemove(fid, originalId)
         });
-      } else if (!isHost && activeMeeting?.blockedParticipants?.includes(fid)) {
-        console.log("[FriendsContext] Guest unblock attempted on a meeting-wide (host) block. This won't remove the global block.");
+      } else if (!isHost && activeMeeting?.blockedParticipants?.map(id => id.toString()).includes(fid)) {
+        console.log("[FriendsContext] Guest unblock attempted on a meeting-wide (host) block. Note: Host block persists.");
+        showAlert("호스트가 관리 차단한 사용자는 해제할 수 없습니다.", "안내");
       }
 
       showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");
     } catch (err) {
-      console.error("[FriendsContext] unblockFriend error:", err);
+      console.error("[FriendsContext] unblockFriend absolute error:", err);
       showAlert("차단 해제 중 오류가 발생했습니다.", "오류");
     }
   };
