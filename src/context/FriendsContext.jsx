@@ -67,8 +67,12 @@ export const FriendsProvider = ({ children }) => {
     const unsubUser = onSnapshot(userRef, (doc) => {
       if (doc.exists()) {
         const data = doc.data();
-        console.log("[FriendsContext] Personal block list updated:", data.blockedUsers?.length || 0);
-        setBlockedIds(data.blockedUsers || []);
+        const personalBlocks = data.blockedUsers || [];
+        console.log("[FriendsContext] Personal block list updated:", personalBlocks.length);
+        setBlockedIds(personalBlocks.map(id => id.toString()));
+      } else {
+        console.log("[FriendsContext] Personal block document does not exist, resetting.");
+        setBlockedIds([]);
       }
     }, (err) => {
       console.warn("[FriendsContext] User profile/block subscription failed (expected for guests):", err.message);
@@ -138,7 +142,11 @@ export const FriendsProvider = ({ children }) => {
       const otherParticipants = currentMeeting.participants
         .filter(p => p.id !== currentUserId && p.id !== 'me') // Exclude self
         .map(p => {
-          const isBlocked = blockedIds.includes(p.id) || (currentMeeting.blockedParticipants || []).includes(p.id);
+          const pid = p.id.toString();
+          const isPersonallyBlocked = blockedIds.includes(pid);
+          const isMeetingBlocked = (currentMeeting.blockedParticipants || []).map(id => id.toString()).includes(pid);
+          const isBlocked = isPersonallyBlocked || isMeetingBlocked;
+          
           return {
             id: p.id,
             name: p.nickname || p.name || 'Unknown',
@@ -147,11 +155,12 @@ export const FriendsProvider = ({ children }) => {
             status: isBlocked ? 'blocked' : (p.status || 'online'),
             avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
             address: isBlocked ? '' : (p.address || ''),
-            isBlocked
+            isBlocked,
+            blockType: isPersonallyBlocked ? (isMeetingBlocked ? 'both' : 'personal') : (isMeetingBlocked ? 'meeting' : 'none')
           };
         });
       
-      console.log(`[FriendsContext] Syncing friends for meeting ${activeMeetingId}:`, otherParticipants.length);
+      console.log(`[FriendsContext] Syncing participants for ${activeMeetingId}: total=${otherParticipants.length}, blocked=${otherParticipants.filter(p => p.isBlocked).length}`);
       setFriends(otherParticipants);
     } else {
       setFriends([]);
@@ -195,8 +204,10 @@ export const FriendsProvider = ({ children }) => {
   }, [activeMeetingId]);
 
   const filteredMessages = useMemo(() => {
-    return messages.filter(m => !blockedIds.includes(m.senderId));
-  }, [messages, blockedIds]);
+    const meetingBlocks = activeMeeting?.blockedParticipants || [];
+    const allBlocked = new Set([...blockedIds, ...meetingBlocks.map(id => id.toString())]);
+    return messages.filter(m => !allBlocked.has(m.senderId?.toString()));
+  }, [messages, blockedIds, activeMeeting]);
 
   // 4. Read Status Subscription
   useEffect(() => {
@@ -285,19 +296,24 @@ export const FriendsProvider = ({ children }) => {
 
   const unblockFriend = async (friendId) => {
     if (!currentUserId || !friendId) return;
+    const fid = friendId.toString();
+    console.log("[FriendsContext] Attempting to unblock:", fid);
+    
     try {
       const userRef = doc(db, 'users', currentUserId);
-      // Use setDoc with merge to be resilient to missing documents
       await setDoc(userRef, {
-        blockedUsers: arrayRemove(friendId)
+        blockedUsers: arrayRemove(fid)
       }, { merge: true });
 
       // If host, also unblock at meeting level
       if (isHost && activeMeetingId && !activeMeetingId.toString().startsWith('guest-')) {
+        console.log("[FriendsContext] Host detected, removing from meeting-wide blocks:", activeMeetingId);
         const meetingRef = doc(db, 'meetings', activeMeetingId);
         await updateDoc(meetingRef, {
-          blockedParticipants: arrayRemove(friendId)
+          blockedParticipants: arrayRemove(fid)
         });
+      } else if (!isHost && activeMeeting?.blockedParticipants?.includes(fid)) {
+        console.log("[FriendsContext] Guest unblock attempted on a meeting-wide (host) block. This won't remove the global block.");
       }
 
       showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");

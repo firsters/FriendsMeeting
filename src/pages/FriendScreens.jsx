@@ -144,7 +144,14 @@ const FriendScreens = ({ onNavigate }) => {
                     </div>
                     <div className="flex-1 border-b border-white/5 py-4 group-last:border-none" onClick={() => handleFriendProfileClick(friend.id)}>
                       <div className="flex justify-between items-center mb-0.5">
-                        <h4 className="text-base font-bold text-white">{friend.name} {friend.isBlocked && <span className="text-red-500 text-[10px] font-black uppercase ml-2 tracking-widest italic">{t('action_block')}</span>}</h4>
+                        <h4 className="text-base font-bold text-white">
+                          {friend.name} 
+                          {friend.isBlocked && (
+                            <span className="text-red-500 text-[10px] font-black uppercase ml-2 tracking-widest italic">
+                              {friend.blockType === 'meeting' ? t('blocked_by_host') || 'Host Blocked' : t('action_block')}
+                            </span>
+                          )}
+                        </h4>
                         {!friend.isBlocked && (
                           <span className="text-[10px] font-bold text-gray-700 uppercase tracking-widest italic font-sans">{friend.status === 'nearby' ? '9m' : friend.status === 'driving' ? '2.5km' : 'far'} {t('friends_nearby_distance')}</span>
                         )}

@@ -161,6 +161,7 @@ export const translations = {
     meeting_new_participant: "새로운 참여자",
     meeting_joined_msg: "님이 모임에 참여했습니다!",
     restricted_content: "비공개 정보",
+    blocked_by_host: "호스트 차단",
     
     // Meeting Overlay
     meeting_new: "새 모임 만들기",
@@ -441,6 +442,7 @@ export const translations = {
     meeting_new_participant: "New Participant",
     meeting_joined_msg: "has joined the meeting!",
     restricted_content: "Restricted Information",
+    blocked_by_host: "Host Blocked",
 
     // Meeting Overlay
     meeting_new: "New Meeting",
