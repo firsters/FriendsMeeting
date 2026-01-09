@@ -57,7 +57,7 @@ const ListScreen = ({ onNavigate, t, guestMeetings }) => (
 
       {/* Render Guest Meetings as Chats */}
       {guestMeetings.map(meeting => (
-        <div key={meeting.id} className="px-6 py-4 flex gap-4 hover:bg-white/5 active:bg-white/10 transition-all cursor-pointer items-center border-b border-white/5" onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}>
+        <div key={meeting.id} className="px-6 py-4 flex gap-4 hover:bg-white/5 active:bg-white/10 transition-all cursor-pointer items-center border-b border-white/5" onClick={() => { setActiveMeetingId(meeting.id); onNavigate(ScreenType.MEETING_DETAILS); }}>
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
             <span className="material-symbols-outlined text-white text-2xl">diversity_3</span>
           </div>
@@ -199,7 +199,7 @@ const CreateScreen = ({ onNavigate, t }) => (
 
 const MeetingScreens = ({ currentScreen, onNavigate }) => {
   const { t } = useTranslation();
-  const { guestMeetings, activeMeetingId } = useFriends();
+  const { guestMeetings, activeMeetingId, setActiveMeetingId } = useFriends();
   const activeMeeting = guestMeetings.find(m => m.id === activeMeetingId) || guestMeetings[0];
 
   switch (currentScreen) {

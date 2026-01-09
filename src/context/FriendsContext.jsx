@@ -28,10 +28,14 @@ export const FriendsProvider = ({ children }) => {
     [guestMeetings, activeMeetingId]
   );
 
-  const isHost = useMemo(() => 
-    activeMeeting?.hostId === currentUserId,
-    [activeMeeting, currentUserId]
-  );
+  const isHost = useMemo(() => {
+    if (!activeMeeting || !currentUserId) return false;
+    // Direct hostId check
+    if (activeMeeting.hostId === currentUserId) return true;
+    // Fallback/Legacy/Guest check: look at active user's role in participants
+    const me = activeMeeting.participants?.find(p => p.id === currentUserId || p.id === 'me');
+    return me?.role === 'host';
+  }, [activeMeeting, currentUserId]);
 
   const isSwitchingMeeting = useRef(false);
 

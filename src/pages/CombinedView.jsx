@@ -25,7 +25,8 @@ const CombinedView = ({ onNavigate }) => {
     currentUserId,
     messages,
     serverLastReadId,
-    guestMeetings
+    guestMeetings,
+    isHost
   } = useFriends();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -81,7 +82,6 @@ const CombinedView = ({ onNavigate }) => {
   const [pendingLocationName, setPendingLocationName] = useState(null);
   const [userAddress, setUserAddress] = useState("");
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
-  const [meetingHostId, setMeetingHostId] = useState(null);
 
   // General Search State (Row 2)
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -136,35 +136,20 @@ const CombinedView = ({ onNavigate }) => {
     }
   }, [selectedFriendId, friends, setSelectedFriendId]);
 
-  // ROW 1 Logic: Auth & Meeting ID sync is now handled by FriendsContext
-  const isHost = currentUserId && meetingHostId && currentUserId === meetingHostId;
 
-  // 2. Meeting Subscription for Location Sharing
+  // ROW 1 Logic: Meeting ID sync is now handled by FriendsContext
+  // We still want to sync top-bar location state if the context updates
   useEffect(() => {
-    if (!currentUserId) {
-      setActiveMeetingId(null);
-      setMeetingLocation(null);
-      setMeetingStatus("unconfirmed");
-      setMeetingHostId(null);
-      return;
-    }
-
-    const unsubMeetings = subscribeToMeetings(currentUserId, (meetings) => {
-      if (meetings.length > 0) {
-        const meeting = meetings[0];
-        if (meeting.hostId) {
-          setMeetingHostId(meeting.hostId);
-        }
+    if (activeMeetingId && guestMeetings.length > 0) {
+      const meeting = guestMeetings.find(m => m.id === activeMeetingId);
+      if (meeting) {
         if (meeting.meetingLocation) {
           setMeetingLocation(meeting.meetingLocation);
           setMeetingStatus("confirmed");
         }
-      } else {
-        setMeetingHostId(null);
       }
-    });
-    return () => unsubMeetings();
-  }, [currentUserId]);
+    }
+  }, [activeMeetingId, guestMeetings]);
 
   // Geolocation & Live Status
   useEffect(() => {
