@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useMemo } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, updateDoc, serverTimestamp, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, setDoc, serverTimestamp, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
 import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode, updateLastReadMessage, subscribeToReadStatus, leaveMeeting, deleteMeeting } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
@@ -263,12 +263,13 @@ export const FriendsProvider = ({ children }) => {
     try {
       // Personal block (multi-user safe)
       const userRef = doc(db, 'users', currentUserId);
-      await updateDoc(userRef, {
+      // Use setDoc with merge instead of updateDoc in case user document doesn't exist yet
+      await setDoc(userRef, {
         blockedUsers: arrayUnion(friendId)
-      });
+      }, { merge: true });
       
       // If host, also block at meeting level for everyone's safety
-      if (isHost && !activeMeetingId.toString().startsWith('guest-')) {
+      if (isHost && activeMeetingId && !activeMeetingId.toString().startsWith('guest-')) {
         const meetingRef = doc(db, 'meetings', activeMeetingId);
         await updateDoc(meetingRef, {
           blockedParticipants: arrayUnion(friendId)
@@ -277,7 +278,7 @@ export const FriendsProvider = ({ children }) => {
       
       showAlert("해당 사용자를 차단했습니다.", "사용자 차단");
     } catch (err) {
-      console.error(err);
+      console.error("[FriendsContext] blockFriend error:", err);
       showAlert("차단 중 오류가 발생했습니다.", "오류");
     }
   };
@@ -286,12 +287,13 @@ export const FriendsProvider = ({ children }) => {
     if (!currentUserId || !friendId) return;
     try {
       const userRef = doc(db, 'users', currentUserId);
-      await updateDoc(userRef, {
+      // Use setDoc with merge to be resilient to missing documents
+      await setDoc(userRef, {
         blockedUsers: arrayRemove(friendId)
-      });
+      }, { merge: true });
 
       // If host, also unblock at meeting level
-      if (isHost && !activeMeetingId.toString().startsWith('guest-')) {
+      if (isHost && activeMeetingId && !activeMeetingId.toString().startsWith('guest-')) {
         const meetingRef = doc(db, 'meetings', activeMeetingId);
         await updateDoc(meetingRef, {
           blockedParticipants: arrayRemove(friendId)
@@ -300,7 +302,7 @@ export const FriendsProvider = ({ children }) => {
 
       showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");
     } catch (err) {
-      console.error(err);
+      console.error("[FriendsContext] unblockFriend error:", err);
       showAlert("차단 해제 중 오류가 발생했습니다.", "오류");
     }
   };
