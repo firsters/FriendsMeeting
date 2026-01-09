@@ -22,18 +22,23 @@ export const FriendsProvider = ({ children }) => {
   const [serverLastReadId, setServerLastReadId] = useState(null);
   const [isReadStatusLoaded, setIsReadStatusLoaded] = useState(false);
   const [blockedIds, setBlockedIds] = useState([]);
+  const [resolvedAddresses, setResolvedAddresses] = useState({}); // { friendId: address }
+  
+  // Helper for ID normalization across the entire context
+  const normId = (id) => id?.toString().trim() || "";
   
   const activeMeeting = useMemo(() => 
-    guestMeetings.find(m => m.id?.toString() === activeMeetingId?.toString()),
+    guestMeetings.find(m => normId(m.id) === normId(activeMeetingId)),
     [guestMeetings, activeMeetingId]
   );
 
   const isHost = useMemo(() => {
     if (!activeMeeting || !currentUserId) return false;
+    const uid = normId(currentUserId);
     // Direct hostId check
-    if (activeMeeting.hostId === currentUserId) return true;
-    // Fallback/Legacy/Guest check: look at active user's role in participants
-    const me = activeMeeting.participants?.find(p => p.id === currentUserId || p.id === 'me');
+    if (normId(activeMeeting.hostId) === uid) return true;
+    // Role check fallback
+    const me = activeMeeting.participants?.find(p => normId(p.id) === uid || normId(p.id) === 'me');
     return me?.role === 'host';
   }, [activeMeeting, currentUserId]);
 
@@ -130,55 +135,47 @@ export const FriendsProvider = ({ children }) => {
     };
   }, [currentUserId]);
 
-  // 2.1 Dynamic Friends Derivation (Meeting-centric)
+  // 2.1 Refined Friends List Derivation (Deterministic)
   useEffect(() => {
-    if (!currentUserId || !activeMeetingId) {
-      setFriends([]);
+    if (!currentUserId || !activeMeeting || !activeMeeting.participants) {
+      if (friends.length > 0) setFriends([]);
       return;
     }
 
-    const currentMeeting = guestMeetings.find(m => m.id.toString() === activeMeetingId.toString());
-    if (currentMeeting && currentMeeting.participants) {
-      const otherParticipants = currentMeeting.participants
-        .filter(p => {
-          const pid = p.id?.toString().trim();
-          const uid = currentUserId?.toString().trim();
-          return pid !== uid && pid !== 'me'; // Exclude self
-        })
-        .map(p => {
-          const pid = p.id?.toString().trim();
-          
-          // Use the more stable blockedIds list
-          const isPersonallyBlocked = blockedIds.some(bid => bid?.toString().trim() === pid);
-          
-          const meetingBlockedIds = (currentMeeting.blockedParticipants || []).map(id => id?.toString().trim());
-          const isMeetingBlocked = meetingBlockedIds.includes(pid);
-          
-          const isBlocked = isPersonallyBlocked || isMeetingBlocked;
-          
-          if (isBlocked) {
-            console.log(`[FriendsContext] DEBUG BlockInfo: pid=${pid}, personal=${isPersonallyBlocked}, meeting=${isMeetingBlocked}, blockIdsCount=${blockedIds.length}`);
-          }
+    const uid = normId(currentUserId);
+    const meetingBlockedIds = (activeMeeting.blockedParticipants || []).map(id => normId(id));
+    const normalizedBlockedIds = blockedIds.map(id => normId(id));
 
-          return {
-            id: p.id,
-            name: p.nickname || p.name || 'Unknown',
-            lat: isBlocked ? null : p.lat,
-            lng: isBlocked ? null : p.lng,
-            status: isBlocked ? 'blocked' : (p.status || 'online'),
-            avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
-            address: isBlocked ? '' : (p.address || ''),
-            isBlocked,
-            blockType: isPersonallyBlocked ? (isMeetingBlocked ? 'both' : 'personal') : (isMeetingBlocked ? 'meeting' : 'none')
-          };
-        });
-      
-      console.log(`[FriendsContext] STATE UPDATE: ${activeMeetingId}, blockedCount=${otherParticipants.filter(f => f.isBlocked).length}`);
-      setFriends(otherParticipants);
-    } else {
-      setFriends([]);
-    }
-  }, [activeMeetingId, guestMeetings, currentUserId, blockedIds]);
+    const otherParticipants = activeMeeting.participants
+      .filter(p => {
+        const pid = normId(p.id);
+        return pid !== uid && pid !== 'me';
+      })
+      .map(p => {
+        const pid = normId(p.id);
+        const isPersonallyBlocked = normalizedBlockedIds.includes(pid);
+        const isMeetingBlocked = meetingBlockedIds.includes(pid);
+        const isBlocked = isPersonallyBlocked || isMeetingBlocked;
+        
+        // Use locally resolved address if Firestore one is missing
+        const currentAddress = p.address || resolvedAddresses[p.id] || resolvedAddresses[pid] || '';
+
+        return {
+          id: p.id,
+          name: p.nickname || p.name || 'Unknown',
+          lat: isBlocked ? null : p.lat,
+          lng: isBlocked ? null : p.lng,
+          status: isBlocked ? 'blocked' : (p.status || 'online'),
+          avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
+          address: isBlocked ? '' : currentAddress,
+          isBlocked,
+          blockType: isPersonallyBlocked ? (isMeetingBlocked ? 'both' : 'personal') : (isMeetingBlocked ? 'meeting' : 'none')
+        };
+      });
+    
+    console.log(`[FriendsContext] FRIENDS_SYNC: ${activeMeetingId}, total=${otherParticipants.length}, blocked=${otherParticipants.filter(f => f.isBlocked).length}`);
+    setFriends(otherParticipants);
+  }, [activeMeeting, currentUserId, blockedIds, resolvedAddresses]);
 
   // 3. Message Subscription
   useEffect(() => {
@@ -309,50 +306,51 @@ export const FriendsProvider = ({ children }) => {
 
   const unblockFriend = async (friendId) => {
     if (!currentUserId || !friendId) return;
-    const fid = friendId.toString().trim();
-    const originalId = friendId;
+    const fid = normId(friendId);
     
     console.log("[FriendsContext] ACTION: Unblocking", fid);
     
-    // 1. Optimistic local state update to ensure SNAPPY UI
-    setBlockedIds(prev => prev.filter(id => {
-      const bid = id?.toString().trim();
-      return bid !== fid && bid !== originalId?.toString().trim();
-    }));
+    // 1. Optimistic Local Sync
+    setBlockedIds(prev => prev.filter(id => normId(id) !== fid));
     
     try {
       const userRef = doc(db, 'users', currentUserId);
-      // Remove both for maximum resilience
       await setDoc(userRef, {
-        blockedUsers: arrayRemove(fid, originalId)
+        blockedUsers: arrayRemove(fid, friendId)
       }, { merge: true });
 
-      // If host, also unblock at meeting level
-      if (isHost && activeMeetingId && !activeMeetingId.toString().startsWith('guest-')) {
+      // If host, also remove from meeting global blocks
+      const isRealMeeting = activeMeetingId && !normId(activeMeetingId).startsWith('guest-');
+      if (isHost && isRealMeeting) {
         console.log("[FriendsContext] HOST ACTION: Removing from meetings collection block list");
         const meetingRef = doc(db, 'meetings', activeMeetingId);
         await updateDoc(meetingRef, {
-          blockedParticipants: arrayRemove(fid, originalId)
+          blockedParticipants: arrayRemove(fid, friendId)
         });
-      } else {
-        const meetingBlockedIds = (activeMeeting?.blockedParticipants || []).map(id => id.toString().trim());
+      } else if (!isHost && isRealMeeting) {
+        // Double check if still meeting-blocked to provide feedback
+        const meetingBlockedIds = (activeMeeting?.blockedParticipants || []).map(id => normId(id));
         if (meetingBlockedIds.includes(fid)) {
-            console.log("[FriendsContext] NOTICE: Personal block removed, but meeting-level block by host still exists.");
-            showAlert("개인 차단은 해제되었으나, 호스트에 의한 전체 차단이 유지 중입니다.", "안내");
+           console.log("[FriendsContext] NOTICE: Guest unblocked personally, but host-block remains.");
+           showAlert("개인 차단은 해제되었으나, 방장이 설정한 전체 차단이 유지 중입니다.", "안내");
         }
       }
 
       showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");
     } catch (err) {
-      console.error("[FriendsContext] FATAL unblock error:", err);
-      // Rollback optimistic update on error would be ideal, but for now just log
+      console.error("[FriendsContext] UNBLOCK ERROR:", err);
       showAlert("차단 해제 중 오류가 발생했습니다.", "오류");
     }
   };
 
-  // Function to update a friend's address (local-only demo)
-  const updateFriendAddress = (id, address) => {
-    setFriends(prev => prev.map(f => f.id === id ? { ...f, address } : f));
+  // Function to update a friend's address (locally persisted in context)
+  const updateFriendAddress = (friendId, address) => {
+    if (!friendId || !address) return;
+    setResolvedAddresses(prev => ({
+      ...prev,
+      [normId(friendId)]: address,
+      [friendId]: address
+    }));
   };
 
   // Function to join a guest meeting
