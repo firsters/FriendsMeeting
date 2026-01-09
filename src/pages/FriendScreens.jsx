@@ -104,16 +104,16 @@ const FriendScreens = ({ onNavigate }) => {
       <header className="px-6 pt-10 pb-6 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('nav_friends')}</h1>
-          {/* 
-          <div className="flex gap-2">
-            <button
-              onClick={handleShareInvite}
-              className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
-            >
-              <span className="material-symbols-outlined">person_add</span>
-            </button>
-          </div>
-          */}
+          {isHost && (
+            <div className="flex gap-2">
+              <button
+                onClick={handleShareInvite}
+                className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
+              >
+                <span className="material-symbols-outlined">person_add</span>
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="relative group">
