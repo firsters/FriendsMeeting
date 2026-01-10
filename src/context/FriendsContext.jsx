@@ -45,7 +45,7 @@ export const FriendsProvider = ({ children }) => {
   const isEmailUser = useMemo(() => {
     const user = auth.currentUser;
     return !!(user && !user.isAnonymous && user.emailVerified);
-  }, []);
+  }, [currentUserId]);
 
   const isSwitchingMeeting = useRef(false);
   const activeIdRef = useRef(activeMeetingId);

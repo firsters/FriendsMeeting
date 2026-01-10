@@ -142,8 +142,8 @@ const CombinedView = ({ onNavigate }) => {
   // ROW 1 Logic: Meeting ID sync is now handled by FriendsContext
   // We still want to sync top-bar location state if the context updates
   useEffect(() => {
-    if (activeMeetingId && guestMeetings.length > 0) {
-      const meeting = guestMeetings.find(m => m.id === activeMeetingId);
+    if (activeMeetingId && myMeetings.length > 0) {
+      const meeting = myMeetings.find(m => m.id === activeMeetingId);
       if (meeting) {
         if (meeting.meetingLocation) {
           setMeetingLocation(meeting.meetingLocation);
@@ -151,7 +151,7 @@ const CombinedView = ({ onNavigate }) => {
         }
       }
     }
-  }, [activeMeetingId, guestMeetings]);
+  }, [activeMeetingId, myMeetings]);
 
   // Geolocation & Live Status
   useEffect(() => {
@@ -210,8 +210,8 @@ const CombinedView = ({ onNavigate }) => {
 
   // Sync personal location to Firebase
   const isPaused = useMemo(() => {
-    if (activeMeetingId && currentUserId && guestMeetings.length > 0) {
-      const meeting = guestMeetings.find(m => m.id === activeMeetingId);
+    if (activeMeetingId && currentUserId && myMeetings.length > 0) {
+      const meeting = myMeetings.find(m => m.id === activeMeetingId);
       if (meeting) {
         const me = meeting.participants.find(p => p.id === currentUserId);
         if (me && me.status === 'paused') {
@@ -220,7 +220,7 @@ const CombinedView = ({ onNavigate }) => {
       }
     }
     return false;
-  }, [activeMeetingId, currentUserId, guestMeetings]);
+  }, [activeMeetingId, currentUserId, myMeetings]);
 
   useEffect(() => {
     if (activeMeetingId && currentUserId && userLocation && !isPaused) {
