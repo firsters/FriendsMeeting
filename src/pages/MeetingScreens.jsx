@@ -106,7 +106,6 @@ const ListScreen = ({ onNavigate, t, myMeetings, activeMeetingId, setActiveMeeti
                     : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
                 }`}
               >
-                <span className="material-symbols-outlined text-base">direct_run</span>
                 {isActive ? '현재 활성화됨' : '입장하기'}
               </button>
             </div>
@@ -276,7 +275,6 @@ const InfoScreen = ({ meeting, onNavigate, t, setActiveMeetingId, isActive }) =>
             isActive ? 'bg-primary text-white shadow-primary/30' : 'bg-white/10 text-white'
           }`}
         >
-          <span className="material-symbols-outlined font-bold text-xl">direct_run</span>
           {isActive ? '활성 상태' : '입장하기'}
         </button>
       </div>
