@@ -588,11 +588,21 @@ const CombinedView = ({ onNavigate }) => {
                     onClick={() => setIsSwitcherOpen(!isSwitcherOpen)}
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-white font-black text-lg truncate leading-none drop-shadow-lg mb-0.5 group-hover:text-primary transition-colors">
-                        {activeMeeting?.title || t("header_no_location")}
-                      </p>
-                      <p className="text-[10px] text-gray-400 truncate w-full font-bold uppercase tracking-tight opacity-80 leading-none">
-                        {meetingLocation?.name || meetingLocation?.address || userAddress || t("header_set_location_prompt")}
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="text-white font-black text-lg truncate leading-none drop-shadow-lg group-hover:text-primary transition-colors">
+                          {activeMeeting?.title || t("header_no_location")}
+                        </p>
+                        {(meetingLocation?.name || meetingLocation?.address) && (
+                          <div className="flex items-center gap-1 px-2 py-0.5 bg-white/5 rounded-md border border-white/5 shrink-0 max-w-[150px]">
+                            <span className="material-symbols-outlined text-[10px] text-primary">location_on</span>
+                            <span className="text-[10px] font-bold text-gray-400 truncate leading-none">
+                              {meetingLocation?.name || meetingLocation?.address}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-gray-500 truncate w-full font-bold uppercase tracking-tight opacity-60 leading-none">
+                        {userAddress || t("header_set_location_prompt")}
                       </p>
                     </div>
                     {myMeetings.length > 1 && (
