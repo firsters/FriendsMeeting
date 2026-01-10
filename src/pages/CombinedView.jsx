@@ -593,9 +593,9 @@ const CombinedView = ({ onNavigate }) => {
                           {activeMeeting?.title || t("header_no_location")}
                         </p>
                         {(meetingLocation?.name || meetingLocation?.address) && (
-                          <div className="flex items-center gap-1 px-2 py-0.5 bg-white/5 rounded-md border border-white/5 shrink-0 max-w-[150px]">
+                          <div className="flex items-center gap-1 px-2 py-0.5 bg-white/5 rounded-md border border-white/5 shrink-0">
                             <span className="material-symbols-outlined text-[10px] text-primary">location_on</span>
-                            <span className="text-[10px] font-bold text-gray-400 truncate leading-none">
+                            <span className="text-[10px] font-bold text-gray-400 leading-none">
                               {meetingLocation?.name || meetingLocation?.address}
                             </span>
                           </div>
