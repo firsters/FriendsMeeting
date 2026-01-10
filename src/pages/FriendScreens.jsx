@@ -5,7 +5,6 @@ import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { useFriends } from '../context/FriendsContext';
 import { useModal } from '../context/ModalContext';
-import MeetingSwitcher from '../components/MeetingSwitcher';
 
 const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
@@ -83,8 +82,21 @@ const FriendScreens = ({ onNavigate }) => {
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
       <header className="px-6 pt-10 pb-6 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
         <div className="flex items-center justify-between mb-8">
-          <div className="flex-1">
-             <MeetingSwitcher />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('nav_friends')}</h1>
+              {myMeetings.length > 1 && (
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 rounded-full border border-white/5">
+                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse"></span>
+                   <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">
+                     {myMeetings.find(m => m.id === activeMeetingId)?.title || 'No Meeting'}
+                   </span>
+                </div>
+              )}
+            </div>
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest opacity-60">
+              {friends.length} {t('friends_count_label') || 'Friends Active'}
+            </p>
           </div>
           <div className="flex gap-2">
             <button
