@@ -951,43 +951,6 @@ const CombinedView = ({ onNavigate }) => {
             </div>
           )}
 
-          {/* Persistent Bottom Nav */}
-          <nav className="absolute bottom-0 left-0 right-0 h-24 bg-background-dark/80 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 pb-4">
-            <button className="flex flex-col items-center gap-1.5 text-primary group">
-              <div className="w-1 w-1 bg-primary rounded-full mb-1 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <span className="material-symbols-outlined text-2xl">map</span>
-              <span className="text-[9px] font-black uppercase tracking-[0.15em]">
-                {t("nav_map")}
-              </span>
-            </button>
-            <button
-              onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}
-              className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"
-            >
-              <span className="material-symbols-outlined text-2xl">forum</span>
-              <span className="text-[9px] font-black uppercase tracking-[0.15em]">
-                {t("nav_chat")}
-              </span>
-            </button>
-            <button
-              onClick={() => onNavigate(ScreenType.FRIENDS)}
-              className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"
-            >
-              <span className="material-symbols-outlined text-2xl">group</span>
-              <span className="text-[9px] font-black uppercase tracking-[0.15em]">
-                {t("nav_friends")}
-              </span>
-            </button>
-            <button
-              onClick={() => onNavigate(ScreenType.SETTINGS)}
-              className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-white transition-all transform active:scale-90"
-            >
-              <span className="material-symbols-outlined text-2xl">person</span>
-              <span className="text-[9px] font-black uppercase tracking-[0.15em]">
-                {t("nav_profile")}
-              </span>
-            </button>
-          </nav>
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ import FriendScreens from './pages/FriendScreens';
 import GroupJoin from './pages/GroupJoin';
 import Profile from './pages/Profile';
 import VersionGuard from './components/VersionGuard';
+import BottomNav from './components/BottomNav';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { APIProvider } from '@vis.gl/react-google-maps';
@@ -165,6 +166,9 @@ function App() {
       <APIProvider apiKey={apiKey}>
         <div className="relative w-full h-full bg-background-dark shadow-2xl flex flex-col">
           {renderScreen()}
+          {isLoggedIn && ![ScreenType.ONBOARDING, ScreenType.LOGIN, ScreenType.SIGNUP, ScreenType.PERMISSIONS, ScreenType.VERIFY_EMAIL, ScreenType.GROUP_JOIN].includes(currentScreen) && (
+            <BottomNav currentScreen={currentScreen} onNavigate={navigate} />
+          )}
         </div>
       </APIProvider>
     </div>
