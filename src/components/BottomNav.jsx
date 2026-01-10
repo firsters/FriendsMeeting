@@ -17,7 +17,7 @@ const BottomNav = ({ currentScreen, onNavigate }) => {
       icon: 'diversity_3'
     },
     {
-      id: ScreenType.MEETING_DETAILS,
+      id: ScreenType.MEETING_CHAT,
       label: t('nav_chat'),
       icon: 'forum'
     },
@@ -36,7 +36,7 @@ const BottomNav = ({ currentScreen, onNavigate }) => {
   // Helper to determine active state
   const isActive = (id) => {
     if (id === ScreenType.MEETINGS) {
-      return currentScreen === ScreenType.MEETINGS || currentScreen === ScreenType.CREATE_MEETING;
+      return currentScreen === ScreenType.MEETINGS || currentScreen === ScreenType.CREATE_MEETING || currentScreen === ScreenType.MEETING_DETAILS;
     }
     if (id === ScreenType.FRIENDS) {
        return currentScreen === ScreenType.FRIENDS || currentScreen === ScreenType.FRIEND_REQUESTS;
