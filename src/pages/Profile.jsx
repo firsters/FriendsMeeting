@@ -239,19 +239,23 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
             icon: "award_star",
             label: t('settings_license'),
             color: "bg-gray-600",
+            isLast: true,
             onClick: () => setLegalDoc({ 
               title: LEGAL_TEXTS[language].license_title, 
               content: LEGAL_TEXTS[language].license_content 
             })
           })}
-          <div className="px-6 py-4 bg-white/5 flex items-center justify-between">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">
-              {t('settings_current_version')}
-            </span>
-            <span className="text-[10px] font-bold text-primary font-mono select-all">
-              v{typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1.0.0'}
-            </span>
-          </div>
+        </div>
+
+        {renderSectionHeader(t('settings_version'))}
+        <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
+          {renderSettingItem({
+            icon: "fingerprint",
+            label: t('settings_current_version'),
+            color: "bg-blue-600",
+            value: `v${typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1.0.0'}`,
+            isLast: true
+          })}
         </div>
 
         {deferredPrompt && (
