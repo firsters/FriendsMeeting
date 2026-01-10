@@ -160,7 +160,7 @@ const CreateScreen = ({ onNavigate, t, currentUserId, showAlert }) => {
         </div>
       </main>
 
-      <div className="p-8 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 sticky bottom-0 left-0 right-0 z-20">
+      <div className="p-8 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 sticky bottom-24 left-0 right-0 z-20">
         <button 
           onClick={handleCreate}
           disabled={loading || !name.trim()}
