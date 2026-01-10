@@ -269,13 +269,6 @@ const InfoScreen = ({ meeting, onNavigate, t, setActiveMeetingId, isActive, show
               <h3 className="text-2xl font-black text-white tracking-widest">{meeting.groupCode}</h3>
             </div>
             <button 
-              onClick={handleInvite}
-              className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary hover:bg-primary/20 transition-all shadow-xl mr-2"
-              title={t('meeting_invite') || '초대하기'}
-            >
-              <span className="material-symbols-outlined">share</span>
-            </button>
-            <button 
               onClick={() => {
                 navigator.clipboard.writeText(meeting.groupCode);
               }}
