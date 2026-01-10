@@ -6,9 +6,7 @@ import { useModal } from '../context/ModalContext';
 import GroupChat from '../components/GroupChat';
 import { createMeeting } from '../utils/meetingService';
 
-      await createMeeting(meetingData, currentUserId, userProfile);
-      onNavigate(ScreenType.MEETINGS);
-    } catch (err) {
+const ListScreen = ({ onNavigate, t, myMeetings, activeMeetingId, setActiveMeetingId, isEmailUser, currentUserId, showConfirm, leaveCurrentMeeting, deleteCurrentMeeting }) => {
   const handleAction = (e, meeting, isHost) => {
     e.stopPropagation();
     if (isHost) {

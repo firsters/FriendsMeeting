@@ -79,9 +79,6 @@ const FriendScreens = ({ onNavigate }) => {
     return newMessages.some(m => m.senderId === friendId);
   };
 
-    return newMessages.some(m => m.senderId === friendId);
-  };
-
   return (
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
       <header className="px-6 pt-10 pb-6 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">

@@ -284,9 +284,6 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
         </div>
       </main>
 
-        </div>
-      </main>
-
       {/* Legal Overlay */}
       {legalDoc && (
         <div className="fixed inset-0 z-[100] bg-background-dark animate-fade-in-up flex flex-col font-sans">
