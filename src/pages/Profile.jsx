@@ -232,7 +232,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           </>
         )}
 
-        <div className="px-6 pt-10">
+        <div className="px-6 pt-10 pb-6 flex flex-col items-center gap-2">
           <button 
             onClick={onLogout}
             className="w-full h-16 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-[2rem] font-extrabold text-base flex items-center justify-center gap-3 transition-all border border-red-500/10 active:scale-[0.98]"
@@ -240,6 +240,10 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
             <span className="material-symbols-outlined">logout</span>
             {t('settings_logout')}
           </button>
+          
+          <div className="mt-8 text-[10px] font-bold text-gray-700 uppercase tracking-widest opacity-40">
+            v{typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1.0.0'}
+          </div>
         </div>
       </main>
 
