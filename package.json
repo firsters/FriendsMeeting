@@ -1,10 +1,10 @@
 {
   "name": "friendsmeeting",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.20260110-122114",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/increment-version.js && vite",
     "prebuild": "node scripts/increment-version.js",
     "build": "vite build",
     "lint": "eslint .",
