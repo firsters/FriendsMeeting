@@ -8,6 +8,7 @@ import MeetingScreens from './pages/MeetingScreens';
 import FriendScreens from './pages/FriendScreens';
 import GroupJoin from './pages/GroupJoin';
 import Profile from './pages/Profile';
+import VersionGuard from './components/VersionGuard';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { APIProvider } from '@vis.gl/react-google-maps';
@@ -160,6 +161,7 @@ function App() {
 
   return (
     <div className="h-[100dvh] w-full flex justify-center bg-black overflow-hidden font-sans antialiased">
+      <VersionGuard />
       <APIProvider apiKey={apiKey}>
         <div className="relative w-full h-full bg-background-dark shadow-2xl flex flex-col">
           {renderScreen()}

@@ -19,6 +19,11 @@ try {
     
     fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + '\n');
     console.log(`Version incremented: ${version} -> ${packageJson.version}`);
+
+    // Also write to public/version.json for client-side polling
+    const versionPath = path.resolve(__dirname, '../public/version.json');
+    fs.writeFileSync(versionPath, JSON.stringify({ version: packageJson.version }, null, 2) + '\n');
+    console.log(`Generated public/version.json: ${packageJson.version}`);
   } else {
     console.error('Invalid version format in package.json');
   }
