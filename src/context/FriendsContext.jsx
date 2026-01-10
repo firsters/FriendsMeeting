@@ -281,17 +281,34 @@ export const FriendsProvider = ({ children }) => {
 
   const blockFriend = async (friendId) => {
     if (!currentUserId || !friendId) return;
-    const fid = friendId.toString().trim();
+    const fid = normId(friendId);
+    console.log("[FriendsContext] ACTION: Blocking", fid);
+
     try {
-      // Personal block (multi-user safe)
+      // 1. Optimistic Local Sync (Personal Block)
       const userRef = doc(db, 'users', currentUserId);
       await setDoc(userRef, {
         blockedUsers: arrayUnion(fid)
       }, { merge: true });
       
-      // If host, also block at meeting level
-      if (isHost && activeMeetingId && !activeMeetingId.toString().startsWith('guest-')) {
-        const meetingRef = doc(db, 'meetings', activeMeetingId);
+      // 2. Optimistic Meeting Sync (If Host)
+      const isRealMeeting = activeIdRef.current && !normId(activeIdRef.current).startsWith('guest-');
+      if (isHost && isRealMeeting) {
+        setGuestMeetings(prev => prev.map(m => {
+          if (normId(m.id) === normId(activeIdRef.current)) {
+            const currentBlocks = m.blockedParticipants || [];
+            if (!currentBlocks.some(id => normId(id) === fid)) {
+               return {
+                 ...m,
+                 blockedParticipants: [...currentBlocks, fid]
+               };
+            }
+          }
+          return m;
+        }));
+
+        console.log("[FriendsContext] HOST ACTION: Adding to meetings collection block list:", fid);
+        const meetingRef = doc(db, 'meetings', activeIdRef.current);
         await updateDoc(meetingRef, {
           blockedParticipants: arrayUnion(fid)
         });
@@ -310,8 +327,21 @@ export const FriendsProvider = ({ children }) => {
     
     console.log("[FriendsContext] ACTION: Unblocking", fid);
     
-    // 1. Optimistic Local Sync
+    // 1. Optimistic Local Sync (Personal Block)
     setBlockedIds(prev => prev.filter(id => normId(id) !== fid));
+    
+    // 2. Optimistic Meeting Sync (If Host)
+    if (isHost && activeMeetingId) {
+      setGuestMeetings(prev => prev.map(m => {
+        if (normId(m.id) === normId(activeMeetingId)) {
+          return {
+            ...m,
+            blockedParticipants: (m.blockedParticipants || []).filter(id => normId(id) !== fid)
+          };
+        }
+        return m;
+      }));
+    }
     
     try {
       const userRef = doc(db, 'users', currentUserId);
@@ -319,11 +349,13 @@ export const FriendsProvider = ({ children }) => {
         blockedUsers: arrayRemove(fid, friendId)
       }, { merge: true });
 
-      // If host, also remove from meeting global blocks
-      const isRealMeeting = activeMeetingId && !normId(activeMeetingId).startsWith('guest-');
+      let stillBlockedByHost = false;
+      const isRealMeeting = activeIdRef.current && !normId(activeIdRef.current).startsWith('guest-');
+
+      // 3. Handle Meeting-level Block in Firestore
       if (isHost && isRealMeeting) {
-        console.log("[FriendsContext] HOST ACTION: Removing from meetings collection block list");
-        const meetingRef = doc(db, 'meetings', activeMeetingId);
+        console.log("[FriendsContext] HOST ACTION: Removing from meetings collection block list:", fid);
+        const meetingRef = doc(db, 'meetings', activeIdRef.current);
         await updateDoc(meetingRef, {
           blockedParticipants: arrayRemove(fid, friendId)
         });
@@ -331,14 +363,21 @@ export const FriendsProvider = ({ children }) => {
         // Double check if still meeting-blocked to provide feedback
         const meetingBlockedIds = (activeMeeting?.blockedParticipants || []).map(id => normId(id));
         if (meetingBlockedIds.includes(fid)) {
-           console.log("[FriendsContext] NOTICE: Guest unblocked personally, but host-block remains.");
-           showAlert("개인 차단은 해제되었으나, 방장이 설정한 전체 차단이 유지 중입니다.", "안내");
+           stillBlockedByHost = true;
         }
       }
 
-      showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");
+      // 4. Selective Feedback
+      if (stillBlockedByHost) {
+         console.log("[FriendsContext] NOTICE: Guest unblocked personally, but host-block remains.");
+         showAlert("개인 차단은 해제되었으나, 방장이 설정한 전체 차단이 유지 중입니다.", "안내");
+      } else {
+         showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");
+      }
     } catch (err) {
       console.error("[FriendsContext] UNBLOCK ERROR:", err);
+      // Revert optimistic if needed? For simplicity we rely on next snapshot, 
+      // but let's at least show the error.
       showAlert("차단 해제 중 오류가 발생했습니다.", "오류");
     }
   };
