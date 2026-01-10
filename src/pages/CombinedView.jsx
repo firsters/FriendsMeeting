@@ -98,6 +98,9 @@ const CombinedView = ({ onNavigate }) => {
 
   // Search Triggers for Enter Key
   const [searchTrigger, setSearchTrigger] = useState(0);
+
+  // Switcher State
+  const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
   const [generalSearchTrigger, setGeneralSearchTrigger] = useState(0);
 
   const [centerTrigger, setCenterTrigger] = useState(0);
@@ -500,36 +503,29 @@ const CombinedView = ({ onNavigate }) => {
           onAddressResolved={(addr) => setUserAddress(addr)}
           onFriendAddressResolved={updateFriendAddress}
           bottomOffset={100}
-          topOffset={isSearchExpanded ? 240 : 140}
+          topOffset={isSearchExpanded ? 180 : 80}
         />
       </div>
 
       {/* Top Header Bar Container */}
       <header className="relative z-[100] px-4 pt-10 pb-4 pointer-events-none flex flex-col items-center gap-2">
-        <div className="bg-card-dark/80 backdrop-blur-xl border border-white/5 rounded-[2rem] px-6 py-2 shadow-2xl pointer-events-auto mb-2">
-           <MeetingSwitcher />
-        </div>
         {/* Main Header Container (Row 1 + Row 2) */}
         <div className="flex flex-col w-full bg-card-dark/95 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 shadow-2xl pointer-events-auto transition-all duration-300">
           {/* ROW 1: Meeting Status & Host Location (Always Visible) */}
           <div className="flex items-center min-h-[4.5rem] w-full border-b border-white/5 last:border-none">
-            {/* Left Section: Indicators (Order swapped and emphasized) */}
-            <div className="flex flex-col justify-center px-5 py-3 border-r border-white/10 gap-1 shrink-0 min-w-[170px]">
-              <div className="flex items-center gap-2">
+            {/* Left Section: Compact Indicators */}
+            <div className="flex items-center px-4 py-3 border-r border-white/10 gap-3 shrink-0">
+              <div className="relative">
                 <span
-                  className={`w-2.5 h-2.5 rounded-full ${meetingInfo.color} shadow-[0_0_10px_rgba(0,0,0,0.5)]`}
+                  className={`block w-3.5 h-3.5 rounded-full ${meetingInfo.color} shadow-[0_0_12px_rgba(0,0,0,0.3)] ring-2 ring-slate-900/50`}
                 ></span>
-                <span className="text-[11px] font-black text-white uppercase tracking-wider">
+                <span className={`absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full ${liveInfo.color} border-2 border-slate-900 ${liveStatus === "online" ? "animate-pulse" : ""}`}></span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-white uppercase tracking-wider leading-none mb-0.5">
                   {meetingInfo.text}
                 </span>
-              </div>
-              <div className="flex items-center gap-2 opacity-50 pl-0.5">
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${liveInfo.color} ${
-                    liveStatus === "online" ? "animate-pulse" : ""
-                  }`}
-                ></span>
-                <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">
+                <span className="text-[7px] font-bold text-gray-500 uppercase tracking-widest leading-none">
                   {liveInfo.text}
                 </span>
               </div>
@@ -587,25 +583,85 @@ const CombinedView = ({ onNavigate }) => {
                   )}
                 </div>
               ) : (
-                <div className="flex flex-col justify-center w-full">
-                  <p 
-                    className={`text-white font-black text-lg truncate leading-none w-full drop-shadow-lg mb-0.5 ${isHost ? 'cursor-pointer hover:text-primary transition-colors active:scale-95' : ''}`}
-                    onClick={() => {
-                      if (isHost && activeMeeting) {
+                <div className="flex items-center justify-between w-full gap-2 relative">
+                  <div 
+                    className="flex-1 min-w-0 flex items-center gap-1.5 group cursor-pointer"
+                    onClick={() => setIsSwitcherOpen(!isSwitcherOpen)}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-black text-lg truncate leading-none drop-shadow-lg mb-0.5 group-hover:text-primary transition-colors">
+                        {activeMeeting?.title || t("header_no_location")}
+                      </p>
+                      <p className="text-[10px] text-gray-400 truncate w-full font-bold uppercase tracking-tight opacity-80 leading-none">
+                        {meetingLocation?.name || meetingLocation?.address || userAddress || t("header_set_location_prompt")}
+                      </p>
+                    </div>
+                    {myMeetings.length > 1 && (
+                      <span className={`material-symbols-outlined text-gray-600 text-lg transition-transform duration-300 ${isSwitcherOpen ? 'rotate-180' : ''}`}>
+                        expand_more
+                      </span>
+                    )}
+                  </div>
+
+                  {isHost && activeMeeting && (
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
                         showPrompt(
                           t('meeting_rename_prompt') || "새로운 모임 이름을 입력하세요",
                           (newName) => updateMeetingName(activeMeeting.id, newName),
                           activeMeeting.title,
                           t('meeting_rename_title') || "모임명 변경"
                         );
-                      }
-                    }}
-                  >
-                    {activeMeeting?.title || t("header_no_location")}
-                  </p>
-                  <p className="text-[10px] text-gray-400 truncate w-full font-bold uppercase tracking-tight opacity-80">
-                    {meetingLocation?.name || meetingLocation?.address || userAddress || t("header_set_location_prompt")}
-                  </p>
+                      }}
+                      className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-500 hover:text-primary transition-all active:scale-90"
+                    >
+                      <span className="material-symbols-outlined text-sm">edit</span>
+                    </button>
+                  )}
+
+                  {/* Integrated Switcher Dropdown */}
+                  {isSwitcherOpen && (
+                    <>
+                      <div className="fixed inset-0 z-[110]" onClick={() => setIsSwitcherOpen(false)}></div>
+                      <div className="absolute top-[calc(100%+1.5rem)] left-0 right-0 bg-card-dark/95 backdrop-blur-2xl border border-white/10 rounded-[2rem] shadow-2xl overflow-hidden z-[120] animate-fade-in-up">
+                        <div className="p-4 border-b border-white/5 bg-white/5">
+                            <span className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em]">{t('nav_meetings')}</span>
+                        </div>
+                        <div className="max-h-60 overflow-y-auto scrollbar-hide">
+                          {myMeetings.map(meeting => {
+                            const isActive = meeting.id === activeMeetingId;
+                            const isMeetingHost = meeting.hostId === currentUserId;
+                            
+                            return (
+                              <button
+                                key={meeting.id}
+                                onClick={() => {
+                                    setActiveMeetingId(meeting.id);
+                                    setIsSwitcherOpen(false);
+                                }}
+                                className={`w-full px-5 py-4 flex items-center gap-4 transition-all text-left ${isActive ? 'bg-primary/10 border-l-4 border-primary' : 'hover:bg-white/5 border-l-4 border-transparent'}`}
+                              >
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${isActive ? 'bg-primary border-primary shadow-lg shadow-primary/20' : 'bg-white/5 border-white/5'}`}>
+                                    <span className="material-symbols-outlined text-white text-base">
+                                        {isMeetingHost ? 'crown' : 'diversity_3'}
+                                    </span>
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className={`text-sm font-bold truncate ${isActive ? 'text-white' : 'text-gray-400'}`}>
+                                    {meeting.title || 'Untitled Meeting'}
+                                  </p>
+                                  <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest font-sans">
+                                    {isMeetingHost ? t('role_host') : t('role_member')}
+                                  </p>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
             </div>
