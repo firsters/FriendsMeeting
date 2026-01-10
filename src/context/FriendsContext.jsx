@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef, useMemo 
 import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, updateDoc, setDoc, serverTimestamp, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
-import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode, updateLastReadMessage, subscribeToReadStatus, leaveMeeting, deleteMeeting } from '../utils/meetingService';
+import { subscribeToMeetings, sendMessage as sendFirebaseMessage, subscribeToMessages, joinMeetingByCode, updateLastReadMessage, subscribeToReadStatus, leaveMeeting, deleteMeeting, updateMeetingTitle } from '../utils/meetingService';
 import { useModal } from './ModalContext';
 
 const FriendsContext = createContext();
@@ -31,6 +31,18 @@ export const FriendsProvider = ({ children }) => {
     myMeetings.find(m => normId(m.id) === normId(activeMeetingId)),
     [myMeetings, activeMeetingId]
   );
+
+  const updateMeetingName = async (meetingId, newName) => {
+    if (!meetingId || !newName.trim()) return;
+    try {
+      await updateMeetingTitle(meetingId, newName.trim());
+      console.log(`[FriendsContext] Meeting name updated: ${meetingId} -> ${newName}`);
+    } catch (err) {
+      console.error("[FriendsContext] Failed to update meeting name:", err);
+      showAlert("모임명 변경 실패", "오류");
+      throw err;
+    }
+  };
 
   const isHost = useMemo(() => {
     if (!activeMeeting || !currentUserId) return false;
@@ -442,7 +454,8 @@ export const FriendsProvider = ({ children }) => {
       kickFriend,
       blockFriend,
       unblockFriend,
-      blockedIds
+      blockedIds,
+      updateMeetingName
     }}>
       {children}
     </FriendsContext.Provider>

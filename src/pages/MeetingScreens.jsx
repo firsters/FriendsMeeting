@@ -6,7 +6,7 @@ import { useModal } from '../context/ModalContext';
 import GroupChat from '../components/GroupChat';
 import { createMeeting } from '../utils/meetingService';
 
-const ListScreen = ({ onNavigate, t, myMeetings, activeMeetingId, setActiveMeetingId, isEmailUser, currentUserId, showConfirm, leaveCurrentMeeting, deleteCurrentMeeting }) => {
+const ListScreen = ({ onNavigate, t, myMeetings, activeMeetingId, setActiveMeetingId, isEmailUser, currentUserId, showConfirm, leaveCurrentMeeting, deleteCurrentMeeting, showPrompt, updateMeetingName }) => {
   const handleAction = (e, meeting, isHost) => {
     e.stopPropagation();
     if (isHost) {
@@ -59,7 +59,20 @@ const ListScreen = ({ onNavigate, t, myMeetings, activeMeetingId, setActiveMeeti
               
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-center mb-0.5">
-                  <h3 className={`text-base font-bold truncate ${isActive ? 'text-white' : 'text-gray-300'}`}>
+                  <h3 
+                    className={`text-base font-bold truncate ${isActive ? 'text-white' : 'text-gray-300'} ${isHost ? 'hover:text-primary transition-colors cursor-pointer' : ''}`}
+                    onClick={(e) => {
+                      if (isHost) {
+                        e.stopPropagation();
+                        showPrompt(
+                          t('meeting_rename_prompt') || "새로운 모임 이름을 입력하세요",
+                          (newName) => updateMeetingName(meeting.id, newName),
+                          meeting.title,
+                          t('meeting_rename_title') || "모임명 변경"
+                        );
+                      }
+                    }}
+                  >
                     {meeting.title || 'Untitled Meeting'}
                   </h3>
                 </div>
@@ -169,8 +182,8 @@ const CreateScreen = ({ onNavigate, t, currentUserId, showAlert }) => {
 
 const MeetingScreens = ({ currentScreen, onNavigate }) => {
   const { t } = useTranslation();
-  const { showAlert, showConfirm } = useModal();
-  const { myMeetings, activeMeetingId, setActiveMeetingId, isEmailUser, currentUserId, leaveCurrentMeeting, deleteCurrentMeeting } = useFriends();
+  const { showAlert, showConfirm, showPrompt } = useModal();
+  const { myMeetings, activeMeetingId, setActiveMeetingId, isEmailUser, currentUserId, leaveCurrentMeeting, deleteCurrentMeeting, updateMeetingName } = useFriends();
   
   const activeMeeting = myMeetings.find(m => m.id === activeMeetingId) || myMeetings[0];
 
@@ -188,6 +201,8 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
           showConfirm={showConfirm}
           leaveCurrentMeeting={leaveCurrentMeeting}
           deleteCurrentMeeting={deleteCurrentMeeting}
+          showPrompt={showPrompt}
+          updateMeetingName={updateMeetingName}
         />
       );
     case ScreenType.MEETING_DETAILS: 

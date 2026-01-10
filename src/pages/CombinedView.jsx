@@ -18,7 +18,7 @@ import { doc, getDoc } from "firebase/firestore";
 
 const CombinedView = ({ onNavigate }) => {
   const { t } = useTranslation();
-  const { showAlert } = useModal();
+  const { showAlert, showPrompt } = useModal();
   const {
     friends,
     updateFriendAddress,
@@ -31,7 +31,8 @@ const CombinedView = ({ onNavigate }) => {
     messages,
     serverLastReadId,
     myMeetings,
-    isHost
+    isHost,
+    updateMeetingName
   } = useFriends();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -587,7 +588,19 @@ const CombinedView = ({ onNavigate }) => {
                 </div>
               ) : (
                 <div className="flex flex-col justify-center w-full">
-                  <p className="text-white font-black text-lg truncate leading-none w-full drop-shadow-lg mb-0.5">
+                  <p 
+                    className={`text-white font-black text-lg truncate leading-none w-full drop-shadow-lg mb-0.5 ${isHost ? 'cursor-pointer hover:text-primary transition-colors active:scale-95' : ''}`}
+                    onClick={() => {
+                      if (isHost && activeMeeting) {
+                        showPrompt(
+                          t('meeting_rename_prompt') || "새로운 모임 이름을 입력하세요",
+                          (newName) => updateMeetingName(activeMeeting.id, newName),
+                          activeMeeting.title,
+                          t('meeting_rename_title') || "모임명 변경"
+                        );
+                      }
+                    }}
+                  >
                     {activeMeeting?.title || t("header_no_location")}
                   </p>
                   <p className="text-[10px] text-gray-400 truncate w-full font-bold uppercase tracking-tight opacity-80">

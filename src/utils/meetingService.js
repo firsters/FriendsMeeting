@@ -165,6 +165,14 @@ export const updateMeetingLocation = async (meetingId, locationData) => {
   });
 };
 
+export const updateMeetingTitle = async (meetingId, title) => {
+  const meetingRef = doc(db, 'meetings', meetingId);
+  await updateDoc(meetingRef, {
+    title: title,
+    updatedAt: serverTimestamp()
+  });
+};
+
 export const subscribeToMeetings = (userId, callback) => {
   // Listen for meetings where the user is a participant using the dedicated IDs array
   const q = query(collection(db, 'meetings'), where('participantIds', 'array-contains', userId));
