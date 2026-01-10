@@ -428,6 +428,7 @@ export const FriendsProvider = ({ children }) => {
       setSelectedFriendId,
       activeMeetingId,
       setActiveMeetingId,
+      activeMeeting,
       isHost,
       isEmailUser,
       lastSeenMap,

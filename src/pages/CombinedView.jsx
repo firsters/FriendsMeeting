@@ -26,6 +26,7 @@ const CombinedView = ({ onNavigate }) => {
     setSelectedFriendId,
     activeMeetingId,
     setActiveMeetingId,
+    activeMeeting,
     currentUserId,
     messages,
     serverLastReadId,
@@ -111,10 +112,7 @@ const CombinedView = ({ onNavigate }) => {
     }
   }, [geocodingLib]);
 
-  const activeMeeting = useMemo(() => 
-    myMeetings.find(m => m.id === activeMeetingId),
-    [myMeetings, activeMeetingId]
-  );
+  // activeMeeting is now from context
 
   const mapCenter = useMemo(() => {
     return selectedFriend
@@ -590,12 +588,10 @@ const CombinedView = ({ onNavigate }) => {
               ) : (
                 <div className="flex flex-col justify-center w-full">
                   <p className="text-white font-black text-lg truncate leading-none w-full drop-shadow-lg mb-0.5">
-                    {meetingLocation?.name ||
-                      meetingLocation?.address ||
-                      t("header_no_location")}
+                    {activeMeeting?.title || t("header_no_location")}
                   </p>
                   <p className="text-[10px] text-gray-400 truncate w-full font-bold uppercase tracking-tight opacity-80">
-                    {userAddress || t("header_set_location_prompt")}
+                    {meetingLocation?.name || meetingLocation?.address || userAddress || t("header_set_location_prompt")}
                   </p>
                 </div>
               )}
