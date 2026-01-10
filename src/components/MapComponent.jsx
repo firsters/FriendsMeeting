@@ -143,8 +143,8 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, 
         const dLat = target.lat - center.lat;
         const dLng = target.lng - center.lng;
 
-        const latMargin = (ne.lat - sw.lat) * 0.01;
-        const lngMargin = (ne.lng - sw.lng) * 0.01;
+        const latMargin = (ne.lat - sw.lat) * 0.05;
+        const lngMargin = (ne.lng - sw.lng) * 0.05;
 
         const mapContainer = map.getDiv();
         const heightInPixels = mapContainer.offsetHeight;
@@ -153,8 +153,8 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, 
         
         // When map.setPadding is used, map.getBounds() already returns the bounds of the "padded" area.
         // So we just need a small additional margin to prevent markers from touching the very edge.
-        const north = ne.lat - (latMargin * 2);
-        const south = sw.lat + (latMargin * 2);
+        const north = ne.lat - latMargin;
+        const south = sw.lat + latMargin;
         const east = ne.lng - lngMargin;
         const west = sw.lng + lngMargin;
 
