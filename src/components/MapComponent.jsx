@@ -53,6 +53,18 @@ const MapInstanceShaper = ({ onMapLoad }) => {
     return null;
 };
 
+const MapPaddingHandler = ({ topOffset, bottomOffset }) => {
+    const map = useMap();
+    useEffect(() => {
+        if (map) {
+            map.setOptions({
+                padding: { top: topOffset, right: 0, bottom: bottomOffset, left: 0 }
+            });
+        }
+    }, [map, topOffset, bottomOffset]);
+    return null;
+};
+
 const GeocodingHandler = ({ location, onAddressResolved }) => {
     const { t } = useTranslation();
     const geocodingLib = useMapsLibrary('geocoding');
@@ -139,11 +151,10 @@ const EdgeMarkers = ({ meetingLocation, generalLocation, friends, userLocation, 
         const latRange = ne.lat - sw.lat;
         const pixelToLat = latRange / heightInPixels;
         
-        const bottomSafeLat = sw.lat + (bottomOffset * pixelToLat);
-        const topSafeLat = ne.lat - (topOffset * pixelToLat);
-
-        const north = Math.min(ne.lat - latMargin, topSafeLat);
-        const south = Math.max(sw.lat + latMargin, bottomSafeLat);
+        // When map.setPadding is used, map.getBounds() already returns the bounds of the "padded" area.
+        // So we just need a small additional margin to prevent markers from touching the very edge.
+        const north = ne.lat - (latMargin * 2);
+        const south = sw.lat + (latMargin * 2);
         const east = ne.lng - lngMargin;
         const west = sw.lng + lngMargin;
 
@@ -567,6 +578,7 @@ const MapComponent = ({
                 className="w-full h-full"
             >
                 <MapInstanceShaper onMapLoad={handleMapLoad} />
+                <MapPaddingHandler topOffset={topOffset} bottomOffset={bottomOffset} />
                 <MapUpdater
                     center={currentCenter}
                     userLocation={userLocation}

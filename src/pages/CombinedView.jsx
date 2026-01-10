@@ -502,12 +502,12 @@ const CombinedView = ({ onNavigate }) => {
           onAddressResolved={(addr) => setUserAddress(addr)}
           onFriendAddressResolved={updateFriendAddress}
           bottomOffset={100}
-          topOffset={isSearchExpanded ? 180 : 80}
+          topOffset={isSearchExpanded ? 160 : 100}
         />
       </div>
 
       {/* Top Header Bar Container */}
-      <header className="relative z-[100] px-4 pt-10 pb-4 pointer-events-none flex flex-col items-center gap-2">
+      <header className="relative z-[100] px-4 pt-2 pb-4 pointer-events-none flex flex-col items-center gap-2">
         {/* Main Header Container (Row 1 + Row 2) */}
         <div className="flex flex-col w-full bg-card-dark/95 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 shadow-2xl pointer-events-auto transition-all duration-300">
           {/* ROW 1: Meeting Status & Host Location (Always Visible) */}
