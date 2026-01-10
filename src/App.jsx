@@ -135,9 +135,7 @@ function App() {
 
       case ScreenType.MEETINGS:
       case ScreenType.MEETING_DETAILS:
-      {/* 
       case ScreenType.CREATE_MEETING:
-      */}
         return <MeetingScreens currentScreen={currentScreen} onNavigate={navigate} />;
 
       case ScreenType.FRIENDS:
