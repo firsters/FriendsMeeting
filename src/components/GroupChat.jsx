@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useFriends } from '../context/FriendsContext';
 import { auth } from '../firebase';
 import { useTranslation } from '../context/LanguageContext';
-import MeetingSwitcher from './MeetingSwitcher';
 
 const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
   const { 
@@ -12,7 +11,8 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
     activeMeetingId,
     serverLastReadId,
     markMeetingAsRead,
-    isReadStatusLoaded
+    isReadStatusLoaded,
+    myMeetings
   } = useFriends();
   const { t } = useTranslation();
   const [inputText, setInputText] = useState('');
@@ -79,8 +79,16 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
     <div className="flex flex-col h-full bg-background-dark animate-fade-in font-sans">
       {/* Header */}
       <header className="px-4 py-4 border-b border-white/5 flex items-center gap-4 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
-        <div className="flex-1">
-          <MeetingSwitcher />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+             <h2 className="text-lg font-black text-white uppercase tracking-wider font-display truncate">
+               {myMeetings.find(m => m.id === activeMeetingId)?.title || t('nav_chat')}
+             </h2>
+             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-pulse shrink-0"></span>
+          </div>
+          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest leading-none truncate opacity-60">
+            {meetingLocation?.name || "채팅 활동 중"}
+          </p>
         </div>
         <button className="p-2 rounded-full hover:bg-white/5 transition-colors text-white">
           <span className="material-symbols-outlined">more_vert</span>
