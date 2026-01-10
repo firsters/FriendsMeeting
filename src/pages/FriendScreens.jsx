@@ -148,7 +148,7 @@ const FriendScreens = ({ onNavigate }) => {
                           {friend.name} 
                           {friend.isBlocked && (
                             <span className="text-red-500 text-[10px] font-black uppercase ml-2 tracking-widest italic">
-                              {friend.blockType === 'meeting' ? t('blocked_by_host') || 'Host Blocked' : t('action_block')}
+                              {t('action_block')}
                             </span>
                           )}
                         </h4>

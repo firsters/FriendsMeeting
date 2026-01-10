@@ -143,7 +143,6 @@ export const FriendsProvider = ({ children }) => {
     }
 
     const uid = normId(currentUserId);
-    const meetingBlockedIds = (activeMeeting.blockedParticipants || []).map(id => normId(id));
     const normalizedBlockedIds = blockedIds.map(id => normId(id));
 
     const otherParticipants = activeMeeting.participants
@@ -153,9 +152,7 @@ export const FriendsProvider = ({ children }) => {
       })
       .map(p => {
         const pid = normId(p.id);
-        const isPersonallyBlocked = normalizedBlockedIds.includes(pid);
-        const isMeetingBlocked = meetingBlockedIds.includes(pid);
-        const isBlocked = isPersonallyBlocked || isMeetingBlocked;
+        const isBlocked = normalizedBlockedIds.includes(pid);
         
         // Use locally resolved address if Firestore one is missing
         const currentAddress = p.address || resolvedAddresses[p.id] || resolvedAddresses[pid] || '';
@@ -169,7 +166,7 @@ export const FriendsProvider = ({ children }) => {
           avatar: p.avatar || (p.nickname || p.name || '?').charAt(0),
           address: isBlocked ? '' : currentAddress,
           isBlocked,
-          blockType: isPersonallyBlocked ? (isMeetingBlocked ? 'both' : 'personal') : (isMeetingBlocked ? 'meeting' : 'none')
+          blockType: isBlocked ? 'personal' : 'none'
         };
       });
     
@@ -214,10 +211,9 @@ export const FriendsProvider = ({ children }) => {
   }, [activeMeetingId]);
 
   const filteredMessages = useMemo(() => {
-    const meetingBlocks = activeMeeting?.blockedParticipants || [];
-    const allBlocked = new Set([...blockedIds, ...meetingBlocks.map(id => id.toString())]);
-    return messages.filter(m => !allBlocked.has(m.senderId?.toString()));
-  }, [messages, blockedIds, activeMeeting]);
+    const allBlocked = new Set(blockedIds.map(id => normId(id)));
+    return messages.filter(m => !allBlocked.has(normId(m.senderId)));
+  }, [messages, blockedIds]);
 
   // 4. Read Status Subscription
   useEffect(() => {
@@ -284,35 +280,19 @@ export const FriendsProvider = ({ children }) => {
     const fid = normId(friendId);
     console.log("[FriendsContext] ACTION: Blocking", fid);
 
+    // 1. Optimistic Local Sync (Personal Block)
+    setBlockedIds(prev => {
+        if (!prev.some(id => normId(id) === fid)) {
+            return [...prev, fid];
+        }
+        return prev;
+    });
+
     try {
-      // 1. Optimistic Local Sync (Personal Block)
       const userRef = doc(db, 'users', currentUserId);
       await setDoc(userRef, {
         blockedUsers: arrayUnion(fid)
       }, { merge: true });
-      
-      // 2. Optimistic Meeting Sync (If Host)
-      const isRealMeeting = activeIdRef.current && !normId(activeIdRef.current).startsWith('guest-');
-      if (isHost && isRealMeeting) {
-        setGuestMeetings(prev => prev.map(m => {
-          if (normId(m.id) === normId(activeIdRef.current)) {
-            const currentBlocks = m.blockedParticipants || [];
-            if (!currentBlocks.some(id => normId(id) === fid)) {
-               return {
-                 ...m,
-                 blockedParticipants: [...currentBlocks, fid]
-               };
-            }
-          }
-          return m;
-        }));
-
-        console.log("[FriendsContext] HOST ACTION: Adding to meetings collection block list:", fid);
-        const meetingRef = doc(db, 'meetings', activeIdRef.current);
-        await updateDoc(meetingRef, {
-          blockedParticipants: arrayUnion(fid)
-        });
-      }
       
       showAlert("해당 사용자를 차단했습니다.", "사용자 차단");
     } catch (err) {
@@ -330,54 +310,15 @@ export const FriendsProvider = ({ children }) => {
     // 1. Optimistic Local Sync (Personal Block)
     setBlockedIds(prev => prev.filter(id => normId(id) !== fid));
     
-    // 2. Optimistic Meeting Sync (If Host)
-    if (isHost && activeMeetingId) {
-      setGuestMeetings(prev => prev.map(m => {
-        if (normId(m.id) === normId(activeMeetingId)) {
-          return {
-            ...m,
-            blockedParticipants: (m.blockedParticipants || []).filter(id => normId(id) !== fid)
-          };
-        }
-        return m;
-      }));
-    }
-    
     try {
       const userRef = doc(db, 'users', currentUserId);
       await setDoc(userRef, {
         blockedUsers: arrayRemove(fid, friendId)
       }, { merge: true });
 
-      let stillBlockedByHost = false;
-      const isRealMeeting = activeIdRef.current && !normId(activeIdRef.current).startsWith('guest-');
-
-      // 3. Handle Meeting-level Block in Firestore
-      if (isHost && isRealMeeting) {
-        console.log("[FriendsContext] HOST ACTION: Removing from meetings collection block list:", fid);
-        const meetingRef = doc(db, 'meetings', activeIdRef.current);
-        await updateDoc(meetingRef, {
-          blockedParticipants: arrayRemove(fid, friendId)
-        });
-      } else if (!isHost && isRealMeeting) {
-        // Double check if still meeting-blocked to provide feedback
-        const meetingBlockedIds = (activeMeeting?.blockedParticipants || []).map(id => normId(id));
-        if (meetingBlockedIds.includes(fid)) {
-           stillBlockedByHost = true;
-        }
-      }
-
-      // 4. Selective Feedback
-      if (stillBlockedByHost) {
-         console.log("[FriendsContext] NOTICE: Guest unblocked personally, but host-block remains.");
-         showAlert("개인 차단은 해제되었으나, 방장이 설정한 전체 차단이 유지 중입니다.", "안내");
-      } else {
-         showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");
-      }
+      showAlert("해당 사용자의 차단을 해제했습니다.", "차단 해제");
     } catch (err) {
       console.error("[FriendsContext] UNBLOCK ERROR:", err);
-      // Revert optimistic if needed? For simplicity we rely on next snapshot, 
-      // but let's at least show the error.
       showAlert("차단 해제 중 오류가 발생했습니다.", "오류");
     }
   };
