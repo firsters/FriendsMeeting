@@ -200,12 +200,6 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
         {renderSectionHeader(t('settings_privacy'))}
         <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
           {renderSettingItem({
-            icon: "person_search",
-            label: t('settings_who_find'),
-            color: "bg-indigo-600",
-            value: t('settings_who_find_value')
-          })}
-          {renderSettingItem({
             icon: "visibility",
             label: t('settings_show_online'),
             color: "bg-teal-500",
