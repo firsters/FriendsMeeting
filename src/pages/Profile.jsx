@@ -5,12 +5,16 @@ import { useFriends } from '../context/FriendsContext';
 import { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { subscribeToMeetings, updateParticipantStatus } from '../utils/meetingService';
+import { LEGAL_TEXTS } from '../constants/LegalTexts';
+import { useTranslation as useLang } from '../context/LanguageContext';
 
 const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => {
   const { t } = useTranslation();
+  const { language } = useLang();
   const { showAlert } = useModal();
   const { guestMeetings, activeMeetingId, currentUserId } = useFriends();
   const [meetings, setMeetings] = useState([]);
+  const [legalDoc, setLegalDoc] = useState(null); // { title: string, content: string }
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -217,6 +221,38 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           })}
         </div>
 
+        {renderSectionHeader(t('settings_legal') || 'Legal')}
+        <div className="mx-6 rounded-[2.5rem] bg-card-dark border border-white/5 overflow-hidden shadow-xl">
+          {renderSettingItem({
+            icon: "description",
+            label: t('settings_terms'),
+            color: "bg-gray-600",
+            onClick: () => setLegalDoc({ 
+              title: LEGAL_TEXTS[language].terms_title, 
+              content: LEGAL_TEXTS[language].terms_content 
+            })
+          })}
+          {renderSettingItem({
+            icon: "policy",
+            label: t('settings_privacy_policy'),
+            color: "bg-gray-600",
+            onClick: () => setLegalDoc({ 
+              title: LEGAL_TEXTS[language].privacy_title, 
+              content: LEGAL_TEXTS[language].privacy_content 
+            })
+          })}
+          {renderSettingItem({
+            icon: "award_star",
+            label: t('settings_license'),
+            color: "bg-gray-600",
+            isLast: true,
+            onClick: () => setLegalDoc({ 
+              title: LEGAL_TEXTS[language].license_title, 
+              content: LEGAL_TEXTS[language].license_content 
+            })
+          })}
+        </div>
+
         {deferredPrompt && (
           <>
             {renderSectionHeader(t('settings_support'))}
@@ -265,6 +301,34 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
           <span className="text-[9px] font-bold uppercase tracking-widest">{t('nav_profile')}</span>
         </button>
       </nav>
+
+      {/* Legal Overlay */}
+      {legalDoc && (
+        <div className="fixed inset-0 z-[100] bg-background-dark animate-fade-in-up flex flex-col font-sans">
+          <header className="px-6 pt-10 pb-6 flex items-center justify-between sticky top-0 bg-background-dark/95 backdrop-blur-md z-20">
+            <h1 className="text-lg font-extrabold text-white">{legalDoc.title}</h1>
+            <button 
+              onClick={() => setLegalDoc(null)}
+              className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          </header>
+          <main className="flex-1 overflow-y-auto px-6 pt-4 pb-20">
+            <div className="bg-card-dark rounded-3xl p-6 border border-white/5 shadow-xl">
+              <pre className="text-sm font-medium text-gray-400 whitespace-pre-wrap leading-relaxed font-sans">
+                {legalDoc.content}
+              </pre>
+            </div>
+            
+            <div className="mt-10 mb-20 text-center opacity-40">
+              <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest">
+                v{typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1.0.0'}
+              </p>
+            </div>
+          </main>
+        </div>
+      )}
     </div>
   );
 };
