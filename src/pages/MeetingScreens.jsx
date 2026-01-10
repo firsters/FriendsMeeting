@@ -7,7 +7,26 @@ import { useModal } from '../context/ModalContext';
 import GroupChat from '../components/GroupChat';
 import { createMeeting } from '../utils/meetingService';
 
-const ListScreen = ({ onNavigate, t, myMeetings, activeMeetingId, setActiveMeetingId, isEmailUser, currentUserId, showConfirm, leaveCurrentMeeting, deleteCurrentMeeting, showPrompt, updateMeetingName }) => {
+const ListScreen = ({ onNavigate, t, myMeetings, activeMeetingId, setActiveMeetingId, isEmailUser, currentUserId, showConfirm, leaveCurrentMeeting, deleteCurrentMeeting, showPrompt, updateMeetingName, showAlert }) => {
+  const handleInvite = (e, meeting) => {
+    e.stopPropagation();
+    const inviteLink = `${window.location.origin}/?group_code=${meeting.groupCode}`;
+    const shareData = {
+      title: meeting.title,
+      text: `[${meeting.title}] 모임에 초대합니다! 코드: ${meeting.groupCode}`,
+      url: inviteLink,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch(err => {
+        console.error("Error sharing:", err);
+      });
+    } else {
+      navigator.clipboard.writeText(inviteLink);
+      showAlert(t('settings_code_copied') || "그룹 코드가 복사되었습니다!", "알림");
+    }
+  };
+
   const handleAction = (e, meeting, isHost) => {
     e.stopPropagation();
     if (isHost) {
@@ -83,14 +102,24 @@ const ListScreen = ({ onNavigate, t, myMeetings, activeMeetingId, setActiveMeeti
                   </p>
                 </div>
 
-                <button 
-                  onClick={(e) => handleAction(e, meeting, isHost)}
-                  className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-all"
-                >
-                  <span className="material-symbols-outlined text-lg">
-                    {isHost ? 'delete' : 'logout'}
-                  </span>
-                </button>
+                  <div className="flex gap-2">
+                  <button 
+                    onClick={(e) => handleInvite(e, meeting)}
+                    className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary hover:bg-primary/20 transition-all font-bold"
+                    title={t('meeting_invite') || '초대하기'}
+                  >
+                    <span className="material-symbols-outlined text-lg font-bold">share</span>
+                  </button>
+
+                  <button 
+                    onClick={(e) => handleAction(e, meeting, isHost)}
+                    className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-lg">
+                      {isHost ? 'delete' : 'logout'}
+                    </span>
+                  </button>
+                </div>
               </div>
 
               {/* Activation Button */}
@@ -199,8 +228,26 @@ const CreateScreen = ({ onNavigate, t, currentUserId, showAlert }) => {
   );
 };
 
-const InfoScreen = ({ meeting, onNavigate, t, setActiveMeetingId, isActive }) => {
+const InfoScreen = ({ meeting, onNavigate, t, setActiveMeetingId, isActive, showAlert }) => {
   if (!meeting) return null;
+
+  const handleInvite = () => {
+    const inviteLink = `${window.location.origin}/?group_code=${meeting.groupCode}`;
+    const shareData = {
+      title: meeting.title,
+      text: `[${meeting.title}] 모임에 초대합니다! 코드: ${meeting.groupCode}`,
+      url: inviteLink,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch(err => {
+        console.error("Error sharing:", err);
+      });
+    } else {
+      navigator.clipboard.writeText(inviteLink);
+      showAlert(t('settings_code_copied') || "그룹 코드가 복사되었습니다!", "알림");
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
@@ -221,6 +268,13 @@ const InfoScreen = ({ meeting, onNavigate, t, setActiveMeetingId, isActive }) =>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{t('meeting_code') || 'Group Code'}</span>
               <h3 className="text-2xl font-black text-white tracking-widest">{meeting.groupCode}</h3>
             </div>
+            <button 
+              onClick={handleInvite}
+              className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary hover:bg-primary/20 transition-all shadow-xl mr-2"
+              title={t('meeting_invite') || '초대하기'}
+            >
+              <span className="material-symbols-outlined">share</span>
+            </button>
             <button 
               onClick={() => {
                 navigator.clipboard.writeText(meeting.groupCode);
@@ -305,6 +359,7 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
           deleteCurrentMeeting={deleteCurrentMeeting}
           showPrompt={showPrompt}
           updateMeetingName={updateMeetingName}
+          showAlert={showAlert}
         />
       );
     case ScreenType.MEETING_DETAILS: 
@@ -315,6 +370,7 @@ const MeetingScreens = ({ currentScreen, onNavigate }) => {
           t={t} 
           setActiveMeetingId={setActiveMeetingId} 
           isActive={activeMeeting?.id === activeMeetingId}
+          showAlert={showAlert}
         />
       );
     case ScreenType.MEETING_CHAT:
