@@ -239,12 +239,19 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
             icon: "award_star",
             label: t('settings_license'),
             color: "bg-gray-600",
-            isLast: true,
             onClick: () => setLegalDoc({ 
               title: LEGAL_TEXTS[language].license_title, 
               content: LEGAL_TEXTS[language].license_content 
             })
           })}
+          <div className="px-6 py-4 bg-white/5 flex items-center justify-between">
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">
+              {t('settings_current_version')}
+            </span>
+            <span className="text-[10px] font-bold text-primary font-mono select-all">
+              v{typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1.0.0'}
+            </span>
+          </div>
         </div>
 
         {deferredPrompt && (
@@ -270,10 +277,6 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
             <span className="material-symbols-outlined">logout</span>
             {t('settings_logout')}
           </button>
-          
-          <div className="mt-8 text-[10px] font-bold text-gray-700 uppercase tracking-widest opacity-40">
-            v{typeof APP_VERSION !== 'undefined' ? APP_VERSION : '1.0.0'}
-          </div>
         </div>
       </main>
 
