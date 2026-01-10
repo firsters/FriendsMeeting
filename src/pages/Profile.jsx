@@ -66,9 +66,9 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
            >
              <div className={`w-5 h-5 bg-white rounded-full absolute shadow-sm transition-all ${isActive ? 'right-0.5' : 'left-0.5'}`}></div>
            </div>
-        ) : (
+        ) : onClick ? (
            <span className="material-symbols-outlined text-gray-700 text-lg">chevron_right</span>
-        )}
+        ) : null}
       </div>
     </div>
   );
