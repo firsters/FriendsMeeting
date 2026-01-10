@@ -275,6 +275,12 @@ export const translations = {
     settings_code_copied: "그룹 코드가 복사되었습니다!",
     
     // Friend Screens Additional
+    meeting_confirm_delete_msg: "모임을 삭제하시겠습니까? 모든 정보와 대화 내용이 지워집니다.",
+    meeting_confirm_leave_msg: "모임에서 나가시겠습니까?",
+    meeting_host_only_msg: "모임 생성은 이메일 로그인 시에만 가능합니다.",
+    meeting_delete: "모임 삭제",
+    meeting_leave: "모임 나가기",
+    meeting_switch: "모임 전환",
     action_block: "차단",
     action_unblock: "차단해제",
     friends_nearby_distance: "m 근처",
@@ -557,6 +563,12 @@ export const translations = {
     settings_copy_link: "Copy Link",
     
     // Friend Screens Additional
+    meeting_confirm_delete_msg: "Are you sure you want to delete this meeting? All info and chats will be erased.",
+    meeting_confirm_leave_msg: "Are you sure you want to leave this meeting?",
+    meeting_host_only_msg: "Creating meetings is only available for email-signed users.",
+    meeting_delete: "Delete Meeting",
+    meeting_leave: "Leave Meeting",
+    meeting_switch: "Switch Meeting",
     action_block: "Block",
     action_unblock: "Unblock",
     friends_nearby_distance: "away",

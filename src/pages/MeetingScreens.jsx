@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import { useFriends } from '../context/FriendsContext';
+import { useModal } from '../context/ModalContext';
 import GroupChat from '../components/GroupChat';
+import { createMeeting } from '../utils/meetingService';
 
 const RenderBottomNav = ({ onNavigate, t, currentScreen }) => (
   <nav className="fixed bottom-0 left-0 right-0 h-20 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-4 z-50">
@@ -29,206 +31,207 @@ const RenderBottomNav = ({ onNavigate, t, currentScreen }) => (
   </nav>
 );
 
-const ListScreen = ({ onNavigate, t, guestMeetings }) => (
-  <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
-    <header className="px-6 pt-10 pb-4 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10 border-b border-white/5">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('nav_meetings')}</h1>
-        <div className="flex gap-2">
-          <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white active:scale-95 transition-all">
-            <span className="material-symbols-outlined text-xl">search</span>
-          </button>
-          <button 
-            onClick={() => onNavigate(ScreenType.CREATE_MEETING)}
-            className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
-          >
-            <span className="material-symbols-outlined text-xl">add_comment</span>
-          </button>
-        </div>
-      </div>
-    </header>
+const ListScreen = ({ onNavigate, t, myMeetings, activeMeetingId, setActiveMeetingId, isEmailUser, currentUserId, showConfirm, leaveCurrentMeeting, deleteCurrentMeeting }) => {
+  const handleAction = (e, meeting, isHost) => {
+    e.stopPropagation();
+    if (isHost) {
+      showConfirm(t('meeting_confirm_delete_msg'), () => deleteCurrentMeeting(meeting.id));
+    } else {
+      showConfirm(t('meeting_confirm_leave_msg'), () => leaveCurrentMeeting(meeting.id, currentUserId));
+    }
+  };
 
-    <main className="flex-1 space-y-px overflow-y-auto scrollbar-hide pb-24">
-      {/* Active Chats Header */}
-      <div className="px-6 py-4 flex items-center justify-between opacity-50">
-        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">{t('meeting_status_active')}</span>
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-      </div>
-
-      {/* Render Guest Meetings as Chats */}
-      {guestMeetings.map(meeting => (
-        <div key={meeting.id} className="px-6 py-4 flex gap-4 hover:bg-white/5 active:bg-white/10 transition-all cursor-pointer items-center border-b border-white/5" onClick={() => { setActiveMeetingId(meeting.id); onNavigate(ScreenType.MEETING_DETAILS); }}>
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-            <span className="material-symbols-outlined text-white text-2xl">diversity_3</span>
+  return (
+    <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
+      <header className="px-6 pt-10 pb-4 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10 border-b border-white/5">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('nav_meetings')}</h1>
+          <div className="flex gap-2">
+            {isEmailUser && (
+              <button 
+                onClick={() => onNavigate(ScreenType.CREATE_MEETING)}
+                className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/30 active:scale-95 transition-all"
+              >
+                <span className="material-symbols-outlined text-2xl font-bold">add</span>
+              </button>
+            )}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex justify-between items-center mb-0.5">
-              <h3 className="text-base font-bold text-white truncate">{meeting.title}</h3>
-              <span className="text-[10px] font-bold text-gray-500">{t('alert_just_now')}</span>
+        </div>
+      </header>
+
+      <main className="flex-1 overflow-y-auto scrollbar-hide pb-24">
+        <div className="px-6 py-6 pb-2 opacity-50">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+            {myMeetings.length > 0 ? t('meeting_status_active') : t('meeting_empty')}
+          </span>
+        </div>
+
+        {myMeetings.map(meeting => {
+          const isHost = meeting.hostId === currentUserId;
+          const isActive = meeting.id === activeMeetingId;
+          
+          return (
+            <div 
+              key={meeting.id} 
+              className={`px-6 py-5 flex gap-4 transition-all cursor-pointer items-center border-b border-white/5 ${isActive ? 'bg-primary/5 ring-1 ring-primary/20' : 'hover:bg-white/5 active:bg-white/10'}`}
+              onClick={() => { setActiveMeetingId(meeting.id); onNavigate(ScreenType.MEETING_DETAILS); }}
+            >
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border transition-all ${isActive ? 'bg-primary border-primary shadow-lg shadow-primary/20' : 'bg-card-dark border-white/10'}`}>
+                <span className={`material-symbols-outlined ${isActive ? 'text-white' : 'text-gray-500'} text-2xl`}>
+                  {isHost ? 'crown' : 'diversity_3'}
+                </span>
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-center mb-0.5">
+                  <h3 className={`text-base font-bold truncate ${isActive ? 'text-white' : 'text-gray-300'}`}>
+                    {meeting.title || 'Untitled Meeting'}
+                  </h3>
+                </div>
+                <p className="text-xs text-gray-500 truncate font-medium">
+                  {isHost ? t('role_host') : t('role_member')} • {meeting.participants?.length || 0} 명 참여 중
+                </p>
+              </div>
+
+              <button 
+                onClick={(e) => handleAction(e, meeting, isHost)}
+                className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-all"
+              >
+                <span className="material-symbols-outlined text-lg">
+                  {isHost ? 'delete' : 'logout'}
+                </span>
+              </button>
             </div>
-            <p className="text-sm text-gray-400 truncate font-medium">나: {t('welcome_sample_msg')}</p>
-          </div>
-          <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-            <span className="text-[10px] font-bold text-white">1</span>
-          </div>
-        </div>
-      ))}
-
-      <div className="px-6 py-4 flex gap-4 hover:bg-white/5 active:bg-white/10 transition-all cursor-pointer items-center border-b border-white/5" onClick={() => onNavigate(ScreenType.MEETING_DETAILS)}>
-         <div className="w-14 h-14 rounded-2xl bg-cover bg-center shrink-0 border border-white/10 shadow-lg" style={{backgroundImage: 'url("https://images.unsplash.com/photo-1543269865-cbf427effbad?w=100")'}}></div>
-         <div className="flex-1 min-w-0">
-           <div className="flex justify-between items-center mb-0.5">
-             <h3 className="text-base font-bold text-white truncate">Friday Night Dinner</h3>
-             <span className="text-[10px] font-bold text-gray-500">15m</span>
-           </div>
-           <p className="text-sm text-gray-400 truncate font-medium">Alex: {t('chat_msg_1')}</p>
-         </div>
-         <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-             <span className="text-[10px] font-bold text-white">3</span>
-         </div>
-      </div>
-
-      {/* Recent Chats Header */}
-      <div className="px-6 py-6 pb-2 opacity-50">
-        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">{t('meeting_tomorrow')}</span>
-      </div>
-
-      <div className="px-6 py-4 flex gap-4 hover:bg-white/5 active:bg-white/10 transition-all cursor-pointer items-center border-b border-white/5">
-        <div className="w-14 h-14 rounded-2xl bg-card-dark flex items-center justify-center shrink-0 border border-white/5">
-          <span className="material-symbols-outlined text-gray-400 text-2xl">coffee</span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-center mb-0.5">
-            <h3 className="text-base font-bold text-white truncate">Coffee with Design Team</h3>
-            <span className="text-[10px] font-bold text-gray-500">Tomorrow</span>
-          </div>
-          <p className="text-sm text-gray-500 truncate font-medium">Harvey: {t('meeting_location')}: Starbucks Reserve</p>
-        </div>
-      </div>
-    </main>
-    <RenderBottomNav onNavigate={onNavigate} t={t} currentScreen={ScreenType.MEETINGS} />
-  </div>
-);
-
-const CreateScreen = ({ onNavigate, t }) => (
-  <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
-    <header className="px-4 py-6 border-b border-white/5 flex items-center justify-between sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
-      <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="text-gray-400 font-bold text-sm">{t('cancel')}</button>
-      <h2 className="text-lg font-extrabold text-white font-display">{t('meeting_new')}</h2>
-      <div className="w-12"></div>
-    </header>
-    
-    <main className="flex-1 p-6 space-y-8 overflow-y-auto scrollbar-hide pb-32">
-      <div className="space-y-2">
-        <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{t('meeting_name')}</label>
-        <input 
-          type="text" 
-          placeholder={t('meeting_name_placeholder')} 
-          className="w-full h-14 bg-card-dark border-none rounded-2xl px-5 text-white placeholder:text-gray-700 focus:ring-2 focus:ring-primary/50 outline-none transition-all" 
-        />
-      </div>
-
-       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{t('meeting_date')}</label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary text-xl">calendar_today</span>
-            <input type="text" value={t('meeting_tomorrow')} readOnly className="w-full h-14 bg-card-dark border-none rounded-2xl pl-12 text-white font-bold outline-none" />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{t('meeting_time')}</label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary text-xl">schedule</span>
-            <input type="text" value="7:00 PM" readOnly className="w-full h-14 bg-card-dark border-none rounded-2xl pl-12 text-white font-bold outline-none" />
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">{t('meeting_location')}</label>
-        <div className="relative mb-4">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary text-xl">search</span>
-          <input type="text" placeholder={t('meeting_location_placeholder')} className="w-full h-14 bg-card-dark border-none rounded-2xl pl-12 pr-12 text-white placeholder:text-gray-700 outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
-          <button className="absolute right-4 top-1/2 -translate-y-1/2 text-primary">
-            <span className="material-symbols-outlined text-xl">my_location</span>
-          </button>
-        </div>
-        <div className="w-full h-40 rounded-3xl overflow-hidden relative border border-white/5">
-           <div className="absolute inset-0 bg-cover bg-center opacity-40 grayscale" style={{backgroundImage: 'url("https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400")'}}></div>
-           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-           <div className="absolute bottom-4 left-4 flex items-center gap-3">
-             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg">
-               <span className="material-symbols-outlined text-white text-base">location_on</span>
-             </div>
-             <div>
-               <p className="text-white text-sm font-bold">Mario's Italian</p>
-               <p className="text-gray-400 text-[10px]">123 Pasta Lane, NY</p>
-             </div>
-           </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex justify-between items-center px-1">
-          <label className="text-xs font-bold uppercase tracking-widest text-gray-500">{t('meeting_invite_friends')}</label>
-          <button className="text-[10px] font-bold text-primary uppercase">{t('meeting_view_all')}</button>
-        </div>
-        <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-          <button className="w-14 h-14 rounded-full border-2 border-dashed border-gray-700 flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary transition-all shrink-0">
-            <span className="material-symbols-outlined">add</span>
-          </button>
-          {[1, 2, 3, 4].map(i => (
-            <img key={i} src={`https://picsum.photos/seed/${i + 80}/100/100`} className="w-14 h-14 rounded-full object-cover shrink-0 border-2 border-primary" alt="Friend" />
-          ))}
-        </div>
-      </div>
-    </main>
-
-    <div className="p-6 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 absolute bottom-0 left-0 right-0 z-20">
-      <button 
-        onClick={() => onNavigate(ScreenType.MEETINGS)}
-        className="w-full h-16 bg-primary rounded-2xl text-white font-bold text-lg shadow-xl shadow-primary/30 flex items-center justify-center gap-3 active:scale-[0.98] transition-all"
-      >
-        <span className="material-symbols-outlined">check_circle</span>
-        Create Meeting
-      </button>
+          );
+        })}
+      </main>
+      <RenderBottomNav onNavigate={onNavigate} t={t} currentScreen={ScreenType.MEETINGS} />
     </div>
-  </div>
-);
+  );
+};
+
+const CreateScreen = ({ onNavigate, t, currentUserId, showAlert }) => {
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleCreate = async () => {
+    if (!name.trim()) return;
+    setLoading(true);
+    try {
+      const user = auth.currentUser;
+      const meetingData = {
+        title: name,
+        location: '', // Optional location field
+        status: 'active'
+      };
+      const userProfile = {
+        nickname: user?.displayName || 'Unknown',
+        avatar: user?.photoURL || (user?.displayName || '?').charAt(0)
+      };
+      await createMeeting(meetingData, currentUserId, userProfile);
+      onNavigate(ScreenType.MEETINGS);
+    } catch (err) {
+      console.error(err);
+      showAlert("모임 생성 실패", "오류");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
+      <header className="px-4 py-6 border-b border-white/5 flex items-center justify-between sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
+        <button onClick={() => onNavigate(ScreenType.MEETINGS)} className="px-4 py-2 text-gray-400 font-bold text-sm uppercase tracking-widest">{t('cancel')}</button>
+        <h2 className="text-lg font-extrabold text-white font-display uppercase tracking-widest">{t('meeting_new')}</h2>
+        <div className="w-16"></div>
+      </header>
+      
+      <main className="flex-1 p-8 space-y-10 overflow-y-auto scrollbar-hide pb-32">
+        <div className="space-y-4">
+          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 ml-1">{t('meeting_name')}</label>
+          <input 
+            type="text" 
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={t('meeting_name_placeholder')} 
+            className="w-full h-16 bg-card-dark border border-white/5 rounded-2xl px-6 text-white text-lg font-bold placeholder:text-gray-700 focus:ring-2 focus:ring-primary/40 outline-none transition-all shadow-xl" 
+          />
+        </div>
+
+        <div className="bg-primary/5 rounded-3xl p-6 border border-primary/10">
+           <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center text-primary shrink-0">
+                 <span className="material-symbols-outlined">info</span>
+              </div>
+              <div>
+                 <h4 className="text-sm font-bold text-white mb-1">모임 생성 안내</h4>
+                 <p className="text-xs text-gray-500 leading-relaxed font-medium">
+                   정식 회원만 모임을 생성할 수 있습니다. 모임 생성 시 고유 입장 코드가 생성되며, 이 코드를 통해 친구들을 초대할 수 있습니다.
+                 </p>
+              </div>
+           </div>
+        </div>
+      </main>
+
+      <div className="p-8 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 sticky bottom-0 left-0 right-0 z-20">
+        <button 
+          onClick={handleCreate}
+          disabled={loading || !name.trim()}
+          className="w-full h-16 bg-primary disabled:opacity-50 disabled:bg-gray-700 rounded-2xl text-white font-black text-lg shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 active:scale-[0.98] transition-all tracking-widest"
+        >
+          {loading ? (
+             <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          ) : (
+            <>
+              <span className="material-symbols-outlined font-bold">rocket_launch</span>
+              {t('meeting_new')}
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const MeetingScreens = ({ currentScreen, onNavigate }) => {
   const { t } = useTranslation();
-  const { guestMeetings, activeMeetingId, setActiveMeetingId } = useFriends();
-  const activeMeeting = guestMeetings.find(m => m.id === activeMeetingId) || guestMeetings[0];
+  const { showAlert, showConfirm } = useModal();
+  const { myMeetings, activeMeetingId, setActiveMeetingId, isEmailUser, currentUserId, leaveCurrentMeeting, deleteCurrentMeeting } = useFriends();
+  
+  const activeMeeting = myMeetings.find(m => m.id === activeMeetingId) || myMeetings[0];
 
   switch (currentScreen) {
     case ScreenType.MEETINGS: 
-      return <ListScreen onNavigate={onNavigate} t={t} guestMeetings={guestMeetings} />;
+      return (
+        <ListScreen 
+          onNavigate={onNavigate} 
+          t={t} 
+          myMeetings={myMeetings} 
+          activeMeetingId={activeMeetingId} 
+          setActiveMeetingId={setActiveMeetingId}
+          isEmailUser={isEmailUser}
+          currentUserId={currentUserId}
+          showConfirm={showConfirm}
+          leaveCurrentMeeting={leaveCurrentMeeting}
+          deleteCurrentMeeting={deleteCurrentMeeting}
+        />
+      );
     case ScreenType.MEETING_DETAILS: 
-      {
-        return (
-          <div className="flex flex-col h-full bg-background-dark animate-fade-in">
-            <div className="flex-1 overflow-hidden pb-20">
-              <GroupChat meetingTitle={activeMeeting?.title || "Friday Night Dinner"} meetingLocation={activeMeeting?.meetingLocation?.name || activeMeeting?.meetingLocation?.address || activeMeeting?.location} />
-            </div>
-            <RenderBottomNav onNavigate={onNavigate} t={t} currentScreen={ScreenType.MEETING_DETAILS} />
+      return (
+        <div className="flex flex-col h-full bg-background-dark animate-fade-in shadow-inner">
+          <div className="flex-1 overflow-hidden pb-20">
+            <GroupChat 
+              meetingTitle={activeMeeting?.title || "Untitled Meeting"} 
+              meetingLocation={activeMeeting?.meetingLocation?.name || activeMeeting?.meetingLocation?.address || activeMeeting?.location} 
+            />
           </div>
-        );
-      }
+          <RenderBottomNav onNavigate={onNavigate} t={t} currentScreen={ScreenType.MEETING_DETAILS} />
+        </div>
+      );
     case ScreenType.CREATE_MEETING: 
-      return <CreateScreen onNavigate={onNavigate} t={t} />;
+      return <CreateScreen onNavigate={onNavigate} t={t} currentUserId={currentUserId} showAlert={showAlert} />;
     default: 
-      {
-        return (
-          <div className="flex flex-col h-full bg-background-dark">
-            <div className="flex-1 overflow-hidden pb-20">
-              <GroupChat onBack={null} meetingTitle={activeMeeting?.title || "Friday Night Dinner"} meetingLocation={activeMeeting?.meetingLocation?.name || activeMeeting?.meetingLocation?.address || activeMeeting?.location} />
-            </div>
-            <RenderBottomNav onNavigate={onNavigate} t={t} currentScreen={ScreenType.MEETINGS} />
-          </div>
-        );
-      }
+      return <ListScreen onNavigate={onNavigate} t={t} myMeetings={myMeetings} setActiveMeetingId={setActiveMeetingId} />;
   }
 };
 

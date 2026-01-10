@@ -12,7 +12,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
   const { t } = useTranslation();
   const { language } = useLang();
   const { showAlert } = useModal();
-  const { guestMeetings, activeMeetingId, currentUserId } = useFriends();
+  const { myMeetings, activeMeetingId, currentUserId } = useFriends();
   const [meetings, setMeetings] = useState([]);
   const [legalDoc, setLegalDoc] = useState(null); // { title: string, content: string }
 
@@ -82,8 +82,8 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
   });
 
   useEffect(() => {
-    if (activeMeetingId && currentUserId && guestMeetings.length > 0) {
-      const meeting = guestMeetings.find(m => m.id === activeMeetingId);
+    if (activeMeetingId && currentUserId && myMeetings.length > 0) {
+      const meeting = myMeetings.find(m => m.id === activeMeetingId);
       if (meeting) {
         const me = meeting.participants.find(p => p.id === currentUserId);
         if (me) {
@@ -94,7 +94,7 @@ const Profile = ({ onNavigate, onLogout, deferredPrompt, onInstallSuccess }) => 
         }
       }
     }
-  }, [activeMeetingId, currentUserId, guestMeetings]);
+  }, [activeMeetingId, currentUserId, myMeetings]);
 
   const handleToggle = async (key) => {
     if (key === 'online') {

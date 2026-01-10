@@ -5,11 +5,12 @@ import { auth, db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { useFriends } from '../context/FriendsContext';
 import { useModal } from '../context/ModalContext';
+import MeetingSwitcher from '../components/MeetingSwitcher';
 
 const FriendScreens = ({ onNavigate }) => {
   const { t } = useTranslation();
   const { showAlert } = useModal();
-  const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId, guestMeetings, blockFriend, unblockFriend, isHost } = useFriends();
+  const { friends, messages, lastSeenMap, activeMeetingId, setSelectedFriendId, myMeetings, blockFriend, unblockFriend, isHost } = useFriends();
   const lastSeenId = lastSeenMap[activeMeetingId] || null;
 
   const handleAction = async (friendId, action) => {
@@ -30,7 +31,7 @@ const FriendScreens = ({ onNavigate }) => {
 
     try {
       // Find the active meeting to get its group code
-      const currentMeeting = guestMeetings.find(m => m.id === activeMeetingId);
+      const currentMeeting = myMeetings.find(m => m.id === activeMeetingId);
 
       let groupCode = '';
       if (currentMeeting && currentMeeting.groupCode) {
@@ -103,7 +104,9 @@ const FriendScreens = ({ onNavigate }) => {
     <div className="flex flex-col h-full bg-background-dark animate-fade-in-up font-sans">
       <header className="px-6 pt-10 pb-6 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-extrabold text-white tracking-tight font-display">{t('nav_friends')}</h1>
+          <div className="flex-1">
+             <MeetingSwitcher />
+          </div>
           <div className="flex gap-2">
             <button
               onClick={handleShareInvite}

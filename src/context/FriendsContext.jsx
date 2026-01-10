@@ -14,7 +14,7 @@ export const FriendsProvider = ({ children }) => {
   const [userLocation, setUserLocation] = useState({ x: 50, y: 50 });
   const [selectedFriendId, setSelectedFriendId] = useState(null);
   const [friends, setFriends] = useState([]);
-  const [guestMeetings, setGuestMeetings] = useState([]);
+  const [myMeetings, setMyMeetings] = useState([]);
   const [messages, setMessages] = useState([]);
   const [activeMeetingId, setActiveMeetingId] = useState(null);
   const [lastSeenMap, setLastSeenMap] = useState({}); // { meetingId: lastSeenId }
@@ -28,8 +28,8 @@ export const FriendsProvider = ({ children }) => {
   const normId = (id) => id?.toString().trim() || "";
   
   const activeMeeting = useMemo(() => 
-    guestMeetings.find(m => normId(m.id) === normId(activeMeetingId)),
-    [guestMeetings, activeMeetingId]
+    myMeetings.find(m => normId(m.id) === normId(activeMeetingId)),
+    [myMeetings, activeMeetingId]
   );
 
   const isHost = useMemo(() => {
@@ -41,6 +41,11 @@ export const FriendsProvider = ({ children }) => {
     const me = activeMeeting.participants?.find(p => normId(p.id) === uid || normId(p.id) === 'me');
     return me?.role === 'host';
   }, [activeMeeting, currentUserId]);
+
+  const isEmailUser = useMemo(() => {
+    const user = auth.currentUser;
+    return !!(user && !user.isAnonymous && user.emailVerified);
+  }, []);
 
   const isSwitchingMeeting = useRef(false);
   const activeIdRef = useRef(activeMeetingId);
@@ -55,7 +60,7 @@ export const FriendsProvider = ({ children }) => {
       setCurrentUserId(user?.uid || null);
       if (!user) {
         setFriends([]);
-        setGuestMeetings([]);
+        setMyMeetings([]);
         setActiveMeetingId(null);
         setBlockedIds([]);
       }
@@ -92,9 +97,9 @@ export const FriendsProvider = ({ children }) => {
     console.log("[FriendsContext] Subscribing to meetings for:", currentUserId);
     const unsubMeetings = subscribeToMeetings(currentUserId, (meetings) => {
       console.log("[FriendsContext] Meetings updated:", meetings.length);
-      setGuestMeetings(prev => {
+      setMyMeetings(prev => {
         const remoteIds = new Set(meetings.map(m => m.id));
-        const localOnly = prev.filter(m => m.id.startsWith('guest-') && !remoteIds.has(m.id));
+        const localOnly = prev.filter(m => m.id.toString().startsWith('guest-') && !remoteIds.has(m.id));
         const merged = [...meetings, ...localOnly];
         console.log(`[FriendsContext] Merged meetings: remote=${meetings.length}, localGuest=${localOnly.length}`);
         return merged;
@@ -346,7 +351,7 @@ export const FriendsProvider = ({ children }) => {
         { id: 'me', name: guestNickname, nickname: guestNickname, role: 'guest', avatar: 'guest' } // You
       ]
     };
-    setGuestMeetings(prev => [newMeeting, ...prev]);
+    setMyMeetings(prev => [newMeeting, ...prev]);
     setActiveMeetingId(newMeeting.id); // Switch to the new guest meeting immediately
   };
 
@@ -379,7 +384,7 @@ export const FriendsProvider = ({ children }) => {
     
     // Rescue: If we are on a guest ID but have real meetings, try to find a match or use a real one
     if (targetMeetingId.toString().startsWith('guest-')) {
-      const realMeeting = guestMeetings.find(m => !m.id.startsWith('guest-'));
+      const realMeeting = myMeetings.find(m => !m.id.startsWith('guest-'));
       if (realMeeting) {
         console.log(`[FriendsContext] Rescue: Redirecting message from ${targetMeetingId} to real meeting ${realMeeting.id}`);
         targetMeetingId = realMeeting.id;
@@ -413,7 +418,7 @@ export const FriendsProvider = ({ children }) => {
       friends, 
       userLocation, 
       setUserLocation, 
-      guestMeetings, 
+      myMeetings, 
       joinGuestMeeting, 
       messages: filteredMessages, // Use filtered messages by default
       rawMessages: messages,      // Provide raw if needed
@@ -424,6 +429,7 @@ export const FriendsProvider = ({ children }) => {
       activeMeetingId,
       setActiveMeetingId,
       isHost,
+      isEmailUser,
       lastSeenMap,
       setLastSeenId,
       currentUserId,

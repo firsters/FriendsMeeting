@@ -333,9 +333,24 @@ export const getUserActiveMeeting = async (userId) => {
 
 export const deleteMeeting = async (meetingId) => {
   if (!meetingId) return;
-  // Note: Subcollections (messages) are not automatically deleted.
-  // For this implementation, we rely on the client ignoring orphaned data.
-  // In a real app, use a Cloud Function to recursive delete.
+  
+  try {
+    // 1. Send final notification if possible
+    await sendMessage(meetingId, {
+      senderId: 'system',
+      senderName: 'System',
+      content: '방장에 의해 모임이 종료되었습니다. 모든 데이터가 삭제됩니다.',
+      type: 'system',
+      timestamp: serverTimestamp()
+    });
+    
+    // Give a small delay for the message to propagate if needed, 
+    // but deleteDoc is usually okay.
+  } catch (err) {
+    console.warn("[meetingService] Failed to send deletion message:", err);
+  }
+
+  // 2. Delete the meeting document
   await deleteDoc(doc(db, 'meetings', meetingId));
 };
 
@@ -348,6 +363,14 @@ export const leaveMeeting = async (meetingId, userId) => {
   if (snapshot.empty) return;
 
   const meetingData = snapshot.docs[0].data();
+  
+  // If Host leaves, delete the whole meeting
+  if (meetingData.hostId === userId) {
+    console.log("[meetingService] Host is leaving. Triggering cascade deletion.");
+    await deleteMeeting(meetingId);
+    return;
+  }
+
   const updatedParticipants = meetingData.participants.filter(p => p.id !== userId);
   const updatedParticipantIds = meetingData.participantIds.filter(id => id !== userId);
 

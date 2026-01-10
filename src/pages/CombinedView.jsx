@@ -13,6 +13,7 @@ import {
 } from "../utils/meetingService";
 import { useFriends } from "../context/FriendsContext";
 import { useModal } from "../context/ModalContext";
+import MeetingSwitcher from "../components/MeetingSwitcher";
 import { doc, getDoc } from "firebase/firestore";
 
 const CombinedView = ({ onNavigate }) => {
@@ -28,7 +29,7 @@ const CombinedView = ({ onNavigate }) => {
     currentUserId,
     messages,
     serverLastReadId,
-    guestMeetings,
+    myMeetings,
     isHost
   } = useFriends();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -110,12 +111,10 @@ const CombinedView = ({ onNavigate }) => {
     }
   }, [geocodingLib]);
 
-  const activeMeeting = {
-    title: t("mock_meeting_title") || "Cafe study session",
-    time: "2:00 PM",
-    location: "Starbucks Gangnam",
-    participants: 4,
-  };
+  const activeMeeting = useMemo(() => 
+    myMeetings.find(m => m.id === activeMeetingId),
+    [myMeetings, activeMeetingId]
+  );
 
   const mapCenter = useMemo(() => {
     return selectedFriend
@@ -428,7 +427,7 @@ const CombinedView = ({ onNavigate }) => {
     if (!auth.currentUser) return;
 
     try {
-      const currentMeeting = guestMeetings.find(m => m.id === activeMeetingId);
+      const currentMeeting = myMeetings.find(m => m.id === activeMeetingId);
 
       let groupCode = '';
       if (currentMeeting && currentMeeting.groupCode) {
@@ -507,9 +506,12 @@ const CombinedView = ({ onNavigate }) => {
       </div>
 
       {/* Top Header Bar Container */}
-      <header className="relative z-10 px-4 pt-0 pb-4 pointer-events-none flex flex-col items-center gap-2">
+      <header className="relative z-[100] px-4 pt-10 pb-4 pointer-events-none flex flex-col items-center gap-2">
+        <div className="bg-card-dark/80 backdrop-blur-xl border border-white/5 rounded-[2rem] px-6 py-2 shadow-2xl pointer-events-auto mb-2">
+           <MeetingSwitcher />
+        </div>
         {/* Main Header Container (Row 1 + Row 2) */}
-        <div className="flex flex-col w-full bg-card-dark/95 backdrop-blur-2xl rounded-b-[2.5rem] border-b border-white/10 shadow-2xl pointer-events-auto transition-all duration-300">
+        <div className="flex flex-col w-full bg-card-dark/95 backdrop-blur-2xl rounded-[2.5rem] border border-white/10 shadow-2xl pointer-events-auto transition-all duration-300">
           {/* ROW 1: Meeting Status & Host Location (Always Visible) */}
           <div className="flex items-center min-h-[4.5rem] w-full border-b border-white/5 last:border-none">
             {/* Left Section: Indicators (Order swapped and emphasized) */}

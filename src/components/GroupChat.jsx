@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useFriends } from '../context/FriendsContext';
 import { auth } from '../firebase';
 import { useTranslation } from '../context/LanguageContext';
+import MeetingSwitcher from './MeetingSwitcher';
 
 const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
   const { 
@@ -79,14 +80,7 @@ const GroupChat = ({ onBack, meetingTitle, meetingLocation }) => {
       {/* Header */}
       <header className="px-4 py-4 border-b border-white/5 flex items-center gap-4 sticky top-0 bg-background-dark/90 backdrop-blur-md z-10">
         <div className="flex-1">
-          <h2 className="text-lg font-extrabold text-white font-display truncate leading-tight">
-            {meetingLocation || meetingTitle || t('nav_meetings')}
-            <span className="text-[10px] ml-2 font-normal text-primary">({messages.length})</span>
-          </h2>
-          <div className="flex items-center gap-1.5 opacity-60">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-            <span className="text-[10px] font-bold text-white uppercase tracking-widest">{friends.length + 1} {t('meeting_active_members')}</span>
-          </div>
+          <MeetingSwitcher />
         </div>
         <button className="p-2 rounded-full hover:bg-white/5 transition-colors text-white">
           <span className="material-symbols-outlined">more_vert</span>
