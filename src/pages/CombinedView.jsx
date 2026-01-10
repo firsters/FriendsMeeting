@@ -13,7 +13,6 @@ import {
 } from "../utils/meetingService";
 import { useFriends } from "../context/FriendsContext";
 import { useModal } from "../context/ModalContext";
-import MeetingSwitcher from "../components/MeetingSwitcher";
 import { doc, getDoc } from "firebase/firestore";
 
 const CombinedView = ({ onNavigate }) => {
