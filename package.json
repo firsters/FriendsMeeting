@@ -1,7 +1,7 @@
 {
   "name": "friendsmeeting",
   "private": true,
-  "version": "1.0.20260110-122114",
+  "version": "1.0.20260111-210222",
   "type": "module",
   "scripts": {
     "dev": "node scripts/increment-version.js && vite",
@@ -11,6 +11,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/cli": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/device": "^8.0.0",
+    "@capacitor/geolocation": "^8.0.0",
+    "@capacitor/status-bar": "^8.0.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@vis.gl/react-google-maps": "^1.7.1",
     "clsx": "^2.1.1",

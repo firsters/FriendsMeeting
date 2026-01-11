@@ -5,6 +5,9 @@ import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import MapComponent from "../components/MapComponent";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import {
   subscribeToMeetings,
   updateMeetingLocation,
@@ -195,40 +198,86 @@ const CombinedView = ({ onNavigate }) => {
   // Geolocation & Live Status
   useEffect(() => {
     let watchId = null;
+    let capWatchId = null;
     const fallbackLocation = [37.5665, 126.9780]; // Seoul City Hall
 
-    if (navigator.geolocation) {
-      const success = (position) => {
-        const { latitude, longitude } = position.coords;
-        const newPos = [latitude, longitude];
-        setUserLocation(newPos);
-        setIsLocationMocked(false);
-        setLiveStatus("online");
-      };
+    const isNative = Capacitor.isNativePlatform();
 
-      const error = (err) => {
-        console.error("Location permission denied or error:", err);
-        setLiveStatus("offline");
-        // Fallback if no location yet
-        setUserLocation((prev) => prev || fallbackLocation);
-        setIsLocationMocked((prev) => prev || true);
-      };
+    const success = (lat, lng) => {
+      const newPos = [lat, lng];
+      setUserLocation(newPos);
+      setIsLocationMocked(false);
+      setLiveStatus("online");
+    };
 
-      // Watch position for real-time updates
-      watchId = navigator.geolocation.watchPosition(success, error, {
-        enableHighAccuracy: true,
-        maximumAge: 5000,
-        timeout: 10000,
-      });
-    } else {
+    const error = (err) => {
+      console.error("Location permission denied or error:", err);
       setLiveStatus("offline");
-      setUserLocation(fallbackLocation);
-      setIsLocationMocked(true);
-    }
+      setUserLocation((prev) => prev || fallbackLocation);
+      setIsLocationMocked((prev) => prev || true);
+    };
+
+    const startTracking = async () => {
+      if (isNative) {
+        try {
+          // Native Capacitor Geolocation
+          const permissions = await Geolocation.checkPermissions();
+          if (permissions.location !== 'granted') {
+            await Geolocation.requestPermissions();
+          }
+
+          capWatchId = await Geolocation.watchPosition(
+            { enableHighAccuracy: true, timeout: 10000 },
+            (position, err) => {
+              if (err) {
+                error(err);
+                return;
+              }
+              if (position) {
+                success(position.coords.latitude, position.coords.longitude);
+              }
+            }
+          );
+          
+          // Setup Status Bar for native
+          StatusBar.setStyle({ style: Style.Dark });
+          StatusBar.setBackgroundColor({ color: '#101622' });
+        } catch (err) {
+          console.error("Capacitor Geolocation error:", err);
+          // Fallback to web if native fails
+          startWebTracking();
+        }
+      } else {
+        startWebTracking();
+      }
+    };
+
+    const startWebTracking = () => {
+      if (navigator.geolocation) {
+        watchId = navigator.geolocation.watchPosition(
+          (pos) => success(pos.coords.latitude, pos.coords.longitude),
+          error,
+          {
+            enableHighAccuracy: true,
+            maximumAge: 5000,
+            timeout: 10000,
+          }
+        );
+      } else {
+        setLiveStatus("offline");
+        setUserLocation(fallbackLocation);
+        setIsLocationMocked(true);
+      }
+    };
+
+    startTracking();
 
     return () => {
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
+      }
+      if (capWatchId !== null) {
+        Geolocation.clearWatch({ id: capWatchId });
       }
     };
   }, []); // Stable watcher

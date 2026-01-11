@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
 import { ScreenType } from '../constants/ScreenType';
 import { useTranslation } from '../context/LanguageContext';
 import { useModal } from '../context/ModalContext';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
 
 const Permissions = ({ onNavigate }) => {
   const { t } = useTranslation();
@@ -14,6 +15,21 @@ const Permissions = ({ onNavigate }) => {
   }, []);
 
   const checkPermissions = async () => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const loc = await Geolocation.checkPermissions();
+        setLocationStatus(loc.location === 'granted' ? 'granted' : 'prompt');
+        
+        // Notification permission via Capacitor is separate, for now we keep fallback
+        if (Notification.permission) {
+          setNotifStatus(Notification.permission);
+        }
+      } catch (err) {
+        console.error("Native permission check error:", err);
+      }
+      return;
+    }
+
     if ("permissions" in navigator) {
       try {
         const loc = await navigator.permissions.query({ name: 'geolocation' });
@@ -39,7 +55,17 @@ const Permissions = ({ onNavigate }) => {
     
     showConfirm(
       t('perm_location_rationale'), 
-      () => {
+      async () => {
+        if (Capacitor.isNativePlatform()) {
+          try {
+            const result = await Geolocation.requestPermissions();
+            setLocationStatus(result.location === 'granted' ? 'granted' : 'denied');
+          } catch (err) {
+            console.error("Native request error:", err);
+          }
+          return;
+        }
+
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
             () => setLocationStatus('granted'),
