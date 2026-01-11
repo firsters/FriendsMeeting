@@ -108,6 +108,44 @@ const CombinedView = ({ onNavigate }) => {
 
   const geocodingLib = useMapsLibrary("geocoding");
   const [geocoder, setGeocoder] = useState(null);
+  const wakeLockRef = useRef(null);
+
+  // Screen Wake Lock Implementation
+  useEffect(() => {
+    const requestWakeLock = async () => {
+      if ('wakeLock' in navigator) {
+        try {
+          wakeLockRef.current = await navigator.wakeLock.request('screen');
+          console.log('[WakeLock] Screen Wake Lock is active');
+          
+          wakeLockRef.current.addEventListener('release', () => {
+            console.log('[WakeLock] Screen Wake Lock was released');
+          });
+        } catch (err) {
+          console.error(`[WakeLock] ${err.name}, ${err.message}`);
+        }
+      }
+    };
+
+    requestWakeLock();
+
+    // Re-request wake lock when page becomes visible again
+    const handleVisibilityChange = async () => {
+      if (wakeLockRef.current !== null && document.visibilityState === 'visible') {
+        await requestWakeLock();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (wakeLockRef.current) {
+        wakeLockRef.current.release();
+        wakeLockRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (geocodingLib) {
@@ -520,13 +558,27 @@ const CombinedView = ({ onNavigate }) => {
                 ></span>
                 <span className={`absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-full ${liveInfo.color} border-2 border-slate-900 ${liveStatus === "online" ? "animate-pulse" : ""}`}></span>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col group/status relative">
                 <span className="text-[10px] font-black text-white uppercase tracking-wider leading-none mb-0.5">
                   {meetingInfo.text}
                 </span>
-                <span className="text-[7px] font-bold text-gray-500 uppercase tracking-widest leading-none">
-                  {liveInfo.text}
-                </span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[7px] font-bold text-gray-500 uppercase tracking-widest leading-none">
+                    {liveInfo.text}
+                  </span>
+                  {liveStatus === "online" && (
+                    <span className="material-symbols-outlined text-[10px] text-green-500 animate-pulse">sensors</span>
+                  )}
+                </div>
+                
+                {/* iOS Background Info Tooltip */}
+                <div className="absolute top-full left-0 mt-2 w-48 bg-card-dark/95 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-2xl opacity-0 group-hover/status:opacity-100 pointer-events-none transition-opacity z-[130]">
+                  <p className="text-[9px] text-white/80 leading-tight font-medium">
+                    {navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 
+                      ? "iOS 정책상 화면이 꺼지면 위치 업데이트가 중단됩니다. 화면을 켠 채로 유지해 주세요."
+                      : "앱을 열어두시면 위치가 실시간으로 공유됩니다."}
+                  </p>
+                </div>
               </div>
             </div>
 
