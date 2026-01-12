@@ -1,4 +1,4 @@
-import { ScreenType } from '../constants/ScreenType';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from '../context/LanguageContext';
 import { useModal } from '../context/ModalContext';
 import { Capacitor } from '@capacitor/core';
