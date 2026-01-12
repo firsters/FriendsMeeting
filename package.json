@@ -1,7 +1,7 @@
 {
   "name": "friendsmeeting",
   "private": true,
-  "version": "1.0.20260111-210222",
+  "version": "1.0.20260112-210033",
   "type": "module",
   "scripts": {
     "dev": "node scripts/increment-version.js && vite",
