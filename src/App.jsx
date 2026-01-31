@@ -13,6 +13,7 @@ import BottomNav from './components/BottomNav';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { APIProvider } from '@vis.gl/react-google-maps';
+import ReloadPrompt from './components/ReloadPrompt';
 import './index.css';
 
 function App() {
@@ -162,6 +163,7 @@ function App() {
   return (
     <div className="h-[100dvh] w-full flex justify-center bg-black overflow-hidden font-sans antialiased">
       <VersionGuard />
+      <ReloadPrompt />
       <APIProvider apiKey={apiKey}>
         <div className="relative w-full h-full bg-background-dark shadow-2xl flex flex-col">
           {renderScreen()}
