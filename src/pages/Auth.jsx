@@ -8,10 +8,12 @@ import {
   sendEmailVerification, 
   updateProfile,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  GoogleAuthProvider,
+  signInWithPopup
 } from 'firebase/auth';
 import { db } from '../firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const Auth = ({ currentScreen, onNavigate, onLogin }) => {
   const { t } = useTranslation();
@@ -188,6 +190,39 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setError('');
+    if (loading) return; 
+    setLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      const user = userCredential.user;
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+      if (!userDoc.exists()) {
+        const groupCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        await setDoc(userDocRef, {
+          groupCode: groupCode,
+          email: user.email,
+          nickname: user.displayName || 'User',
+          createdAt: new Date(),
+          photoURL: user.photoURL
+        });
+      }
+      onLogin(); 
+    } catch (err) {
+      console.error("Google Login error:", err);
+      if (err.code === 'auth/popup-closed-by-user') {
+        setLoading(false);
+        return; 
+      }
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderHeader = (title, desc, backTo) => (
     <header className="px-6 pt-10 pb-8">
       {backTo && (
@@ -261,6 +296,21 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
               {loading ? 'Logging in...' : t('auth_login')}
               {!loading && <span className="material-symbols-outlined">login</span>}
             </button>
+            
+            <div className="relative flex items-center py-2">
+              <div className="flex-grow border-t border-gray-700"></div>
+              <span className="flex-shrink-0 mx-4 text-gray-500 text-xs uppercase font-bold tracking-widest">Or</span>
+              <div className="flex-grow border-t border-gray-700"></div>
+            </div>
+
+            <button 
+              onClick={handleGoogleLogin}
+              disabled={loading}
+              className={`w-full h-16 bg-white rounded-2xl text-gray-900 font-bold text-lg shadow-lg hover:bg-gray-100 transition-all active:scale-[0.98] flex items-center justify-center gap-3 ${loading ? 'opacity-50' : ''}`}
+            >
+              <img src="https://www.google.com/favicon.ico" alt="Google" className="w-6 h-6" />
+              {t('auth_google_login') || "Google Login"}
+            </button>
             <div className="flex items-center justify-center gap-2 pt-4">
               <span className="text-gray-500 font-medium">{t('auth_no_account')}</span>
               <button onClick={() => onNavigate(ScreenType.SIGNUP)} className="text-primary font-bold hover:underline transition-all">
@@ -298,8 +348,23 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
               >
                 {loading ? 'Processing...' : t('auth_signup')}
                 {!loading && <span className="material-symbols-outlined">arrow_forward</span>}
-              </button>
+            </button>
+            
+            <div className="relative flex items-center py-2">
+              <div className="flex-grow border-t border-gray-700"></div>
+              <span className="flex-shrink-0 mx-4 text-gray-500 text-xs uppercase font-bold tracking-widest">Or</span>
+              <div className="flex-grow border-t border-gray-700"></div>
             </div>
+
+            <button 
+              onClick={handleGoogleLogin}
+              disabled={loading}
+              className={`w-full h-16 bg-white rounded-2xl text-gray-900 font-bold text-lg shadow-lg hover:bg-gray-100 transition-all active:scale-[0.98] flex items-center justify-center gap-3 ${loading ? 'opacity-50' : ''}`}
+            >
+              <img src="https://www.google.com/favicon.ico" alt="Google" className="w-6 h-6" />
+              {t('auth_google_login') || "Google Login"}
+            </button>
+          </div>
             <div className="flex items-center justify-center gap-2 pt-4">
               <span className="text-gray-500 font-medium">{t('auth_has_account')}</span>
               <button onClick={() => onNavigate(ScreenType.LOGIN)} className="text-primary font-bold hover:underline transition-all">
@@ -478,6 +543,21 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
             >
               {t('auth_login')}
               <span className="material-symbols-outlined">login</span>
+            </button>
+            
+            <div className="relative flex items-center py-2">
+              <div className="flex-grow border-t border-gray-700"></div>
+              <span className="flex-shrink-0 mx-4 text-gray-500 text-xs uppercase font-bold tracking-widest">Or</span>
+              <div className="flex-grow border-t border-gray-700"></div>
+            </div>
+
+            <button 
+              onClick={handleGoogleLogin}
+              disabled={loading}
+              className={`w-full h-16 bg-white rounded-2xl text-gray-900 font-bold text-lg shadow-lg hover:bg-gray-100 transition-all active:scale-[0.98] flex items-center justify-center gap-3 ${loading ? 'opacity-50' : ''}`}
+            >
+              <img src="https://www.google.com/favicon.ico" alt="Google" className="w-6 h-6" />
+              {t('auth_google_login') || "Google Login"}
             </button>
           </div>
         </div>
