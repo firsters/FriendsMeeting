@@ -3,6 +3,7 @@ import { useTranslation } from '../context/LanguageContext';
 import { useModal } from '../context/ModalContext';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
+import { ScreenType } from '../constants/ScreenType';
 
 const Permissions = ({ onNavigate }) => {
   const { t } = useTranslation();
