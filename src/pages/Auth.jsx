@@ -198,29 +198,51 @@ const Auth = ({ currentScreen, onNavigate, onLogin }) => {
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
       const user = userCredential.user;
+      
+      // DEBUG: Show success alert (temporary)
+      // showAlert("Google Login Success: " + user.email);
+
       const userDocRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userDocRef);
-      if (!userDoc.exists()) {
-        const groupCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-        await setDoc(userDocRef, {
-          groupCode: groupCode,
-          email: user.email,
-          nickname: user.displayName || 'User',
-          createdAt: new Date(),
-          photoURL: user.photoURL
-        });
+      let userDocSnapshot;
+      
+      try {
+        userDocSnapshot = await getDoc(userDocRef);
+      } catch (firestoreErr) {
+        console.error("Firestore getDoc error:", firestoreErr);
+        // If we can't check Firestore, we might still want to proceed or warn
+        // For now, let's assume it's a new user if we can't read? Or just proceed.
+        // showAlert("Firestore Error: " + firestoreErr.message);
       }
+
+      if (!userDocSnapshot || !userDocSnapshot.exists()) {
+        const groupCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        try {
+          await setDoc(userDocRef, {
+            groupCode: groupCode,
+            email: user.email,
+            nickname: user.displayName || 'User',
+            createdAt: new Date(),
+            photoURL: user.photoURL
+          }, { merge: true }); // Use merge to be safe
+        } catch (writeErr) {
+             console.error("Firestore write error:", writeErr);
+        }
+      }
+      
+      setLoading(false); // Ensure loading is off before navigation
       onLogin(); 
     } catch (err) {
       console.error("Google Login error:", err);
+      setLoading(false);
+      
       if (err.code === 'auth/popup-closed-by-user') {
-        setLoading(false);
         return; 
       }
+      
+      // Explicitly show alert for other errors
+      showAlert(`Google Login Error: ${err.message}`, "Login Failed");
       setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   const renderHeader = (title, desc, backTo) => (
